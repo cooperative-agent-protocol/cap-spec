@@ -1,0 +1,75 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Site Agent → Machine Agent ──────────────────────────────────────
+
+// WorkOrder assigns a skill-level task to a specific machine.
+// The typed fields (skill, zones, parameters, constraints, success_criteria)
+// are the normative contract. human_context is supplementary NL for context.
+message WorkOrder {
+  string task_id           = 1;
+  string work_package_id   = 2;
+  string target_machine_id = 3;
+
+  // Machine-agnostic skill name, e.g. "excavate_batch", "load_truck",
+  // "haul_route", "dump_material", "safe_wait".
+  string skill             = 4;
+
+  GeoZoneRef target_zone      = 5;
+  GeoZoneRef source_zone      = 6;
+  GeoZoneRef destination_zone = 7;
+
+  map<string, string> parameters = 8;
+
+  repeated Constraint preconditions      = 9;
+  repeated Constraint safety_constraints = 10;
+
+  TimeWindow execution_window = 11;
+  int32 priority              = 12;
+
+  // Success criteria — machine-verifiable conditions for task completion.
+  // e.g. "moved_volume_m3 >= 10.0", "zero_safety_violation".
+  repeated string success_criteria = 13;
+
+  // Supplementary natural language context from the Site Agent or user.
+  // NOT the normative contract — typed fields above take precedence.
+  string human_context = 14;
+}
+
+// CancelWorkOrder requests cancellation of a previously issued work order.
+message CancelWorkOrder {
+  string task_id = 1;
+  string reason  = 2;
+}
+
+// ReservationRequest asks to reserve a shared resource (zone, load point,
+// route segment) for exclusive use.
+message ReservationRequest {
+  string reservation_id = 1;
+  string resource_id    = 2;
+  string holder_id      = 3;
+  TimeWindow requested_window = 4;
+  string reason         = 5;
+}
+
+// ReservationRelease frees a previously granted reservation.
+message ReservationRelease {
+  string reservation_id = 1;
+  string reason         = 2;
+}
+
+// ModeCommand requests a machine to transition to a different operating mode.
+message ModeCommand {
+  string machine_id        = 1;
+  MachineMode requested_mode = 2;
+  string reason            = 3;
+}

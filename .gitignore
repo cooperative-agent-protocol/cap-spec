@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+
+# Generated proto code (regenerable via `make gen`; canonical artifacts
+# are the .proto sources + BSR / PyPI / npm wheels per ADR-008).
+gen/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+
+# Node / TS
+node_modules/
+dist/
+
+# Build outputs
+build/
+cmake-build-*/
+
+# Formal-method TLA+ tool + states
+formal/tla/tla2tools.jar
+formal/tla/*.toolbox/
+formal/tla/states/
+
+# mkdocs build output
+site/
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp

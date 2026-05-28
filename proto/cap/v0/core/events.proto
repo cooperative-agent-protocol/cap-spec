@@ -1,0 +1,128 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Fault Taxonomy ──────────────────────────────────────────────────
+
+// FaultCategory classifies the nature of a fault for automated routing.
+enum FaultCategory {
+  FAULT_CATEGORY_UNSPECIFIED       = 0;
+  FAULT_CATEGORY_SENSOR_DEGRADATION   = 1;  // GNSS quality loss, camera failure
+  FAULT_CATEGORY_LOCALIZATION_LOSS    = 2;  // Position fix lost or unreliable
+  FAULT_CATEGORY_MECHANICAL_FAILURE   = 3;  // Hydraulic, drivetrain, actuator fault
+  FAULT_CATEGORY_COMMUNICATION_LOSS   = 4;  // Network partition, gRPC timeout
+  FAULT_CATEGORY_GEOFENCE_VIOLATION   = 5;  // Entered keepout or off-site zone
+  FAULT_CATEGORY_HUMAN_PROXIMITY      = 6;  // Human detected in work envelope
+  FAULT_CATEGORY_ENVIRONMENT_HAZARD   = 7;  // Slope, flooding, unstable ground
+  FAULT_CATEGORY_LOW_FUEL             = 8;  // Fuel or battery below threshold
+  FAULT_CATEGORY_PLANNER_REJECTED     = 9;  // Site Agent rejected a plan/decision
+  FAULT_CATEGORY_BLOCKED_BY_RESERVATION = 10; // Cannot proceed, resource held by another
+}
+
+// HandoverReason classifies why a handover is being requested.
+enum HandoverReason {
+  HANDOVER_REASON_UNSPECIFIED      = 0;
+  HANDOVER_REASON_HUMAN_DETECTED   = 1;
+  HANDOVER_REASON_LOCALIZATION_DEGRADED = 2;
+  HANDOVER_REASON_ESTOP_ACTIVE     = 3;
+  HANDOVER_REASON_MACHINE_UNHEALTHY = 4;
+  HANDOVER_REASON_TASK_AMBIGUITY   = 5;
+  HANDOVER_REASON_OPERATOR_REQUEST = 6;
+  HANDOVER_REASON_SAFETY_EVENT     = 7;
+}
+
+// HandoverSeverity determines the response level required.
+enum HandoverSeverity {
+  HANDOVER_SEVERITY_UNSPECIFIED     = 0;
+  HANDOVER_SEVERITY_AUTO_RECOVERABLE = 1;  // System can auto-recover
+  HANDOVER_SEVERITY_OPERATOR_REQUIRED = 2; // Human intervention needed
+  HANDOVER_SEVERITY_FULL_STOP       = 3;   // Immediate halt, no auto-recovery
+}
+
+// ─── Events (Machine Agent → Site Agent) ─────────────────────────────
+
+// ProgressEvent reports task execution progress.
+message ProgressEvent {
+  string machine_id       = 1;
+  string task_id          = 2;
+  TaskState state         = 3;
+  double completion_ratio = 4;  // 0.0 to 1.0
+  string summary          = 5;
+  GeoZoneRef current_zone = 6;
+  repeated KeyValue metrics = 7;
+}
+
+// FaultEvent reports a machine or task fault.
+message FaultEvent {
+  string machine_id       = 1;
+  string task_id          = 2;
+  FaultSeverity severity  = 3;
+  string fault_code       = 4;
+  string summary          = 5;
+  bool requires_handover  = 6;
+  bool requires_safe_stop = 7;
+  repeated KeyValue attributes = 8;
+  FaultCategory category  = 9;  // Structured fault classification
+}
+
+// HandoverEvent requests transition to a different control mode,
+// typically from autonomous to teleop when human intervention is needed.
+message HandoverEvent {
+  string machine_id            = 1;
+  string task_id               = 2;
+  MachineMode requested_mode   = 3;
+  string reason                = 4;
+  bool operator_required       = 5;
+  TimeWindow response_window   = 6;
+  HandoverReason handover_reason = 7;    // Structured classification
+  HandoverSeverity handover_severity = 8; // Response level required
+}
+
+// SafetyEvent reports safety-critical state changes (geofence, human detection, etc.).
+message SafetyEvent {
+  string machine_id       = 1;
+  string task_id          = 2;
+  string event_type       = 3;  // e.g. "geofence_violation", "human_detected"
+  FaultSeverity severity  = 4;
+  string summary          = 5;
+  GeoZoneRef affected_zone = 6;
+  bool motion_inhibited   = 7;
+}
+
+// ReservationStatus reports the outcome of a ReservationRequest.
+message ReservationStatus {
+  enum ReservationState {
+    RESERVATION_STATE_UNSPECIFIED = 0;
+    RESERVATION_STATE_GRANTED     = 1;
+    RESERVATION_STATE_DENIED      = 2;
+    RESERVATION_STATE_RELEASED    = 3;
+    RESERVATION_STATE_EXPIRED     = 4;
+    RESERVATION_STATE_REQUESTED   = 5;  // Initial state when reservation is first requested
+  }
+
+  string reservation_id       = 1;
+  string resource_id          = 2;
+  string holder_id            = 3;
+  ReservationState state      = 4;
+  string reason               = 5;
+  TimeWindow granted_window   = 6;
+}
+
+// AuditEvent records an auditable action for compliance and traceability.
+message AuditEvent {
+  string actor_id              = 1;
+  string subject_id            = 2;
+  string subject_type          = 3;
+  string action                = 4;
+  string result                = 5;
+  string reason                = 6;
+  repeated KeyValue attributes = 7;
+}

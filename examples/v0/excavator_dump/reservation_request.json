@@ -1,0 +1,20 @@
+{
+  "header": {
+    "messageId": "msg-0030",
+    "senderId": "site-agent-01",
+    "receiverId": "excavator-01",
+    "workPackageId": "wp-001",
+    "planHash": "a1b2c3d4e5f6",
+    "sentAt": "2026-03-19T08:02:00Z"
+  },
+  "reservationRequest": {
+    "reservationId": "res-0001",
+    "resourceId": "load-point-A",
+    "holderId": "excavator-01",
+    "requestedWindow": {
+      "earliest": "2026-03-19T08:02:00Z",
+      "latest": "2026-03-19T08:04:00Z"
+    },
+    "reason": "Excavation at load-point-A for task-1042"
+  }
+}

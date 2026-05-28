@@ -1,0 +1,159 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+import "cap/v0/core/lifecycle.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Intent: declarative replacement for HAL "actions" ───────────────
+//
+// The legacy HAL takes imperative actions ("start_dig", "swing_to_load")
+// which mutate controller state on every call. When Gemini batches
+// multiple tool calls in one think (a documented pattern), the
+// controller's timer resets repeatedly — visible as the "首ブンブン"
+// arm oscillation. Idempotent guards in the controller
+// (excavator_controller.py, truck_controller.py) are band-aid
+// compensation for an API that should have been state-declarative
+// from the start.
+//
+// Intents are *declarative*: re-submitting the same Intent (same
+// correlation_id, same payload) while it is in-flight is a no-op.
+// A different Intent on the same correlation_id preempts the prior
+// one through the dispatcher's lifecycle (lifecycle.proto).
+
+// ─── Plan envelope (referenced by DriveIntent) ───────────────────────
+//
+// PlanContract is the immutable plan output of an implementation's
+// path planner (e.g. Hybrid A*). The wire form is defined here;
+// implementations are free to maintain their own in-memory record
+// type with hashing helpers as long as it round-trips through this
+// message.
+message PlanContractWire {
+  string plan_id = 1;
+
+  // (world_seq, body_envelope_hash, zone_grid_hash) tuple.
+  // PlanContract is invalidated as soon as any of these changes.
+  int64  world_seq            = 2;
+  string body_envelope_hash   = 3;
+  string zone_grid_hash       = 4;
+
+  // Geometry
+  repeated Pose3D    waypoints     = 5;
+  repeated int32     motion_types  = 6;  // MotionType enum (alg side)
+  repeated double    headings      = 7;
+
+  // Planner-side estimates (used by the safety supervisor for sanity checks).
+  double expected_max_slope_deg = 8;
+  double expected_min_clearance_m = 9;
+  double expected_speed_mps     = 10;
+
+  // Lifetime: dispatcher rejects an Intent whose plan has expired.
+  double horizon_sec = 11;
+}
+
+enum AbortPolicy {
+  ABORT_POLICY_UNSPECIFIED = 0;
+  // Default: the safety supervisor ABORTs on any safety violation.
+  ABORT_POLICY_ABORT_ON_VIOLATION = 1;
+  // Slow down rather than abort when slope/curvature marginal; abort
+  // only on hard limits (HAZARD intrusion, fall, peer proximity).
+  ABORT_POLICY_DEGRADE_THEN_ABORT = 2;
+  // Bridge proceeds even on slope warnings (used for testing only).
+  ABORT_POLICY_FORCE              = 3;
+}
+
+// ─── Concrete Intents ────────────────────────────────────────────────
+
+message DriveIntent {
+  PlanContractWire plan = 1;
+  AbortPolicy abort_policy = 2;
+}
+
+message DigIntent {
+  double target_volume_m3 = 1;
+  double bucket_capacity_m3 = 2;
+  // Optional: explicit dig pose (for spatial dig planning).
+  Pose3D approach_pose = 3;
+}
+
+message SwingIntent {
+  double target_yaw_rad = 1;
+  // Optional: target truck for load alignment.
+  string truck_id = 2;
+}
+
+message LoadTruckIntent {
+  string truck_id = 1;
+  double bucket_volume_m3 = 2;
+}
+
+message StabilizeArmIntent {
+  // Empty payload — declares "arm should be in stable carry pose".
+}
+
+message DumpIntent {
+  // Empty payload — truck side: bed up to dump payload.
+}
+
+message WaitForLoadIntent {
+  // Truck side: declare ready-to-load posture and wait.
+  double timeout_sec = 1;  // 0 = no timeout
+}
+
+// ─── Stop / cancel ───────────────────────────────────────────────────
+//
+// StopIntent is the unified cancel/preemption channel. It replaces:
+//   - movement.py::_abort_motion (drive_to error path)
+//   - unity_mobility_interface.py::stop()
+//   - navigate_segmented_path's mandatory self.stop() before queue swap
+// All these collapse into one StopIntent dispatched against the
+// CommandHandle being preempted.
+message StopIntent {
+  enum Mode {
+    MODE_UNSPECIFIED = 0;
+    MODE_GRACEFUL    = 1;  // smooth deceleration, then idle
+    MODE_HARD        = 2;  // velocity → 0 immediately
+    MODE_HOLD        = 3;  // brake and hold position (e.g. waiting for peer)
+  }
+  Mode mode = 1;
+  string reason = 2;
+}
+
+// ─── Intent envelope ─────────────────────────────────────────────────
+//
+// Wrapped in CapFrame.body when sent over the wire.
+message Intent {
+  // Stable correlation id from the agent. Re-submitting the same id
+  // while in-flight is a no-op for matching payloads, a preempt for
+  // differing payloads.
+  string correlation_id = 1;
+
+  string machine_id = 2;
+  string task_id = 3;  // optional
+
+  oneof payload {
+    DriveIntent        drive          = 10;
+    DigIntent          dig            = 11;
+    SwingIntent        swing          = 12;
+    LoadTruckIntent    load_truck     = 13;
+    StabilizeArmIntent stabilize_arm  = 14;
+    DumpIntent         dump           = 15;
+    WaitForLoadIntent  wait_for_load  = 16;
+    StopIntent         stop           = 30;
+  }
+}
+
+// IntentAck is returned synchronously from dispatcher.dispatch(intent).
+// The agent then subscribes to CommandLifecycleEvent for the lifecycle.
+message IntentAck {
+  CommandHandle handle = 1;
+  // If state == REJECTED, this explains why (e.g. plan expired,
+  // payload schema invalid, machine not registered).
+  string rejection_reason = 2;
+}

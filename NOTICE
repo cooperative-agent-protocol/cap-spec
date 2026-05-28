@@ -1,0 +1,22 @@
+CAP — Cooperative Agent Protocol Specification
+Copyright 2026 CAP Authors
+
+This product includes software developed by the CAP project
+(https://cap-protocol.dev — pending public release).
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This repository contains the protocol specification, formal verification
+artifacts, and generator configuration for the Cooperative Agent Protocol.
+Generated language bindings depend on the Google Protocol Buffers runtime,
+licensed separately (see https://github.com/protocolbuffers/protobuf).
+
+Trademarks:
+- "Cooperative Agent Protocol" and the "CAP" wordmark are pending
+  trademark registration with the Japan Patent Office (JPO). See
+  TRADEMARK_POLICY.md for usage terms once registered.
+
+Acknowledgements:
+- The Construction Domain Pack v0 schema is derived from research
+  conducted at The University of Tokyo, Department of Civil Engineering,
+  Construction Mechanization Laboratory.

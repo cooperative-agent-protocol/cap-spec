@@ -1,0 +1,28 @@
+{
+  "header": {
+    "messageId": "msg-0004",
+    "senderId": "excavator-01",
+    "receiverId": "site-agent-01",
+    "correlationId": "msg-0002",
+    "workPackageId": "earthwork-B3",
+    "planHash": "sha256:a1b2c3d4e5f6",
+    "sentAt": "2026-03-19T09:10:00Z"
+  },
+  "progressEvent": {
+    "machineId": "excavator-01",
+    "taskId": "task-1042",
+    "state": "TASK_STATE_RUNNING",
+    "completionRatio": 0.6,
+    "summary": "掘削 4.8m³ / 8.0m³ 完了、サイクル 4/7",
+    "currentZone": {
+      "mapId": "site-a",
+      "zoneId": "B3-cell-14",
+      "revision": "r12"
+    },
+    "metrics": [
+      { "key": "cycles_completed", "value": "4" },
+      { "key": "volume_moved_m3", "value": "4.8" },
+      { "key": "avg_cycle_sec", "value": "72" }
+    ]
+  }
+}

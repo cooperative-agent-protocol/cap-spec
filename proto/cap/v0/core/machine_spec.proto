@@ -1,0 +1,228 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Single source of truth for the physical specification of a single
+// machine model. proto3 is the canonical definition; every consumer
+// (Python / C++ / TypeScript / C#) is generated or wrapped from this
+// file.
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+import "cap/v0/core/skill.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+
+// ─── Mobility envelope ────────────────────────────────────────────
+
+// MobilityLimits captures the velocity / acceleration bounds the
+// planner and tracker must honour. Values are conservative: actual
+// hardware caps are usually higher, but planner / MPC operate
+// inside this envelope so a single tuning artefact propagates to
+// both.
+message MobilityLimits {
+  double max_linear_vel_mps   = 1;   // [m/s] forward / reverse cap
+  double max_angular_vel_radps = 2;  // [rad/s] yaw rate cap
+  double arrival_threshold_m  = 3;   // distance-to-goal that triggers stop
+}
+
+
+// ─── Body geometry ────────────────────────────────────────────────
+
+// BodyGeometry describes the rigid base — used by the planner for
+// body-aware obstacle inflation, by the safety supervisor for
+// footprint slope checking, and by the perception self-hull for
+// LiDAR self-filtering.
+//
+// Every field is ``optional`` so a wrapper layer can reconstruct
+// ``Optional[float]`` semantics via ``HasField()`` — preserves
+// ``float | None`` typing without needing an extra wrapper struct.
+message BodyGeometry {
+  optional double body_length_m       = 1;
+  optional double body_width_m        = 2;
+  optional double body_height_m       = 3;
+  optional double operating_weight_kg = 4;
+
+  // Track-vehicle specific. ``track_width_m`` is centre-to-centre.
+  optional double track_width_m       = 5;
+  optional double ground_clearance_m  = 6;
+}
+
+
+// ─── Mobility geometry (planning / safety thresholds) ─────────────
+
+message MobilityGeometry {
+  // Tightest geometric turn the planner may request.
+  optional double min_turning_radius_m = 1;
+
+  // ``max_slope_deg``: planner's IMPASSABLE / cost threshold. Set
+  // conservatively below the machine's physical capability so
+  // every plan has a safety margin.
+  //
+  // Wrapper default policy: real specs always set a non-zero value.
+  // Implementations MAY substitute a default (e.g. 25.0 deg) when
+  // the proto record's value is exactly 0.0 (proto3 scalar default),
+  // since the only realistic source of 0.0 is an accidentally-empty
+  // record rather than a production catalog entry.
+  double max_slope_deg = 2;
+
+  // ``emergency_slope_deg``: runtime stop-and-replan threshold
+  // monitored by the safety supervisor. MUST be > max_slope_deg.
+  // When unset, consumers default to max_slope_deg × 1.5
+  // (auto-computed).
+  optional double emergency_slope_deg = 3;
+
+  // Motion-primitive capabilities. A Hybrid A* planner gates which
+  // Reed-Shepp primitives it may emit based on these. Both are
+  // ``optional`` because proto3 ``bool`` defaults to ``false``, but
+  // the realistic default for ``can_reverse`` is ``True`` — a
+  // missing field would otherwise silently flip the meaning.
+  // Wrappers SHOULD treat unset as (can_reverse=True,
+  // can_point_turn=False).
+  optional bool can_reverse    = 4;  // unset → True
+  optional bool can_point_turn = 5;  // unset → False
+}
+
+
+// ─── Excavator work envelope ──────────────────────────────────────
+
+message ExcavatorEnvelope {
+  optional double boom_length_m         = 1;
+  optional double arm_length_m          = 2;
+  optional double bucket_link_length_m  = 3;
+  optional double max_dig_depth_m       = 4;
+  optional double max_dump_height_m     = 5;
+  optional double bucket_capacity_m3    = 6;
+  optional double max_reach_m           = 7;
+}
+
+
+// ─── Dump truck payload + bed kinematics ──────────────────────────
+
+message DumpTruckEnvelope {
+  optional double payload_capacity_m3 = 1;
+  optional double payload_capacity_kg = 2;
+
+  // Bed kinematics for cameras with ``parent_link='bed_link'``.
+  // All unset → bed-mounted cameras fall back to static-offset
+  // projection. When set, the producer projects bed cameras
+  // dynamically using HAL ``bed_joint`` angle.
+  optional double bed_pivot_x_m = 3;
+  optional double bed_pivot_z_m = 4;
+  optional double bed_length_m  = 5;
+}
+
+
+// ─── Excavator arm phase targets ─────────────────────────────────
+
+// ArmPhasePose is one phase of an excavator's choreographed arm
+// movement (idle / digging / swinging_to_load / etc.). The keys of
+// the inner ``joints`` map are short joint names ("turntable",
+// "boom", "arm", "bucket"); values are radians.
+message ArmPhasePose {
+  map<string, double> joints = 1;  // joint short name → radians
+}
+
+
+// ─── Cycle timings ───────────────────────────────────────────────
+
+// Wrapper default policy: proto3 ``double`` scalars default to
+// 0.0, but realistic dataclass defaults are dig=3.0, swing=2.0,
+// loading=1.0, dump=2.0 seconds. Wrappers MAY substitute these
+// defaults whenever a record's timing field is exactly 0.0 (every
+// real spec sets non-zero values, so substitution only fires on
+// accidentally-empty records). Proto field numbers stay
+// non-optional to keep the wire format compact.
+message CycleTimings {
+  double dig_duration_sec     = 1;  // dataclass default 3.0
+  double swing_duration_sec   = 2;  // dataclass default 2.0
+  double loading_duration_sec = 3;  // dataclass default 1.0
+  double dump_duration_sec    = 4;  // dataclass default 2.0
+}
+
+
+// ─── MachineSpec — top-level message ──────────────────────────────
+
+// Single source of truth for one physical machine model. Generators:
+//   * Python: `gen/python/cap/v0/machine_spec_pb2.py` (buf generate)
+//   * C++:    `gen/cpp/cap/v0/machine_spec.pb.h` / `.cc`
+//   * TypeScript: `gen/ts/cap/v0/machine_spec_pb.ts`
+//   * C#:     added to buf.gen.yaml when needed.
+//
+// Implementations are free to wrap the generated record behind their
+// own dataclasses / structs as long as the wire format round-trips.
+message MachineSpec {
+  // ── Identity ────────────────────────────────────────────────────
+
+  // Display name for humans / logs: "ZX120", "ZX200", "IC120".
+  string model_number = 1;
+
+  // Machine type / family. Reuse common enum so site agent and
+  // skill registry can filter consistently.
+  MachineType machine_type = 2;
+
+  // Simulator-side namespace / ROS topic root, e.g. "zx120".
+  // Historically also used as the de-facto machine id; surfaced
+  // explicitly so callers don't have to guess.
+  string unity_namespace = 3;
+
+  // ── Mobility / geometry / capabilities ─────────────────────────
+
+  MobilityLimits mobility       = 4;
+  BodyGeometry body             = 5;
+  MobilityGeometry geometry     = 6;
+  ExcavatorEnvelope excavator   = 7;  // unset for trucks
+  DumpTruckEnvelope dump_truck  = 8;  // unset for excavators
+
+  // ── Special capabilities (cached one-bit answers) ──────────────
+
+  bool has_swing    = 9;
+  bool has_tailgate = 10;
+
+  // ── Wiring + behaviour ─────────────────────────────────────────
+
+  // URDF joint name → ROS topic suffix.
+  map<string, string> joint_topic_map = 11;
+
+  // Excavator arm phase choreography: phase name → joint poses.
+  // Empty for trucks.
+  map<string, ArmPhasePose> arm_phases = 12;
+
+  // Skill IR — machine-agnostic skill definitions for this model.
+  repeated SkillDefinition skill_definitions = 13;
+
+  // ── Cycle timings (seconds) ────────────────────────────────────
+
+  CycleTimings timings = 14;
+}
+
+
+// ─── Catalog wrapper ──────────────────────────────────────────────
+
+// MachineSpecCatalog ships every machine model the deployment
+// supports. Conformance suites, planners, bridges, and simulators
+// all read from this.
+//
+// Both ``schema_version`` and ``catalog_revision`` are present in
+// the v0 release because field-1 placement is fixed once consumers
+// ship. Bumping ``schema_version`` lets future migrations refuse to
+// parse newer catalogs in older binaries instead of silently
+// truncating fields. ``catalog_revision`` is a free-form
+// deployment-side counter (e.g. git SHA prefix) that lets ops tools
+// verify which catalog a running container actually loaded.
+message MachineSpecCatalog {
+  // Bump on backwards-incompatible field changes (rename, type
+  // change, semantic flip). v0 ships at ``1``.
+  uint32 schema_version = 1;
+
+  // Free-form deployment revision label (git SHA / build id /
+  // monotonic counter). Empty when the catalog is constructed in
+  // tests or sandboxes.
+  string catalog_revision = 2;
+
+  repeated MachineSpec specs = 3;
+}

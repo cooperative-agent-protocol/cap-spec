@@ -1,0 +1,162 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+#
+# mkdocs-material configuration for the CAP documentation site
+# (https://cap-protocol.dev — pending). Bilingual EN/JA from Day 1.
+#
+# Build:    mkdocs build
+# Serve:    mkdocs serve
+# Publish:  GitHub Actions deploys to GitHub Pages on push to main.
+
+site_name: "CAP — Cooperative Agent Protocol"
+site_description: "An open protocol for cooperative industrial agent coordination. Construction-first."
+site_url: "https://cap-protocol.dev"
+repo_url: "https://github.com/cooperative-agent-protocol/cap-spec"
+repo_name: "cooperative-agent-protocol/cap-spec"
+edit_uri: "edit/main/docs/"
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - toc.follow
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.tabs.link
+    - content.action.edit
+
+extra:
+  alternate:
+    - name: English
+      link: /
+      lang: en
+    - name: 日本語
+      link: /ja/
+      lang: ja
+  generator: false
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: folder
+      reconfigure_material: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: ja
+          name: 日本語
+          build: true
+          nav_translations:
+            "Home": "ホーム"
+            "Core Specification": "コア仕様"
+            "Domain Packs": "ドメインパック"
+            "Construction": "建設"
+            "SDKs": "SDK"
+            "Conformance": "適合性"
+            "ADRs": "ADR"
+            "RFCs": "RFC"
+            "Quickstart": "クイックスタート"
+            "ISO Mapping": "ISO マッピング"
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+nav:
+  - Home: index.md
+  - Core Specification:
+      - Overview: specification/index.md
+      - Scope: specification/ch01-scope.md
+      - Terms: specification/ch02-terms.md
+      - Architecture: specification/ch03-architecture.md
+      - Communication Model: specification/ch04-communication-model.md
+      - Protocol Flows: specification/ch05-protocol-flows.md
+      - State Machines: specification/ch06-state-machines.md
+      - Message Reference: specification/ch07-message-reference.md
+      - Error Handling: specification/ch08-error-handling.md
+      - Security: specification/ch09-security.md
+      - Conformance: specification/ch10-conformance.md
+      - Implementation Guidelines: specification/ch11-implementation-guidelines.md
+  - Domain Packs:
+      - Overview: domains/index.md
+      - Construction (v0): domains/construction/index.md
+      - Agriculture (planned): domains/agriculture/index.md
+      - Mining (planned): domains/mining/index.md
+      - Forestry (planned): domains/forestry/index.md
+      - Intralogistics (planned): domains/intralogistics/index.md
+  - Standards Alignment:
+      - ISO 15143-3 Mapping: iso-15143-3-mapping.md
+      - OPC UA Relation (ADR-009): adr/009-opcua-relation.md
+  - ADRs:
+      - "001 — 3-Layer LLM Architecture": adr/001-llm-site-agent-only.md
+      - "002 — Transport-Neutral Semantics": adr/002-transport-neutral-semantics.md
+      - "003 — Independent Safety Channel": adr/003-independent-safety-channel.md
+      - "004 — ALO Representation": adr/004-alo-representation.md
+      - "005 — Agent Dialogue Protocol": adr/005-agent-dialogue-protocol.md
+      - "006 — Security Architecture": adr/006-security-architecture.md
+      - "007 — Formal Verification": adr/007-formal-verification.md
+      - "008 — Versioning": adr/008-versioning.md
+      - "009 — OPC UA Relation": adr/009-opcua-relation.md
+      - "010 — Observability": adr/010-observability.md
+      - "011 — Domain Pack Architecture": adr/011-domain-pack-architecture.md
+      - "012 — Mean Field in Core": adr/012-mean-field-core-rationale.md
+  - RFCs:
+      - Index: rfcs/README.md
+      - Template: rfcs/RFC-0000-template.md
+      - Domain Pack Template: rfcs/domain-pack-template.md
+  - Project:
+      - CAP vs MCP: cap-vs-mcp.md
+      - Safety Boundary: safety-boundary.md
+      - Compatibility Matrix: compatibility.md
+      - Postmortem Template: postmortems/TEMPLATE.md
+
+extra_css:
+  - assets/extra.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11.4.1/dist/mermaid.min.js
+
+copyright: >
+  Copyright &copy; 2026 CAP Authors &mdash;
+  Licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>

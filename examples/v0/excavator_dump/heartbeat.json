@@ -1,0 +1,33 @@
+{
+  "header": {
+    "messageId": "msg-0010",
+    "senderId": "excavator-01",
+    "receiverId": "site-agent-01",
+    "sentAt": "2026-03-19T08:01:05Z"
+  },
+  "heartbeat": {
+    "machineId": "excavator-01",
+    "currentMode": "MACHINE_MODE_SUPERVISED_AUTONOMY",
+    "healthy": true,
+    "activeTaskId": "task-1042",
+    "activeTaskState": "TASK_STATE_RUNNING",
+    "pose": {
+      "x": 124.5,
+      "y": 67.2,
+      "z": 3.1,
+      "roll": 0.0,
+      "pitch": -0.02,
+      "yaw": 1.57,
+      "frameId": "site-a-local"
+    },
+    "estopActive": false,
+    "fuelOrBatteryPercent": 72.5,
+    "activeReservations": ["res-0001"],
+    "health": [
+      { "key": "hydraulic_pressure_mpa", "value": "32.1" },
+      { "key": "coolant_temp_c", "value": "85" },
+      { "key": "engine_rpm", "value": "1800" }
+    ],
+    "aloStateSummary": "バックホウ1号機はB3区画で掘削作業中。4サイクル完了、掘削量4.8m³。油圧系統正常、燃料残量72%。"
+  }
+}

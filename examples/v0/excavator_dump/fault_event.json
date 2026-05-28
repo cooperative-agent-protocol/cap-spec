@@ -1,0 +1,25 @@
+{
+  "header": {
+    "messageId": "msg-0020",
+    "senderId": "excavator-01",
+    "receiverId": "site-agent-01",
+    "correlationId": "task-1042",
+    "workPackageId": "wp-001",
+    "planHash": "a1b2c3d4e5f6",
+    "sentAt": "2026-03-19T08:05:30Z"
+  },
+  "faultEvent": {
+    "machineId": "excavator-01",
+    "taskId": "task-1042",
+    "severity": "FAULT_SEVERITY_WARNING",
+    "faultCode": "HYDRAULIC_PRESSURE_LOW",
+    "summary": "Hydraulic pressure dropped below threshold (28 MPa, limit 30 MPa)",
+    "requiresHandover": false,
+    "requiresSafeStop": false,
+    "attributes": [
+      { "key": "current_pressure_mpa", "value": "28.3" },
+      { "key": "threshold_mpa", "value": "30.0" },
+      { "key": "trend", "value": "declining" }
+    ]
+  }
+}

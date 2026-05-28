@@ -1,0 +1,99 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Construction Domain Pack v0 — Zone types.
+//
+// CAP-Core (`cap.v0.core.world_model`) defines generic ZoneConstraintGridDelta
+// for KEEPOUT / HAZARD / cost cells. This file adds construction-specific
+// zone classifications layered on top of that generic substrate.
+//
+// The wire encoding uses string identifiers (e.g. `"excavation"`,
+// `"dump"`) on `Zone.type` so non-construction domains can extend or
+// substitute their own taxonomies without protobuf field collisions.
+
+syntax = "proto3";
+
+package cap.v0.domains.construction;
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0.domains.construction";
+
+
+// ─── Construction zone type constants ────────────────────────────────
+//
+// Like SkillName in skills.proto, ZoneType is a constants enum surfaced
+// to SDK consumers but not used directly on the wire — wire form is a
+// string field on a domain-agnostic Zone message.
+enum ZoneType {
+  ZONE_TYPE_UNSPECIFIED  = 0;
+
+  // Excavation zone — bucket-equipped machines remove soil here.
+  // String form: "excavation".
+  ZONE_TYPE_EXCAVATION   = 1;
+
+  // Dump zone — haulers / trucks discharge payload here. String form:
+  // "dump".
+  ZONE_TYPE_DUMP         = 2;
+
+  // Haul road segment — designated travel corridor between excavation
+  // and dump zones, may have width / speed-class hints. String form:
+  // "haul_road".
+  ZONE_TYPE_HAUL_ROAD    = 3;
+
+  // Terrain feature zone — slope / soil-class metadata for planner
+  // input. Not a work zone. String form: "terrain".
+  ZONE_TYPE_TERRAIN      = 4;
+
+  // Staging zone — temporary machine parking / refueling area.
+  // String form: "staging".
+  ZONE_TYPE_STAGING      = 5;
+}
+
+
+// ─── Soil class enum ─────────────────────────────────────────────────
+//
+// Soil classification commonly affects bucket-fill efficiency, excavation
+// duration, and trafficability. The taxonomy is intentionally coarse —
+// implementations may map ISO 14688 / Unified Soil Classification System
+// to these classes.
+enum SoilClass {
+  SOIL_CLASS_UNSPECIFIED = 0;
+  SOIL_CLASS_SAND        = 1;
+  SOIL_CLASS_GRAVEL      = 2;
+  SOIL_CLASS_CLAY        = 3;
+  SOIL_CLASS_LOAM        = 4;
+  SOIL_CLASS_ROCK        = 5;
+  SOIL_CLASS_MIXED       = 6;
+}
+
+
+// ─── Zone attributes (construction-specific) ─────────────────────────
+//
+// Optional attributes attached to construction zones. Carried by
+// `ZoneAttributes.payload` (an `Any` field) in CAP-Core's world model
+// when the zone type is in this Domain Pack.
+
+message ExcavationZoneAttributes {
+  double volume_m3            = 1;  // remaining volume target
+  double slope_deg_max        = 2;  // maximum slope at this zone
+  SoilClass soil_class        = 3;
+  double depth_target_m       = 4;  // optional target depth
+}
+
+message DumpZoneAttributes {
+  double remaining_capacity_m3 = 1;
+  double slope_deg_max         = 2;
+  bool   over_pile_allowed     = 3;  // accept over-pile dumping
+}
+
+message HaulRoadAttributes {
+  double width_m              = 1;
+  double recommended_speed_mps = 2;
+  bool   bidirectional         = 3;
+}
+
+message TerrainAttributes {
+  double slope_deg_max        = 1;
+  SoilClass soil_class        = 2;
+  bool   passable             = 3;
+}

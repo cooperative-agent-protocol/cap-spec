@@ -1,0 +1,323 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "google/protobuf/timestamp.proto";
+import "cap/v0/core/common.proto";
+import "cap/v0/core/lifecycle.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Central WorldModel (Site Agent owns) ────────────────────────────
+//
+// Replaces the band-aid where each Machine Agent maintains its own
+// TerrainGrid / obstacles / zone_constraints (LiDAR raw → spatial_ctx
+// directly, _zone_refresh_loop polling at 5s). Under the new design:
+//
+//   Bridge (LiDAR/IMU/pose) → push Observation → Site Agent fuses
+//   → publishes WorldDelta (5Hz) → Machine Agents apply on replica
+//
+// The same WorldModel is used by Site Agent's planner, all Machine
+// Agents' planners (via replica), and any reactive safety supervisors.
+// "I observe X" and "I plan around Y" reference the same data.
+
+// ─── Versioning ──────────────────────────────────────────────────────
+
+message WorldVersion {
+  // Monotonic seq number assigned by Site Agent's WorldStore.
+  int64 seq = 1;
+
+  // Parent seq this delta builds on. For a snapshot reset, parent_seq
+  // == 0. For a delta, parent_seq == previous-applied seq.
+  int64 parent_seq = 2;
+
+  google.protobuf.Timestamp generated_at = 3;
+
+  // Replica may treat data as stale beyond this horizon and request
+  // a fresh snapshot.
+  double horizon_sec = 4;
+}
+
+// ─── Confidence & cells ──────────────────────────────────────────────
+
+message ConfidenceCell {
+  // Grid cell coordinates (cell_size held by snapshot's metadata).
+  int32 gx = 1;
+  int32 gy = 2;
+
+  double height_m = 3;
+
+  // Worst slope across the 4-neighbor finite-difference computed by
+  // WorldModel.slope. The body-aware slope (max corner over a footprint
+  // sweep) is computed at query time via BodyEnvelope, not stored
+  // here, so the same raw cells serve all machine geometries.
+  double slope_deg = 4;
+
+  // Surface normal (unit vector) at the cell. Useful for cosine-based
+  // friction estimation and a safety supervisor's instability check.
+  double normal_x = 5;
+  double normal_y = 6;
+  double normal_z = 7;
+
+  // 0..1 EWMA confidence with recency decay; sources <0.2 may be
+  // discarded when planning.
+  double confidence = 8;
+
+  // Number of distinct sensor sources that have contributed.
+  int32 source_count = 9;
+
+  google.protobuf.Timestamp last_updated = 10;
+}
+
+message TerrainCellDelta {
+  enum Op {
+    OP_UNSPECIFIED = 0;
+    OP_UPSERT      = 1;
+    OP_REMOVE      = 2;
+  }
+  Op op = 1;
+  ConfidenceCell cell = 2;
+}
+
+// ─── Persisted obstacles ─────────────────────────────────────────────
+//
+// Persisted obstacle records. Persistence runs at the location
+// level on the Site Agent (not per machine), so multiple machines
+// see consistent obstacles.
+message PersistedObstacle {
+  string obstacle_id = 1;        // stable id within the site
+  double x = 2;
+  double y = 3;
+  double radius_m = 4;
+  double height_m = 5;           // estimated max z extent above ground
+
+  int32 hit_count = 6;           // promotion counter (>=min_hits = stable)
+  double confidence = 7;
+  google.protobuf.Timestamp first_seen = 8;
+  google.protobuf.Timestamp last_seen  = 9;
+
+  // Sources that have reported the obstacle (machine_ids).
+  repeated string source_machines = 10;
+
+  // Optional classification: "vehicle", "rock", "vegetation", etc.
+  string classification = 11;
+}
+
+message ObstacleDelta {
+  enum Op {
+    OP_UNSPECIFIED = 0;
+    OP_UPSERT      = 1;
+    OP_REMOVE      = 2;
+  }
+  Op op = 1;
+  PersistedObstacle obstacle = 2;
+}
+
+// ─── Zone constraints ────────────────────────────────────────────────
+//
+// The wire schema separates KEEPOUT and HAZARD into distinct cell sets
+// so that HAZARD-as-hard-block semantics are preserved end-to-end
+// regardless of how an implementation stores them internally.
+
+message ZoneConstraintGridDelta {
+  // Hash over the full grid contents; Replica uses this to detect
+  // "missed an interim delta" and request a snapshot resync.
+  string content_hash = 1;
+
+  double cell_size_m = 2;
+
+  // KEEPOUT (always hard block in planner).
+  repeated GridCellRef keepout_cells = 3;
+
+  // HAZARD: also hard block (treated identically to KEEPOUT by the
+  // planner).
+  repeated GridCellRef hazard_cells = 4;
+
+  // For backward observability / dashboard only. Planner does not use.
+  repeated GridCellRef cost_cells = 5;
+}
+
+message GridCellRef {
+  int32 gx = 1;
+  int32 gy = 2;
+  // Optional cost multiplier (used only for cost_cells).
+  double multiplier = 3;
+}
+
+// ─── Fleet pose (replaces /api/.../fleet polling) ────────────────────
+
+message FleetMemberState {
+  string machine_id = 1;
+  MachineType machine_type = 2;
+  Pose3D pose = 3;
+  double speed_mps = 4;
+  double heading_rate_rad_s = 5;
+  // Currently active Intent (null if idle).
+  string active_command_id = 6;
+  MachinePhase phase = 7;
+  google.protobuf.Timestamp pose_at = 8;
+}
+
+// ─── Cost adaptation ─────────────────────────────────────────────────
+//
+// A cost-adaptation layer in the Site Agent accumulates execution-time
+// abort cells. Sent in the same delta channel so Replicas keep the
+// cost map in sync.
+message CostAdaptationDelta {
+  // Cell-level cost multiplier; EWMA-decayed by Site Agent.
+  repeated GridCellRef adapted_cells = 1;
+}
+
+// ─── Combined delta ──────────────────────────────────────────────────
+
+message WorldDelta {
+  WorldVersion version = 1;
+
+  // Optional metadata (cell_size_m, fusion params, ...).
+  // Always present on snapshot (parent_seq == 0).
+  WorldMetadata metadata = 2;
+
+  // Granular updates. Empty if nothing changed for that channel.
+  repeated TerrainCellDelta terrain        = 10;
+  repeated ObstacleDelta    obstacles      = 11;
+  repeated FleetMemberState fleet          = 12;
+  ZoneConstraintGridDelta   zones          = 13;
+  CostAdaptationDelta       cost_adapt     = 14;
+}
+
+message WorldMetadata {
+  double terrain_cell_size_m = 1;
+  // Fusion parameters in effect when this snapshot was generated.
+  // Replica uses these to interpret confidence values correctly.
+  int32 obstacle_min_hits = 2;
+  int32 obstacle_max_misses = 3;
+  double obstacle_match_distance_m = 4;
+}
+
+// ─── Observation (Bridge → Site Agent push) ──────────────────────────
+//
+// One Observation per machine per LiDAR/IMU tick.
+// Replaces the per-machine `spatial_ctx.obstacles = [...]` direct
+// assignment in observation_worker.py. Each frame is associated
+// with the pose AT capture time so Site Agent can rectify.
+
+message Observation {
+  string machine_id = 1;
+  google.protobuf.Timestamp captured_at = 2;
+  Pose3D pose_at_capture = 3;
+
+  // LiDAR detected obstacle clusters (raw, pre-persistence-filter).
+  repeated DetectedCluster clusters = 4;
+
+  // Terrain heights observed in this frame (cell-aligned).
+  repeated ObservedHeight heights = 5;
+
+  // IMU-derived measured slope/roll/pitch at the machine's centroid.
+  // The safety supervisor reads this; it is also fused into the cell
+  // under the machine's footprint to bias terrain confidence.
+  double measured_roll_deg  = 6;
+  double measured_pitch_deg = 7;
+  double measured_yaw_rate_rad_s = 8;
+
+  // Vertical velocity for fall detection.
+  double vz_mps = 9;
+
+  // Self-state (fuel, joint angles, payload) flow through the existing
+  // Heartbeat channel; this message is for *external* sensing only.
+}
+
+message DetectedCluster {
+  // Sensor frame coordinates (machine body-aligned).
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double width_m = 4;
+  double length_m = 5;
+  double height_m = 6;
+  // Sensor confidence in this frame (0..1). Persistence layer
+  // converts this into per-location stability.
+  double frame_confidence = 7;
+}
+
+message ObservedHeight {
+  // World-frame coordinates of the observed cell center.
+  double x = 1;
+  double y = 2;
+  double height_m = 3;
+  double frame_confidence = 4;
+}
+
+// ─── Subscribe / push API ────────────────────────────────────────────
+//
+// The Bridge and Replica use a bidi gRPC stream:
+//   Bridge → Site:   stream Observation
+//   Site → Replica:  stream WorldDelta (after Subscribe)
+// Both directions allow flow-control via gRPC backpressure.
+
+message SubscribeRequest {
+  // Replica's last applied seq; Site Agent sends a single OP_UPSERT
+  // delta for everything that changed since (or full snapshot if
+  // since_seq == 0 or too far behind).
+  int64 since_seq = 1;
+}
+
+message SubscribeResponse {
+  WorldDelta delta = 1;
+}
+
+message PushRequest {
+  Observation observation = 1;
+}
+
+message PushResponse {
+  // Highest WorldVersion.seq that integrated observations through
+  // the most recent stream message.
+  int64 integrated_seq = 1;
+}
+
+service WorldStreamService {
+  // Subscribe: replica receives a stream of WorldDelta.
+  // Site Agent guarantees parent_seq monotonicity. If Replica falls
+  // behind beyond Site Agent's retention window, the next delta will
+  // have parent_seq == 0 (full snapshot reset).
+  rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse);
+
+  // Push: Bridge streams Observations. Site Agent acks with the seq
+  // that integrated the observation.
+  rpc Push(stream PushRequest) returns (PushResponse);
+}
+
+// ─── Execution trace (Bridge → Site Agent, for L5 cost adaptation) ───
+//
+// 5Hz stream of execution telemetry. The Site Agent's cost-
+// adaptation layer subscribes; ABORT events here drive cell cost
+// inflation. ExecutionTrace is independent of CommandLifecycleEvent
+// (which carries handle.state changes) — the traces give the
+// position/deviation series WHILE a command is executing.
+
+message ExecutionTrace {
+  string command_id = 1;
+  string machine_id = 2;
+  google.protobuf.Timestamp captured_at = 3;
+
+  Pose3D pose = 4;
+  double linear_speed_mps = 5;
+  double angular_rate_rad_s = 6;
+
+  // Index of the planned waypoint nearest current pose.
+  int32 plan_waypoint_idx = 7;
+  // Cross-track distance from the planned path (m).
+  double deviation_m = 8;
+
+  // Measured by IMU at this tick (should match the planner's
+  // expected_max_slope_deg under nominal execution).
+  double measured_slope_deg = 9;
+
+  // Empty unless a safety-supervisor ABORT fires this tick.
+  AbortCause abort_cause = 10;
+  string abort_message = 11;
+}

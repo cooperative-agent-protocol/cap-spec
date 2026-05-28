@@ -1,0 +1,104 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Enums ───────────────────────────────────────────────────────────
+
+enum MachineType {
+  MACHINE_TYPE_UNSPECIFIED = 0;
+  MACHINE_TYPE_EXCAVATOR   = 1;
+  MACHINE_TYPE_DUMP_TRUCK  = 2;
+  MACHINE_TYPE_DOZER       = 3;  // Bulldozer (cap-conformance label "bulldozer")
+  MACHINE_TYPE_GRADER      = 4;
+  MACHINE_TYPE_LOADER      = 5;
+  MACHINE_TYPE_ROLLER      = 6;
+  MACHINE_TYPE_CRANE       = 7;
+  // Track-carrier — multi-purpose hauler distinct from a tipping
+  // dump truck. Backwards-compatible addition: consumers parsing
+  // with an older descriptor receive value 8 as
+  // ``MACHINE_TYPE_UNSPECIFIED``.
+  MACHINE_TYPE_CARRIER     = 8;
+}
+
+enum MachineMode {
+  MACHINE_MODE_UNSPECIFIED        = 0;
+  MACHINE_MODE_MANUAL             = 1;
+  MACHINE_MODE_TELEOP             = 2;
+  MACHINE_MODE_SUPERVISED_AUTONOMY = 3;
+  MACHINE_MODE_AUTONOMY           = 4;
+  MACHINE_MODE_SAFE_STOP          = 5;
+  MACHINE_MODE_MAINTENANCE        = 6;
+}
+
+enum TaskState {
+  TASK_STATE_UNSPECIFIED = 0;
+  TASK_STATE_PENDING     = 1;
+  TASK_STATE_ACCEPTED    = 2;
+  TASK_STATE_RUNNING     = 3;
+  TASK_STATE_BLOCKED     = 4;
+  TASK_STATE_SUCCEEDED   = 5;
+  TASK_STATE_FAILED      = 6;
+  TASK_STATE_CANCELLED   = 7;
+  TASK_STATE_REJECTED    = 8;
+  TASK_STATE_EXPIRED     = 9;
+}
+
+enum FaultSeverity {
+  FAULT_SEVERITY_UNSPECIFIED = 0;
+  FAULT_SEVERITY_INFO        = 1;
+  FAULT_SEVERITY_WARNING     = 2;
+  FAULT_SEVERITY_ERROR       = 3;
+  FAULT_SEVERITY_CRITICAL    = 4;
+}
+
+// ─── Common Messages ─────────────────────────────────────────────────
+
+message KeyValue {
+  string key   = 1;
+  string value = 2;
+}
+
+message MessageHeader {
+  string message_id      = 1;
+  string sender_id       = 2;
+  string receiver_id     = 3;
+  string correlation_id  = 4;
+  string work_package_id = 5;
+  string plan_hash       = 6;
+  google.protobuf.Timestamp sent_at = 7;
+}
+
+message Pose3D {
+  double x        = 1;
+  double y        = 2;
+  double z        = 3;
+  double roll     = 4;
+  double pitch    = 5;
+  double yaw      = 6;
+  string frame_id = 7;
+}
+
+message GeoZoneRef {
+  string map_id   = 1;
+  string zone_id  = 2;
+  string revision = 3;
+}
+
+message Constraint {
+  string constraint_id           = 1;
+  string type                    = 2;
+  repeated KeyValue params       = 3;
+}
+
+message TimeWindow {
+  google.protobuf.Timestamp earliest = 1;
+  google.protobuf.Timestamp latest   = 2;
+}

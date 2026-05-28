@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+#
+# Run TLA+ TLC model checker on every PR that touches the formal models.
+# Path-triggered to keep CI fast (TLC takes 5-30 min per spec).
+
+name: formal-tlc
+
+on:
+  pull_request:
+    paths:
+      - "formal/tla/**"
+      - ".github/workflows/formal-tlc.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  tlc:
+    name: TLC ${{ matrix.model }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - model: TaskState
+            config: TaskState.cfg
+          - model: ReservationState
+            config: ReservationState.cfg
+          - model: MachineMode
+            config: MachineMode.cfg
+          - model: CAPCoordination
+            config: CAPCoordination_safety.cfg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Download tla2tools.jar (pinned digest)
+        run: |
+          cd formal/tla
+          if [ ! -f tla2tools.jar ]; then
+            curl -sL -o tla2tools.jar https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+          fi
+      - name: Run TLC for ${{ matrix.model }}
+        run: |
+          cd formal/tla
+          java -jar tla2tools.jar -config ${{ matrix.config }} ${{ matrix.model }}.tla

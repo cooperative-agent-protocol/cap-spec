@@ -1,0 +1,236 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Control hierarchy interface schema. Defines the typed contracts
+// between the four layers of the path-tracking stack:
+//
+//   planner → trajectory generator → tracker → low-level velocity
+//   controller → mobility interface
+//
+// proto-typed messages at every boundary let implementations swap
+// the local tracker (or any other layer) without touching the
+// planner / mobility interface above and below.
+//
+// Conformance expectations:
+//   * MotionPrimitive ↔ legacy ``int32`` 0..7 adapter holds
+//     (``int32 + 1 == MotionPrimitive``).
+//   * Waypoints (nodes) and SegmentHints (per-edge data) are
+//     **separate** repeated fields in ``TrajectoryRequest`` so
+//     the convention "motion_types[i] describes
+//     waypoints[i]→waypoints[i+1]" maps cleanly: when N waypoints
+//     are emitted, exactly N-1 segment hints are emitted.
+//   * ``replan_id`` is propagated through every downstream message
+//     (TrackingTarget / VelocityCommand) so observability can join
+//     command records back to the originating plan without an
+//     out-of-band correlation_id.
+//   * ``target_linear_velocity_mps`` is **signed** (negative =
+//     reverse), matching ``Twist2D.linear``.
+//
+// Naming: ``MotionPrimitive`` (not ``MotionType``) is the proto
+// name to avoid colliding with existing Python ``MotionType``
+// IntEnum types in implementations. Wrappers typically expose the
+// generated proto enum directly once the implementation migrates.
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+
+// ─── Geometric primitives ────────────────────────────────────────
+
+// Pose2D captures the planar body pose used by the path planner
+// and tracker. Yaw is in radians, +CCW from the world +X axis,
+// matching the rest of the bridge's conventions
+// (``unity_mobility_interface``).
+message Pose2D {
+  double x   = 1;  // [m] world frame
+  double y   = 2;  // [m] world frame
+  double yaw = 3;  // [rad] +CCW from world +X
+}
+
+// Twist2D is the differential-drive command shape: signed forward
+// velocity (negative = reverse) and yaw rate. Lateral is omitted
+// because skid-steer / differential-drive vehicles don't expose
+// independent lateral control.
+message Twist2D {
+  double linear  = 1;  // [m/s] +forward, -reverse
+  double angular = 2;  // [rad/s] +CCW yaw rate
+}
+
+
+// ─── Motion primitive enum ───────────────────────────────────────
+
+// MotionPrimitive classifies a single planned segment.
+//
+// Wire-compatibility note: ``cap-spec/proto/cap/v0/intent.proto::
+// PlanContractWire.motion_types`` carries a legacy ``int32`` (0..7)
+// representation. The conformance suite pins
+// ``int32_value + 1 == MotionPrimitive`` so adapters bridging legacy
+// plan wire records cannot drift by one.
+//
+// The integer values intentionally start at 1 (proto3 reserves 0
+// for UNSPECIFIED), so every enum value is exactly one higher than
+// the legacy int32 encoding.
+enum MotionPrimitive {
+  MOTION_PRIMITIVE_UNSPECIFIED   = 0;
+  MOTION_PRIMITIVE_FWD_STRAIGHT  = 1;  // Python MotionType.FWD_STRAIGHT  = 0
+  MOTION_PRIMITIVE_FWD_LEFT      = 2;  // Python MotionType.FWD_LEFT      = 1
+  MOTION_PRIMITIVE_FWD_RIGHT     = 3;  // Python MotionType.FWD_RIGHT     = 2
+  MOTION_PRIMITIVE_REV_STRAIGHT  = 4;  // Python MotionType.REV_STRAIGHT  = 3
+  MOTION_PRIMITIVE_REV_LEFT      = 5;  // Python MotionType.REV_LEFT      = 4
+  MOTION_PRIMITIVE_REV_RIGHT     = 6;  // Python MotionType.REV_RIGHT     = 5
+  MOTION_PRIMITIVE_POINT_LEFT    = 7;  // Python MotionType.POINT_LEFT    = 6
+  MOTION_PRIMITIVE_POINT_RIGHT   = 8;  // Python MotionType.POINT_RIGHT   = 7
+}
+
+
+// ─── Local tracker selection ─────────────────────────────────────
+
+// LocalTrackerKind selects the local tracking algorithm. The bridge
+// dispatches to the matching implementation at boot or per-machine
+// based on operator config / env override.
+//
+// MPCC is intentionally NOT enumerated here yet — proto3 enums are
+// open to additive growth, so deferring the value avoids long-lived
+// "this number means nothing yet" semantic noise. When MPCC lands,
+// a subsequent revision appends it at value 4.
+enum LocalTrackerKind {
+  LOCAL_TRACKER_KIND_UNSPECIFIED  = 0;
+  LOCAL_TRACKER_KIND_PURE_PURSUIT = 1;
+  LOCAL_TRACKER_KIND_MPC          = 2;
+  LOCAL_TRACKER_KIND_RHMPC        = 3;  // Howard/Kelly 2009
+}
+
+
+// ─── Segment hint (per-edge data on the planned trajectory) ──────
+
+// SegmentHint describes how the tracker should travel from
+// ``waypoints[i]`` to ``waypoints[i+1]``. Hints are per-edge, not
+// per-node, so a path of N waypoints carries exactly N-1
+// SegmentHints — implementations enforce this length invariant.
+message SegmentHint {
+  // [1/m] signed; + indicates left turn. Emitted by a curvature-
+  // bounded spline / planner; consumed by the local tracker as
+  // the reference signal.
+  double curvature                 = 1;
+  // [m/s] **signed**: negative = reverse. Matches
+  // ``Twist2D.linear`` and ``VelocityCommand.twist.linear`` so
+  // the value can be passed through the stack without sign
+  // re-derivation. Per-segment derate (e.g. slip_velocity_gain
+  // applied to ``MachineSpec`` max) lives here.
+  double target_linear_velocity_mps = 2;
+  MotionPrimitive primitive        = 3;
+}
+
+
+// ─── Trajectory plan (planner → tracker contract) ────────────────
+
+// TrajectoryRequest is the planner → tracker boundary. Carries
+// the global path + the spec hints the tracker must respect.
+//
+// ``min_turning_radius_m`` mirrors the spec value at
+// ``MobilityGeometry.min_turning_radius_m`` (NOT
+// ``MobilityLimits``) but is plumbed through here explicitly so
+// the tracker doesn't need a MachineSpec import path. Planners
+// typically inflate this value upstream; the tracker receives the
+// post-inflate number, so this carries "planner-inflated request
+// constraint" semantics rather than the canonical machine value —
+// a different load-bearing meaning that justifies the duplication.
+//
+// ``replan_id`` is monotonic per-machine — every new path emitted
+// by the planner increments it. The tracker uses this to detect
+// "is this a fresh path or a no-op re-emission" without doing a
+// per-waypoint diff. Propagated through TrackingTarget and
+// VelocityCommand so observability can join command records
+// back to the originating plan.
+//
+// Length invariant (pinned by conformance test):
+//   ``len(segment_hints) == max(0, len(waypoints) - 1)``
+// — N waypoints describe N-1 edges. An empty plan has both
+// fields empty.
+//
+// ``cusp_indices`` is a sorted ascending list of waypoint indices
+// where the planner emits a FWD↔REV direction switch. Computed by
+// the bridge adapter from ``segment_hints[*].primitive`` so producer
+// and consumer agree on the cusps without a second pass. RHMPC-style
+// trackers consume this as a typed first-class signal (rather than
+// re-deriving from primitives every tick); observability layers can
+// emit one ``cusp_handoff`` tracker event per index.
+//
+// Invariants (pinned by conformance test):
+//   * Every index ``i`` in ``cusp_indices`` satisfies
+//     ``1 <= i <= len(waypoints) - 2`` (cusps live BETWEEN
+//     two motion-type segments — never at the path start,
+//     never at the path end). A cusp at waypoint N-1 would
+//     have no succeeding segment to reverse into, which is a
+//     planner bug ("stop and end" rather than "stop and
+//     reverse"). Adapter-side producers should never emit such
+//     an index; ad-hoc proto writers are caught by the validator.
+//   * The list is sorted ascending with no duplicates.
+//   * An empty list is valid (paths with no direction
+//     switches — FWD-only / REV-only / POINT-only).
+message TrajectoryRequest {
+  string machine_id                = 1;
+  uint64 replan_id                 = 2;
+  repeated Pose2D waypoints        = 3;
+  repeated SegmentHint segment_hints = 4;
+  double min_turning_radius_m      = 5;
+  repeated int32 cusp_indices      = 6;
+}
+
+
+// ─── Tracking target (tracker → velocity controller contract) ───
+
+// TrackingTarget is the per-tick output of the tracker layer:
+// "given the current pose + planned trajectory, here is the
+// pose I want to drive toward and the motion primitive I'm
+// currently servicing".
+//
+// Carries ``replan_id`` + ``target_linear_velocity_mps`` so the
+// downstream velocity controller can apply per-segment derate
+// without re-querying the trajectory, and observability can
+// join the tracker output back to the originating plan.
+//
+// The active_primitive field lets the velocity controller
+// apply different caps (REV is typically capped at ~70 % of
+// max_linear; POINT may need a different angular cap to
+// counteract skid).
+message TrackingTarget {
+  string machine_id              = 1;
+  uint64 replan_id               = 2;
+  Pose2D current_pose            = 3;
+  Pose2D goal_pose               = 4;
+  double lookahead_distance_m    = 5;
+  // [m/s] signed (negative = reverse). Same convention as
+  // ``SegmentHint.target_linear_velocity_mps``.
+  double target_linear_velocity_mps = 6;
+  MotionPrimitive active_primitive = 7;
+}
+
+
+// ─── Velocity command (controller → mobility interface) ─────────
+
+// VelocityCommand is the lowest-level control output. The
+// applied caps are surfaced explicitly so observability can
+// distinguish "command was clipped at the spec boundary" from
+// "command was always small". A tracker-event aggregator can pair
+// the curvature-saturation counter with these caps: when the
+// counter rises while applied caps stay below their nominal bound,
+// the command was being silently scaled — operators see the
+// discrepancy in the same UI panel.
+//
+// ``replan_id`` + ``active_primitive`` propagate through here
+// so a VelocityCommand record can be joined back to the
+// originating plan + tracker dispatch class without an
+// out-of-band correlation_id.
+message VelocityCommand {
+  string machine_id               = 1;
+  uint64 replan_id                = 2;
+  Twist2D twist                   = 3;
+  double  max_linear_applied_mps  = 4;
+  double  max_angular_applied_rps = 5;
+  MotionPrimitive active_primitive = 6;
+}

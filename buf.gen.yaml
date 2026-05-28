@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+version: v2
+managed:
+  enabled: true
+plugins:
+  # Python
+  - remote: buf.build/protocolbuffers/python
+    out: gen/python
+  # Python gRPC
+  - remote: buf.build/grpc/python
+    out: gen/python
+  # C++
+  - remote: buf.build/protocolbuffers/cpp
+    out: gen/cpp
+  # C++ gRPC
+  - remote: buf.build/grpc/cpp
+    out: gen/cpp
+  # TypeScript (for ops console)
+  - remote: buf.build/bufbuild/es
+    out: gen/ts
+  # C# (for Unity-based simulator integrations).
+  # Unity 6+ supports protobuf-net out of the box; the official
+  # ``protocolbuffers/csharp`` plugin emits idiomatic .cs that
+  # imports ``Google.Protobuf`` (NuGet package, available in Unity
+  # via .NET Standard 2.1 / 2.0 compat). Output lands in
+  # ``cap-spec/gen/csharp/``; integrators pull it into their Unity
+  # project (e.g. via a ``Packages/com.cap.proto/Runtime/`` symlink).
+  - remote: buf.build/protocolbuffers/csharp
+    out: gen/csharp

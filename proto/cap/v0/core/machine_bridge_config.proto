@@ -1,0 +1,173 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Bridge-side per-deployment instance configuration. References
+// ``MachineSpec`` by model number for shared physical params, and
+// carries bridge-specific runtime config that doesn't make sense
+// to duplicate per instance:
+//
+//   * ``cap_machine_id`` — deployment-time unique id (e.g. zx120-01
+//     vs zx120-02 share the same MachineSpec).
+//   * sensor mount offsets — the same machine model can have
+//     different LiDAR placements at different sites.
+//   * ROS topic suffix overrides — different bridge implementations
+//     or vendor URDFs publish on different topics.
+//   * frame_id contract — real-machine deployments validate
+//     ``header.frame_id`` against expected values per topic kind.
+//   * joint name aliases — vendor URDFs use different joint names
+//     than CAP canonical (e.g. boom_pitch_joint vs boom_joint).
+//   * camera direction list — for multi-camera subscriptions;
+//     default ["front"].
+//
+// MachineSpec stays the physical SSOT (immutable per model number,
+// shipped with the catalog); MachineBridgeConfig is the deployment-
+// time overlay.
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+
+// ─── LiDAR mount ──────────────────────────────────────────────────
+
+// LidarMount captures the sensor's body-frame offset and the
+// ground-classification threshold. Different sites mount the same
+// machine model's LiDAR at different heights (some on the cab, some
+// on a custom mast), so this can't live on MachineSpec.
+message LidarMount {
+  // Forward / left / up offset of LiDAR from machine origin
+  // (cab top), expressed in the body frame. Positive forward ⇒
+  // sensor is in front of body centre. proto3 splits the offset
+  // into three named scalars for a clearer wire format.
+  double forward_m = 1;
+  double left_m    = 2;
+  double up_m      = 3;
+
+  // Points below this height (metres above ground) are classified
+  // as ground. ``optional`` so an unset record can fall back to
+  // the auto-computed ``up_m - 0.3`` (matches the dataclass'
+  // ``None`` semantics).
+  optional double ground_threshold_m = 4;
+}
+
+
+// ─── ROS topic suffix overrides ───────────────────────────────────
+
+// ROSTopicSuffixes mirrors the bridge's per-topic suffix knobs.
+// Empty-string fields fall back to a bridge-defined default at
+// materialization time; real-machine integrators populate fields
+// where their vendor stack differs.
+//
+// Real records always set non-empty values, so the empty-string
+// substitution only fires on accidentally-empty payloads (sandbox /
+// test / partial migrations).
+message ROSTopicSuffixes {
+  string cmd_vel        = 1;  // dataclass default "tracks/cmd_vel"
+  // ``operator_input`` is the one suffix where empty string is a
+  // *valid* signal ("disable operator subscription"), not an "unset
+  // → use default" marker. Declared ``optional`` so wrappers can
+  // distinguish "unset → use the bridge's default" from "explicit
+  // empty string → disable subscription". Other suffixes treat
+  // empty as "use default", because an empty topic suffix would
+  // otherwise produce an invalid topic name (``/{namespace}/`` with
+  // no leaf).
+  optional string operator_input = 2;
+  string pose           = 3;  // dataclass default "base_link/pose"
+  string odom           = 4;  // dataclass default "odom"
+  string joint_states   = 5;  // dataclass default "joint_states"
+  string imu            = 6;  // dataclass default "imu/body"
+  string gnss           = 7;  // dataclass default "gnss/fix"
+  string lidar          = 8;  // dataclass default "lidar/front/points"
+}
+
+
+// ─── Frame ID contract (real-machine validation) ──────────────────
+
+// FrameContract captures the expected ``header.frame_id`` per
+// topic kind for real-machine integration. Bridges that ignored
+// frame_id at deserialization risk silent coordinate-frame
+// corruption; carrying the contract on the wire lets deployments
+// express their frame conventions in their catalog and lets the
+// bridge validate against them.
+//
+// Empty map (default) → no validation, every frame_id passes
+// through. Real-machine integrators populate; the bridge logs a
+// warning on mismatch but never rejects (rejecting would be
+// over-eager — integrators sometimes publish in surprising-but-
+// valid frames).
+message FrameContract {
+  // Topic-kind ("pose"|"odom"|"imu"|"gnss"|"lidar") → expected
+  // frame_id string.
+  map<string, string> expected_frames = 1;
+}
+
+
+// ─── Joint name aliasing (real-machine URDF) ──────────────────────
+
+// JointNameAliases translates vendor URDF joint names to CAP
+// canonical names at the bridge ingestion seam. Empty map (default)
+// = identity / no translation, suitable for bridges whose URDF
+// already uses CAP canonical names. Real-machine integrators
+// populate the map so downstream FK / state-lookup code keeps
+// using canonical names with zero changes.
+message JointNameAliases {
+  // Robot URDF joint name → CAP canonical joint name.
+  map<string, string> aliases = 1;
+}
+
+
+// ─── MachineBridgeConfig — top-level per-instance config ──────────
+
+message MachineBridgeConfig {
+  // Deployment-time unique id ("zx120-01", "zx120-02"). Two
+  // instances of the same MachineSpec model number share spec
+  // but have different cap_machine_id values.
+  string cap_machine_id = 1;
+
+  // Reference key into ``MachineSpecCatalog``. **Lookup contract**:
+  // this is the *catalog key* used at materialization time, NOT the
+  // human-display ``MachineSpec.model_number`` field. CAP convention:
+  // catalog key is the lowercase short name ("zx120");
+  // ``MachineSpec.model_number`` is the display label ("ZX120"). They
+  // differ by case, so wrappers must look up by the lowercase key.
+  //
+  // MachineSpec is the single source of truth; bridge config carries
+  // only the lookup key, not duplicated physical fields.
+  string spec_model_number = 2;
+
+  // Simulator-side ROS namespace (e.g. "zx120"). Often equals
+  // ``MachineSpec.unity_namespace`` but can differ for multi-
+  // instance deployments where the second machine wants a
+  // distinct topic prefix.
+  string unity_namespace = 3;
+
+  LidarMount lidar             = 4;
+  ROSTopicSuffixes topics      = 5;
+  FrameContract frames         = 6;
+  JointNameAliases joints      = 7;
+  repeated string camera_directions = 8;  // default ["front"]
+}
+
+
+// ─── Catalog wrapper ──────────────────────────────────────────────
+
+// MachineBridgeCatalog ships every machine *instance* the
+// deployment runs — paired at runtime with a MachineSpecCatalog to
+// materialise per-instance config + spec.
+//
+// Versioned the same way as MachineSpecCatalog: schema_version +
+// catalog_revision both ship in v0 because field-1 placement is
+// fixed once consumers start parsing.
+message MachineBridgeCatalog {
+  // Bump on backwards-incompatible field changes. v0 ships at ``1``.
+  uint32 schema_version = 1;
+
+  // Free-form deployment revision label. Empty when the catalog
+  // is constructed in tests or sandboxes.
+  string catalog_revision = 2;
+
+  repeated MachineBridgeConfig configs = 3;
+}

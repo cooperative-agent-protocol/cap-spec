@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+#
+# GitHub Funding configuration. Currently a placeholder; CAP does not
+# accept monetary contributions at this stage. When sponsorship channels
+# are set up (e.g., GitHub Sponsors for the maintainer, Open Collective
+# for the project), entries will be added here.
+
+# github: [cap-protocol]
+# open_collective: cap-protocol
+# custom: ['https://cap-protocol.dev/sponsor']

@@ -1,0 +1,20 @@
+{
+  "header": {
+    "messageId": "msg-0031",
+    "senderId": "site-agent-01",
+    "receiverId": "excavator-01",
+    "correlationId": "msg-0030",
+    "sentAt": "2026-03-19T08:02:01Z"
+  },
+  "reservationStatus": {
+    "reservationId": "res-0001",
+    "resourceId": "load-point-A",
+    "holderId": "excavator-01",
+    "state": "RESERVATION_STATE_GRANTED",
+    "reason": "Resource available",
+    "grantedWindow": {
+      "earliest": "2026-03-19T08:02:01Z",
+      "latest": "2026-03-19T08:04:01Z"
+    }
+  }
+}

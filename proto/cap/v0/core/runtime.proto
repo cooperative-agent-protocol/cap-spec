@@ -1,0 +1,91 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+import "cap/v0/core/site_agent.proto";
+import "cap/v0/core/machine_agent.proto";
+import "cap/v0/core/events.proto";
+import "cap/v0/core/error.proto";
+import "cap/v0/core/alo.proto";
+import "cap/v0/core/dialogue.proto";
+import "cap/v0/core/mean_field.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Runtime Envelope ────────────────────────────────────────────────
+
+// CapFrame is the unified envelope for all CAP messages.
+// Every message on the wire is wrapped in a CapFrame.
+message CapFrame {
+  MessageHeader header = 1;
+
+  oneof body {
+    // Site Agent → Machine Agent
+    WorkOrder          work_order          = 10;
+    CancelWorkOrder    cancel_work_order   = 11;
+    ReservationRequest reservation_request = 12;
+    ReservationRelease reservation_release = 13;
+    ModeCommand        mode_command        = 14;
+
+    // Machine Agent → Site Agent
+    CapabilityManifest capability_manifest = 20;
+    Heartbeat          heartbeat           = 21;
+    WorkOrderAck       work_order_ack      = 22;
+
+    // Events
+    ReservationStatus  reservation_status  = 30;
+    ProgressEvent      progress_event      = 31;
+    FaultEvent         fault_event         = 32;
+    HandoverEvent      handover_event      = 33;
+    SafetyEvent        safety_event        = 34;
+    AuditEvent         audit_event         = 35;
+
+    // ALO (Abstract Language Objects)
+    ALOStateUpdate     alo_state_update    = 40;
+    ALOInteraction     alo_interaction     = 41;
+
+    // Agent Dialogue
+    AgentDialogue      agent_dialogue      = 42;
+
+    // Mean-Field (Site Agent → Machine Agents, ~1 Hz broadcast)
+    MeanFieldSnapshot  mean_field_snapshot = 45;
+
+    // Error
+    CapError           cap_error           = 50;
+  }
+}
+
+// ─── Service ─────────────────────────────────────────────────────────
+
+// ConnectRequest wraps a CapFrame for the streaming RPC request.
+// The first ConnectRequest in a stream SHOULD include supported_versions
+// to enable protocol version negotiation.
+message ConnectRequest {
+  CapFrame frame = 1;
+
+  // Protocol versions supported by the sender (e.g., ["v0.1", "v0.2"]).
+  // Sent only in the first message of the stream. Empty means "any v0.x".
+  repeated string supported_versions = 2;
+}
+
+// ConnectResponse wraps a CapFrame for the streaming RPC response.
+// The first ConnectResponse in a stream SHOULD include negotiated_version
+// confirming the protocol version selected by the site agent.
+message ConnectResponse {
+  CapFrame frame = 1;
+
+  // Protocol version selected by the site agent from the intersection
+  // of supported_versions. If empty, defaults to the latest v0.x.
+  string negotiated_version = 2;
+}
+
+// CapRuntimeService provides a bidirectional streaming connection between
+// site agent and machine agent. Both sides send and receive CapFrames.
+service CapRuntimeService {
+  rpc Connect(stream ConnectRequest) returns (stream ConnectResponse);
+}

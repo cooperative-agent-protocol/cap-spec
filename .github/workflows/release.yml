@@ -1,0 +1,146 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+#
+# Release pipeline triggered on tags `v*.*.*`. Produces:
+#   - GitHub Release with proto module + checked-in artifacts
+#   - CycloneDX 1.5 SBOM
+#   - sigstore cosign keyless signatures (via GitHub OIDC)
+#   - SLSA Build L3 provenance attestation
+#   - buf push to BSR (cap-core + cap-construction modules)
+#
+# PyPI / npm / Conan publishing is NOT auto-enabled at v0.1; it requires
+# per-org OIDC trust setup (see B6 in the user playbook).
+
+name: release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write       # create GitHub Release + upload assets
+  id-token: write       # OIDC for cosign + SLSA
+  attestations: write   # GitHub Attestations API
+
+jobs:
+  build:
+    name: Build artifacts
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: ver
+        name: Resolve version from tag
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: 1.69.0
+
+      - name: buf lint + breaking + generate
+        run: |
+          buf lint
+          buf generate
+
+      - name: Tarball proto module
+        run: |
+          mkdir -p artifacts
+          tar -czf "artifacts/cap-spec-proto-${{ steps.ver.outputs.version }}.tar.gz" proto buf.yaml buf.gen.yaml LICENSE NOTICE
+          tar -czf "artifacts/cap-spec-gen-${{ steps.ver.outputs.version }}.tar.gz" gen
+
+      - uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: artifacts/sbom-cap-spec-${{ steps.ver.outputs.version }}.cdx.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: artifacts/
+
+  sign-and-attest:
+    name: Sign + attest
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: artifacts/
+
+      - uses: sigstore/cosign-installer@v3
+
+      - name: Sign each artifact (keyless via GitHub OIDC)
+        run: |
+          for f in artifacts/*.tar.gz artifacts/*.cdx.json; do
+            test -f "$f" || continue
+            cosign sign-blob --yes "$f" \
+              --output-signature "$f.sig" \
+              --output-certificate "$f.pem"
+          done
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: "artifacts/*.tar.gz"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: artifacts/
+          overwrite: true
+
+  publish-github-release:
+    name: GitHub Release
+    runs-on: ubuntu-24.04
+    needs: [build, sign-and-attest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: artifacts/
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.cdx.json
+            artifacts/*.sig
+            artifacts/*.pem
+          generate_release_notes: true
+
+  bsr-push:
+    name: buf push to BSR
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: 1.69.0
+          # buf.build/cap-protocol/cap-core push requires a BSR token in
+          # secrets.BUF_TOKEN (user-provisioned per playbook step B5).
+          buf_user: cap-protocol
+          buf_api_token: ${{ secrets.BUF_TOKEN }}
+      - name: buf push
+        run: buf push --tag "$GITHUB_REF_NAME"
+
+  # PyPI / npm publishing intentionally NOT in v0.1; gated on B6
+  # (user-action OIDC trust setup). Stubs documented below.
+  #
+  # publish-pypi:
+  #   needs: [build, sign-and-attest]
+  #   steps:
+  #     - uses: pypa/gh-action-pypi-publish@release/v1
+  #
+  # publish-npm:
+  #   needs: [build, sign-and-attest]
+  #   steps:
+  #     - run: npm publish --provenance

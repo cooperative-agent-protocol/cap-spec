@@ -1,0 +1,80 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+#
+# Per-PR lint pipeline. Runs on every push and pull_request.
+
+name: lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  buf-lint:
+    name: buf lint + breaking + gen drift check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # buf breaking needs history
+
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: 1.69.0
+
+      - name: buf lint
+        run: buf lint
+
+      - name: buf breaking (against main)
+        if: github.event_name == 'pull_request'
+        run: buf breaking --against '.git#branch=main'
+
+      - name: buf generate + gen drift check
+        run: |
+          buf generate
+          if ! git diff --quiet gen/; then
+            echo "ERROR: gen/ is out of sync with proto/ — run 'make gen' and commit."
+            git diff --stat gen/
+            exit 1
+          fi
+
+  reuse-spdx:
+    name: SPDX header check (REUSE)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: REUSE lint
+        uses: fsfe/reuse-action@v3
+
+  license-compat:
+    name: Dependency license compatibility
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install license-checker
+        run: pip install pip-licenses
+      - name: Scan + fail on copyleft
+        run: |
+          set -eu
+          pip install build
+          pip-licenses --format=json --output-file=licenses.json
+          python - <<'PY'
+          import json, sys
+          BLOCK = {"GPL", "AGPL", "LGPL", "EPL-2.0", "EPL-1.0"}
+          with open("licenses.json") as f:
+              data = json.load(f)
+          bad = [d for d in data if any(b in d.get("License", "") for b in BLOCK)]
+          if bad:
+              print("Blocked licenses detected:")
+              for d in bad:
+                  print(f"  - {d['Name']} {d['Version']}: {d['License']}")
+              sys.exit(1)
+          PY

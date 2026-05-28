@@ -1,0 +1,71 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+#
+# Cross-language interop matrix. Runs as a nightly cron and on PRs that
+# touch .proto files. Pairs each language client with each language server
+# to ensure wire-format round-trip across Python / C++ / TypeScript.
+
+name: interop-matrix
+
+on:
+  schedule:
+    - cron: "0 3 * * *"  # 03:00 UTC nightly
+  pull_request:
+    paths:
+      - "proto/**"
+      - "buf.yaml"
+      - "buf.gen.yaml"
+      - ".github/workflows/interop-matrix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  interop:
+    name: ${{ matrix.client }} client × ${{ matrix.server }} server
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [python, cpp, typescript]
+        server: [python, cpp, typescript]
+        # Skip self-loop unless reference behavior is critical
+        exclude:
+          - client: cpp
+            server: cpp
+          - client: typescript
+            server: typescript
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: 1.69.0
+
+      - name: Generate proto bindings
+        run: buf generate
+
+      - uses: actions/setup-python@v5
+        if: matrix.client == 'python' || matrix.server == 'python'
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        if: matrix.client == 'typescript' || matrix.server == 'typescript'
+        with:
+          node-version: "20"
+
+      - name: Build C++ (if needed)
+        if: matrix.client == 'cpp' || matrix.server == 'cpp'
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y cmake build-essential libgrpc++-dev protobuf-compiler-grpc
+          # Build commands wired in A10; placeholder until then
+          echo "TODO(A10): build cap-reference/cpp"
+
+      - name: Run interop test ${{ matrix.client }} → ${{ matrix.server }}
+        run: |
+          echo "TODO(A8+): run interop fixture; placeholder for v0.1"
+          # A real run wires the conformance tests with
+          # `pytest --target grpc://...` once both ends are buildable.

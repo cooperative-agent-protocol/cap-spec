@@ -1,0 +1,42 @@
+{
+  "header": {
+    "messageId": "msg-0001",
+    "senderId": "excavator-01",
+    "receiverId": "site-agent-01",
+    "workPackageId": "",
+    "planHash": "",
+    "sentAt": "2026-03-19T08:00:00Z"
+  },
+  "capabilityManifest": {
+    "machineId": "excavator-01",
+    "machineType": "MACHINE_TYPE_EXCAVATOR",
+    "capabilities": [
+      {
+        "skill": "excavate_batch",
+        "limits": [
+          { "key": "max_reach_m", "value": "9.9" },
+          { "key": "max_depth_m", "value": "6.7" },
+          { "key": "bucket_capacity_m3", "value": "0.8" }
+        ]
+      },
+      {
+        "skill": "load_truck",
+        "limits": [
+          { "key": "max_swing_deg", "value": "360" },
+          { "key": "max_lift_height_m", "value": "9.0" }
+        ]
+      },
+      {
+        "skill": "safe_wait",
+        "limits": []
+      }
+    ],
+    "currentMode": "MACHINE_MODE_SUPERVISED_AUTONOMY",
+    "halProfile": "komatsu/pc200-11",
+    "softwareVersion": "0.1.0",
+    "metadata": [
+      { "key": "serial_number", "value": "PC200-11-12345" },
+      { "key": "site_id", "value": "site-a" }
+    ]
+  }
+}

@@ -1,0 +1,197 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Mean-Field Layer ────────────────────────────────────────────────
+// Shared public state that all agents read to make field-aware decisions.
+// Site Agent acts as the major player (leader) computing shadow prices;
+// Machine Agents act as minor players (followers) using prices to score
+// candidate actions via a deterministic best-response scorer.
+//
+// Theoretical basis: major-minor Mean-Field Control (MFC).
+// Safety Supervisor remains outside the mean-field layer (hard constraints).
+
+// MeanFieldSnapshot captures the current population state of the site.
+// Updated by the MeanFieldEstimator service at ~1 Hz from Heartbeat,
+// ProgressEvent, ReservationStatus, and ALO world model.
+message MeanFieldSnapshot {
+  string snapshot_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+
+  // Per-zone occupancy and service state.
+  repeated ZoneField zone_fields = 3;
+
+  // Per-edge (corridor / route segment) traffic state.
+  repeated EdgeField edge_fields = 4;
+
+  // Site-wide shadow prices computed by the leader (Site Agent).
+  ShadowPrices prices = 5;
+
+  // Short-horizon forecast (optional, for time-aware path planning).
+  repeated MeanFieldForecast forecasts = 6;
+
+  // Common noise: site-wide disturbances (weather, visibility, etc.).
+  repeated CommonNoise common_noises = 7;
+}
+
+// ZoneField holds the mean-field state for a single zone/node.
+message ZoneField {
+  string zone_id = 1;
+
+  // Occupancy: number of machines currently in this zone, by type.
+  map<string, int32> occupancy_by_type = 2;  // e.g. {"excavator": 1, "dump_truck": 2}
+
+  // Queue length at service points within this zone.
+  double queue_length = 3;
+
+  // Effective service rate (tasks completed per minute in this zone).
+  double service_rate = 4;
+
+  // Resource pressure: fraction of zone capacity currently utilized [0, 1].
+  double resource_pressure = 5;
+
+  // Risk level [0, 1]: aggregated from proximity, human presence, terrain.
+  double risk = 6;
+
+  // Uncertainty level [0, 1]: fraction of zone with unknown/stale data.
+  double uncertainty = 7;
+}
+
+// EdgeField holds the mean-field state for a route segment / corridor.
+message EdgeField {
+  string edge_id = 1;  // e.g. "zone_A-zone_B", "lane_01"
+
+  string from_zone_id = 2;
+  string to_zone_id = 3;
+
+  // Moving density: number of machines currently traversing this edge.
+  int32 moving_count = 4;
+
+  // Predicted traversal time (seconds) based on current traffic.
+  double predicted_traversal_sec = 5;
+
+  // Risk level [0, 1] on this edge.
+  double risk = 6;
+
+  // Whether this edge has a hard reservation blocking passage.
+  bool hard_blocked = 7;
+}
+
+// ShadowPrices are the dual variables / tolls computed by the Site Agent
+// to internalize externalities. Higher price = more congested / costly.
+// Updated via: λ_{t+1}(z) = [λ_t(z) + η(occ_t(z) - cap(z))]_+
+message ShadowPrices {
+  // Zone congestion price: cost of entering/staying in this zone.
+  map<string, double> zone_price = 1;  // zone_id → price
+
+  // Queue price: cost of joining a queue at a service point.
+  map<string, double> queue_price = 2;  // zone_id → price
+
+  // Edge congestion price: cost of using this route segment.
+  map<string, double> edge_price = 3;  // edge_id → price
+
+  // Learning rate used for this update cycle.
+  double eta = 4;
+}
+
+// MeanFieldForecast predicts population state at a future time.
+// Used by time-aware path planning: state = (x, y, θ, t).
+message MeanFieldForecast {
+  google.protobuf.Timestamp forecast_time = 1;
+  int32 horizon_sec = 2;  // Seconds ahead from snapshot timestamp.
+  repeated ZoneField zone_fields = 3;
+  repeated EdgeField edge_fields = 4;
+}
+
+// CommonNoise represents site-wide disturbances affecting all agents.
+message CommonNoise {
+  string noise_type = 1;  // "weather", "visibility", "ground_condition", "human_activity"
+  double intensity = 2;   // [0, 1]
+  string description = 3; // Human-readable, e.g. "降雨により視界不良"
+}
+
+// ─── Agent Intent (for structured dialogue) ─────────────────────────
+
+// AgentIntent declares what a machine agent plans to do and its
+// expected impact on the mean field. Used in AgentDialogue messages
+// for transparent, auditable peer-to-peer negotiation.
+message AgentIntent {
+  string agent_id = 1;
+
+  // What the agent intends to do.
+  string intent_type = 2;  // "move", "work", "wait", "yield", "handover"
+
+  // Target location or zone.
+  string target_zone_id = 3;
+  double target_x = 4;
+  double target_y = 5;
+
+  // Time window for the intended action.
+  double expected_duration_sec = 6;
+
+  // Expected change to the mean field from this action.
+  FieldDelta expected_delta = 7;
+
+  // Fallback alternatives if primary intent is blocked.
+  repeated string fallback_descriptions = 8;
+
+  // Confidence in this intent [0, 1].
+  double confidence = 9;
+
+  // Free-text rationale for LLM reasoning.
+  string rationale = 10;
+}
+
+// FieldDelta describes the predicted change to the mean field
+// from a single agent's action. Used for scoring and auditing.
+message FieldDelta {
+  // Change in zone occupancy (positive = entering, negative = leaving).
+  map<string, int32> zone_occupancy_delta = 1;
+
+  // Change in edge traffic (positive = using, negative = freeing).
+  map<string, int32> edge_traffic_delta = 2;
+
+  // Change in queue length at service points.
+  map<string, double> queue_delta = 3;
+
+  // Estimated total externality cost of this action (p_t · Δμ_i).
+  double externality_cost = 4;
+}
+
+// ─── Best Response Score (audit record) ──────────────────────────────
+
+// BestResponseRecord captures the scoring of candidate actions
+// for auditing and post-hoc analysis.
+message BestResponseRecord {
+  string agent_id = 1;
+  string task_id = 2;
+  google.protobuf.Timestamp scored_at = 3;
+
+  repeated CandidateScore candidates = 4;
+  string selected_candidate_id = 5;
+
+  // Gap between best and second-best score (for regret analysis).
+  double best_response_gap = 6;
+}
+
+// CandidateScore records the scoring breakdown for one candidate action.
+message CandidateScore {
+  string candidate_id = 1;
+  string description = 2;  // Human-readable, e.g. "move to zone_B via lane_02"
+
+  double local_cost = 3;      // ℓ_local: terrain, fuel, kinematics
+  double task_cost = 4;       // ℓ_task: task progress delay
+  double externality_cost = 5; // p_t · Δμ_i: impact on shared state
+  double commitment_cost = 6;  // ℓ_commit: dialogue promises, handover sync
+  double total_score = 7;      // Sum (lower is better)
+
+  FieldDelta predicted_delta = 8;
+}

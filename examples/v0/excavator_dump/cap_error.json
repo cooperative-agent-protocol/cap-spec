@@ -1,0 +1,22 @@
+{
+  "header": {
+    "messageId": "msg-0060",
+    "senderId": "site-agent-01",
+    "receiverId": "excavator-01",
+    "sentAt": "2026-03-19T08:08:00Z"
+  },
+  "capError": {
+    "errorCode": 2001,
+    "domain": "ERROR_DOMAIN_PROTOCOL",
+    "message": "Invalid state transition: cannot transition from PENDING to SUCCEEDED",
+    "relatedMessageId": "msg-0059",
+    "severity": "FAULT_SEVERITY_WARNING",
+    "details": [
+      { "key": "current_state", "value": "TASK_STATE_PENDING" },
+      { "key": "attempted_state", "value": "TASK_STATE_SUCCEEDED" },
+      { "key": "task_id", "value": "task-1042" }
+    ],
+    "retryable": false,
+    "retryAfterSec": 0
+  }
+}

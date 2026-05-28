@@ -1,0 +1,182 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+import "cap/v0/core/alo.proto";
+import "cap/v0/core/events.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Agent Dialogue Protocol ────────────────────────────────────────
+// Enables structured communication between Site Agent [A] and
+// Machine Agent [B] in the 2-layer LLM architecture.
+// Model on Machine Agent is advisory only — no actuator control.
+
+// DialogueIntent classifies the purpose of a dialogue message.
+enum DialogueIntent {
+  DIALOGUE_INTENT_UNSPECIFIED          = 0;
+  DIALOGUE_INTENT_SITUATION_REPORT     = 1;  // Machine → Site: current situation
+  DIALOGUE_INTENT_LOCAL_DECISION       = 2;  // Machine → Site: decision taken or proposed
+  DIALOGUE_INTENT_PLAN_PROPOSAL        = 3;  // Machine → Site: suggest plan change
+  DIALOGUE_INTENT_ACKNOWLEDGEMENT      = 4;  // Either direction: receipt confirmed
+  DIALOGUE_INTENT_INSTRUCTION          = 5;  // Site → Machine: directive
+  DIALOGUE_INTENT_QUERY                = 6;  // Either direction: request for information
+  DIALOGUE_INTENT_CLARIFICATION_REQUEST = 7; // Either direction: request for clarification
+  DIALOGUE_INTENT_RISK_NOTICE          = 8;  // Machine → Site: risk/constraint warning
+  DIALOGUE_INTENT_EXECUTION_COMMIT     = 9;  // Machine → Site: commitment to execute under conditions
+  DIALOGUE_INTENT_SUBGOAL_COMPLETE     = 10; // Machine → Site: partial goal achieved
+  DIALOGUE_INTENT_HANDOVER_REQUEST     = 11; // Machine → Site: request handover to operator
+}
+
+// LocalDecisionScope defines the autonomy scope of a machine's decision.
+// MICRO: autonomous execution allowed, no approval needed.
+// TASK: affects current task, requires Site Agent approval.
+// CROSS_TASK: affects multiple tasks or other machines, requires Site Agent approval.
+enum LocalDecisionScope {
+  LOCAL_DECISION_SCOPE_UNSPECIFIED = 0;
+  LOCAL_DECISION_SCOPE_MICRO      = 1;
+  LOCAL_DECISION_SCOPE_TASK       = 2;
+  LOCAL_DECISION_SCOPE_CROSS_TASK = 3;
+}
+
+// ─── Provenance ─────────────────────────────────────────────────────
+
+// DialogueProvenance records the origin and confidence of a dialogue message.
+message DialogueProvenance {
+  string agent_id           = 1;  // e.g. "excavator-01", "site-agent-01"
+  string agent_role         = 2;  // "machine_agent" or "site_agent"
+  double confidence         = 3;  // 0.0–1.0
+  string model_id           = 4;  // e.g. "claude/claude-haiku-4-5", "gemini/gemini-2.0-flash", "ollama/phi3:mini", "fake-rule-based"
+  google.protobuf.Timestamp generated_at = 5;
+  string reasoning_summary  = 6;  // Brief explanation of generation logic
+}
+
+// ─── Message Types ──────────────────────────────────────────────────
+
+// SituationReport: Machine Agent reports current situation to Site Agent.
+message SituationReport {
+  string machine_id                    = 1;
+  string task_id                       = 2;
+  string situation_summary             = 3;  // Natural language description
+  repeated ALOProperty observed_facts  = 4;  // Structured observations
+  string recommended_action            = 5;
+  DialogueProvenance provenance        = 6;
+}
+
+// LocalDecision: Machine Agent reports a local decision.
+// If scope >= TASK, approval_required is true and the machine must wait
+// for Site Agent to set approved=true before execution.
+message LocalDecision {
+  string machine_id           = 1;
+  string task_id              = 2;
+  LocalDecisionScope scope    = 3;
+  string decision_summary     = 4;  // What was decided
+  string rationale            = 5;  // Why this decision
+  bool approval_required      = 6;  // True if scope >= TASK
+  bool approved               = 7;  // Set by Site Agent in response
+  string approver_id          = 8;  // Site Agent that approved/rejected
+  DialogueProvenance provenance = 9;
+}
+
+// PlanProposal: Machine Agent proposes a plan adjustment to Site Agent.
+message PlanProposal {
+  string machine_id                      = 1;
+  string task_id                         = 2;
+  string proposal_summary                = 3;
+  repeated KeyValue proposed_parameters  = 4;
+  string expected_outcome                = 5;
+  DialogueProvenance provenance          = 6;
+}
+
+// ClarificationRequest: Either agent requests clarification on ambiguous input.
+// e.g. "Which load point should be prioritized?" or "Confirm target volume."
+message ClarificationRequest {
+  string requester_id       = 1;
+  string task_id            = 2;
+  string question            = 3;  // Natural language question
+  repeated string options    = 4;  // Suggested answers (optional)
+  string context             = 5;  // Why clarification is needed
+  DialogueProvenance provenance = 6;
+}
+
+// RiskNotice: Machine Agent warns about a risk or constraint affecting execution.
+// e.g. "Western route has heavy traffic, expect delays."
+message RiskNotice {
+  string machine_id            = 1;
+  string task_id               = 2;
+  string risk_summary          = 3;  // Natural language risk description
+  FaultSeverity severity       = 4;  // INFO, WARNING, ERROR, CRITICAL
+  repeated ALOProperty factors = 5;  // Structured risk factors
+  string mitigation_suggestion = 6;  // Suggested countermeasure
+  DialogueProvenance provenance = 7;
+}
+
+// ExecutionCommit: Machine Agent commits to executing under stated conditions.
+// e.g. "Conditions met. Proceeding with excavation at B3-cell-14."
+message ExecutionCommit {
+  string machine_id          = 1;
+  string task_id             = 2;
+  string commit_summary      = 3;  // What the machine is committing to
+  repeated string conditions = 4;  // Conditions under which execution proceeds
+  DialogueProvenance provenance = 5;
+}
+
+// SubgoalComplete: Machine Agent reports partial goal achievement.
+// e.g. "10m³ target: 4m³ excavated so far."
+message SubgoalComplete {
+  string machine_id            = 1;
+  string task_id               = 2;
+  string subgoal_description   = 3;  // What was achieved
+  double progress_percent      = 4;  // 0.0–100.0
+  repeated KeyValue metrics    = 5;  // e.g. excavated_m3=4.0
+  DialogueProvenance provenance = 6;
+}
+
+// HandoverRequest: Machine Agent requests handover to operator control.
+// e.g. "Human detected in work envelope, requesting teleop handover."
+message HandoverRequest {
+  string machine_id              = 1;
+  string task_id                 = 2;
+  string reason                  = 3;
+  HandoverSeverity severity      = 4;  // From events.proto
+  string recommended_action      = 5;
+  DialogueProvenance provenance  = 6;
+}
+
+// ─── Dialogue Envelope ──────────────────────────────────────────────
+
+// DialogueMessage is a single message within a dialogue.
+message DialogueMessage {
+  string message_id          = 1;
+  DialogueIntent intent      = 2;
+
+  oneof content {
+    SituationReport situation_report       = 10;
+    LocalDecision local_decision           = 11;
+    PlanProposal plan_proposal             = 12;
+    string text                            = 13;  // Free-form for ACK, INSTRUCTION, QUERY
+    ClarificationRequest clarification_request = 14;
+    RiskNotice risk_notice                 = 15;
+    ExecutionCommit execution_commit       = 20;
+    SubgoalComplete subgoal_complete       = 21;
+    HandoverRequest handover_request       = 22;
+  }
+
+  DialogueProvenance provenance      = 16;
+  google.protobuf.Timestamp timestamp = 17;
+}
+
+// AgentDialogue is the envelope for a dialogue exchange between agents.
+message AgentDialogue {
+  string dialogue_id                = 1;
+  repeated string participant_ids   = 2;
+  string task_id                    = 3;
+  repeated DialogueMessage messages = 4;
+  google.protobuf.Timestamp created_at = 5;
+}

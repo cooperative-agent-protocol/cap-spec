@@ -1,0 +1,133 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "google/protobuf/timestamp.proto";
+import "cap/v0/core/common.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Phase enum (single source of truth) ─────────────────────────────
+//
+// Replaces the historical practice of hardcoding phase strings ("idle",
+// "moving_to_dig", "loading_truck", ...) on both the agent and the
+// simulator-bridge sides. Three past production bugs (typos:
+// "loading", "returning_to_load", "driving_to_target") were caused by
+// agent-side strings drifting from the controller's internal enum.
+//
+// Both excavator and dump-truck phases live in one enum so that
+// CommandHandle.diagnostics can reference a single phase namespace.
+
+enum MachinePhase {
+  MACHINE_PHASE_UNSPECIFIED         = 0;
+
+  // Shared
+  MACHINE_PHASE_IDLE                = 1;
+
+  // Excavator
+  MACHINE_PHASE_MOVING_TO_DIG       = 10;
+  MACHINE_PHASE_DIGGING             = 11;
+  MACHINE_PHASE_SWINGING_TO_LOAD    = 12;
+  MACHINE_PHASE_LOADING_TRUCK       = 13;
+  MACHINE_PHASE_WAITING_FOR_TRUCK   = 14;
+
+  // Dump truck
+  MACHINE_PHASE_MOVING_TO_LOAD_POINT = 20;
+  MACHINE_PHASE_WAITING_FOR_LOAD     = 21;
+  MACHINE_PHASE_HAULING_TO_DUMP      = 22;
+  MACHINE_PHASE_DUMPING              = 23;
+  MACHINE_PHASE_RETURNING            = 24;
+}
+
+// ─── Command lifecycle ───────────────────────────────────────────────
+//
+// HAL.send_command() under the legacy design returns immediately with
+// "request accepted", and the agent then polls /state until the
+// controller's phase changes — racing with the 10Hz state aggregator
+// (the "two-stage entry/exit" band-aid in
+// agent/machine/tools/{excavator,dump_truck}/_helpers.py).
+//
+// Under the new design, every command returns a CommandHandle whose
+// `state` transitions monotonically through this enum. The agent waits
+// on the state stream, never on phase strings.
+
+enum CommandState {
+  COMMAND_STATE_UNSPECIFIED = 0;
+  COMMAND_STATE_QUEUED      = 1;  // dispatcher accepted, not yet executing
+  COMMAND_STATE_EXECUTING   = 2;  // controller actively running
+  COMMAND_STATE_COMPLETED   = 3;  // terminal: success
+  COMMAND_STATE_FAILED      = 4;  // terminal: safety supervisor or controller abort
+  COMMAND_STATE_PREEMPTED   = 5;  // terminal: superseded by a later dispatch
+  COMMAND_STATE_REJECTED    = 6;  // terminal: dispatcher refused (invalid intent)
+}
+
+// AbortCause carries the reason for a FAILED state. The safety
+// supervisor populates this so upstream planning / cost-adaptation
+// layers can attribute the failure to a specific cell or condition.
+enum AbortCause {
+  ABORT_CAUSE_UNSPECIFIED        = 0;
+  ABORT_CAUSE_FOOTPRINT_SLOPE    = 1;  // body footprint exceeds max_slope_deg
+  ABORT_CAUSE_GROUND_CLEARANCE   = 2;  // height span > clearance under footprint
+  ABORT_CAUSE_HAZARD_INTRUSION   = 3;  // entered HAZARD/KEEPOUT zone
+  ABORT_CAUSE_PEER_PROXIMITY     = 4;  // another machine too close
+  ABORT_CAUSE_ROLL_LIMIT         = 5;  // measured roll exceeds emergency
+  ABORT_CAUSE_PITCH_LIMIT        = 6;  // measured pitch exceeds emergency
+  ABORT_CAUSE_FALL_DETECTED      = 7;  // vertical velocity > threshold
+  ABORT_CAUSE_PATH_INFEASIBLE    = 8;  // bridge can't follow planned curvature
+  ABORT_CAUSE_TIMEOUT            = 9;  // controller did not progress
+  ABORT_CAUSE_HAL_DISCONNECT     = 10; // HAL channel lost
+  ABORT_CAUSE_USER_CANCEL        = 11; // explicit cancel from agent
+}
+
+// ─── CommandHandle ───────────────────────────────────────────────────
+
+message CommandHandle {
+  // UUID assigned by the dispatcher on submission.
+  string command_id = 1;
+
+  // Human-readable kind for logging / dashboard.
+  // (The full Intent oneof is in intent.proto.)
+  string intent_kind = 2;
+
+  // Stable correlation id supplied by the agent. Re-submitting the
+  // same correlation_id while a command with that id is in-flight is
+  // an idempotent no-op (replaces the historical
+  // `if self.phase != ExcavatorPhase.DIGGING` guards).
+  string correlation_id = 3;
+
+  CommandState state = 4;
+
+  // 0..1, populated for long-running commands (drive_to: distance
+  // traveled / total). Optional; controllers may leave at 0.
+  double progress = 5;
+
+  google.protobuf.Timestamp submitted_at  = 6;
+  google.protobuf.Timestamp last_event_at = 7;
+
+  // Populated when state == FAILED.
+  AbortCause abort_cause   = 8;
+  string     error_message = 9;
+
+  // Free-form diagnostics: current pose, active phase, debug counters.
+  // Encoded as KeyValue pairs to keep the wire schema stable while
+  // controllers add new fields.
+  repeated KeyValue diagnostics = 10;
+
+  // The phase the controller most recently reported. Optional but
+  // useful for observability dashboards.
+  MachinePhase last_phase = 11;
+}
+
+// ─── Stream messages ─────────────────────────────────────────────────
+
+// CommandLifecycleEvent is published on the bridge → agent stream
+// every time a CommandHandle's state changes. The agent's
+// CommandHandle.wait_for(state) consumes this stream.
+message CommandLifecycleEvent {
+  string         machine_id = 1;
+  CommandHandle  handle     = 2;
+}

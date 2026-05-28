@@ -1,0 +1,62 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+import "cap/v0/core/alo.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Machine Agent → Site Agent ──────────────────────────────────────
+
+// Capability describes a single skill a machine can perform, with its limits.
+message Capability {
+  string skill                = 1;  // e.g. "excavate_batch", "haul_route"
+  repeated KeyValue limits    = 2;  // e.g. max_reach_m, max_payload_kg
+}
+
+// CapabilityManifest is sent on connect to declare what the machine can do.
+message CapabilityManifest {
+  string machine_id            = 1;
+  MachineType machine_type     = 2;
+  repeated Capability capabilities = 3;
+  MachineMode current_mode     = 4;
+  string hal_profile           = 5;  // e.g. "komatsu/pc200-11"
+  string software_version      = 6;
+  repeated KeyValue metadata   = 7;
+  ALODescriptor alo_descriptor = 8;  // Machine's self-description as ALO
+}
+
+// Heartbeat is sent periodically to report machine health and pose.
+message Heartbeat {
+  string machine_id                   = 1;
+  MachineMode current_mode            = 2;
+  bool healthy                        = 3;
+  string active_task_id               = 4;
+  TaskState active_task_state         = 5;
+  Pose3D pose                         = 6;
+  bool estop_active                   = 7;
+  double fuel_or_battery_percent      = 8;
+  repeated string active_reservations = 9;
+  repeated KeyValue health            = 10;
+  string alo_state_summary             = 11;  // Model-generated natural language state description (LLM/SLM)
+}
+
+// WorkOrderAck is the machine's response to a received WorkOrder.
+message WorkOrderAck {
+  enum Decision {
+    DECISION_UNSPECIFIED = 0;
+    DECISION_ACCEPTED    = 1;
+    DECISION_REJECTED    = 2;
+    DECISION_DEFERRED    = 3;
+  }
+
+  string task_id       = 1;
+  Decision decision    = 2;
+  string reason        = 3;
+  int32 retry_after_sec = 4;
+}

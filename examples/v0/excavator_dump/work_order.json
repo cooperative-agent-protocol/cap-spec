@@ -1,0 +1,56 @@
+{
+  "header": {
+    "messageId": "msg-0002",
+    "senderId": "site-agent-01",
+    "receiverId": "excavator-01",
+    "correlationId": "",
+    "workPackageId": "earthwork-B3",
+    "planHash": "sha256:a1b2c3d4e5f6",
+    "sentAt": "2026-03-19T09:00:00Z"
+  },
+  "workOrder": {
+    "taskId": "task-1042",
+    "workPackageId": "earthwork-B3",
+    "targetMachineId": "excavator-01",
+    "skill": "excavate_batch",
+    "targetZone": {
+      "mapId": "site-a",
+      "zoneId": "B3-cell-14",
+      "revision": "r12"
+    },
+    "sourceZone": {},
+    "destinationZone": {},
+    "parameters": {
+      "targetVolumeM3": "8",
+      "maxCycleSec": "90"
+    },
+    "preconditions": [
+      {
+        "constraintId": "pre-1",
+        "type": "truck_ready",
+        "params": [
+          { "key": "truck_id", "value": "dump-truck-01" }
+        ]
+      }
+    ],
+    "safetyConstraints": [
+      {
+        "constraintId": "safe-1",
+        "type": "no_swing_over_human",
+        "params": []
+      },
+      {
+        "constraintId": "safe-2",
+        "type": "keep_out",
+        "params": [
+          { "key": "zone", "value": "west-corridor" }
+        ]
+      }
+    ],
+    "executionWindow": {
+      "earliest": "2026-03-19T09:00:00Z",
+      "latest": "2026-03-19T09:30:00Z"
+    },
+    "priority": 10
+  }
+}

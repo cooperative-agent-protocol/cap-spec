@@ -1,0 +1,77 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+// Machine-Agnostic Skill Intermediate Representation (Skill IR)
+//
+// Formalizes machine skills as typed, parameterized definitions that are
+// independent of specific machine models or OEMs. This enables:
+//   - Cross-machine skill composition (same skill, different machines)
+//   - Skill-aware fleet scheduling
+//   - External skill definition without code changes
+//   - Multi-agent planning with formal preconditions/postconditions
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Skill Definition ───────────────────────────────────────────────
+
+// SkillDefinition describes a machine-agnostic skill with typed parameters,
+// preconditions, and postconditions.
+message SkillDefinition {
+  string skill_id             = 1;  // Unique skill identifier (e.g. "excavate_batch")
+  string skill_name           = 2;  // Human-readable name (e.g. "Excavate Batch")
+  string description          = 3;  // Natural language description
+  string machine_type         = 4;  // Required machine type ("excavator", "dump_truck", "" = any)
+  repeated SkillParameter parameters   = 5;
+  repeated string preconditions        = 6;  // Conditions that must hold before execution
+  repeated string postconditions       = 7;  // Conditions guaranteed after successful execution
+  float default_timeout_sec   = 8;  // Default timeout for this skill
+  string category             = 9;  // Skill category: "locomotion", "manipulation", "sensing", "coordination"
+}
+
+// SkillParameter describes a single typed parameter for a skill.
+message SkillParameter {
+  string name                 = 1;  // Parameter name (e.g. "target_volume_m3")
+  string param_type           = 2;  // Type: "float", "int", "string", "bool", "position"
+  string unit                 = 3;  // SI unit (e.g. "m3", "m", "deg", "s")
+  string description          = 4;  // Human-readable description
+  double min_value            = 5;  // Minimum allowed value (for numeric types)
+  double max_value            = 6;  // Maximum allowed value (for numeric types)
+  bool required               = 7;  // Whether this parameter is required
+  string default_value        = 8;  // Default value as string
+}
+
+// ─── Skill Execution ────────────────────────────────────────────────
+
+// SkillExecution tracks a single invocation of a skill on a machine.
+message SkillExecution {
+  string execution_id         = 1;
+  string skill_id             = 2;
+  string machine_id           = 3;
+  string task_id              = 4;
+  map<string, string> parameters = 5;  // Actual parameter values
+  SkillExecutionStatus status = 6;
+  string result_summary       = 7;
+  float duration_sec          = 8;
+}
+
+enum SkillExecutionStatus {
+  SKILL_EXECUTION_STATUS_UNSPECIFIED = 0;
+  SKILL_EXECUTION_STATUS_PENDING     = 1;
+  SKILL_EXECUTION_STATUS_RUNNING     = 2;
+  SKILL_EXECUTION_STATUS_SUCCEEDED   = 3;
+  SKILL_EXECUTION_STATUS_FAILED      = 4;
+  SKILL_EXECUTION_STATUS_ABORTED     = 5;
+}
+
+// ─── Skill Catalog ──────────────────────────────────────────────────
+
+// SkillCatalog is a collection of skill definitions available in the system.
+message SkillCatalog {
+  repeated SkillDefinition skills = 1;
+  string catalog_version          = 2;  // Semantic version of the catalog
+}

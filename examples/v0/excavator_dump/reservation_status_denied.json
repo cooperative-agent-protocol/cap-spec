@@ -1,0 +1,16 @@
+{
+  "header": {
+    "messageId": "msg-0032",
+    "senderId": "site-agent-01",
+    "receiverId": "dump-01",
+    "correlationId": "msg-0033",
+    "sentAt": "2026-03-19T08:02:30Z"
+  },
+  "reservationStatus": {
+    "reservationId": "res-0002",
+    "resourceId": "load-point-A",
+    "holderId": "dump-01",
+    "state": "RESERVATION_STATE_DENIED",
+    "reason": "Resource held by excavator-01 until 2026-03-19T08:04:01Z"
+  }
+}

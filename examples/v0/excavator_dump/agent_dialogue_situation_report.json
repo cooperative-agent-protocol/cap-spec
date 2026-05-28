@@ -1,0 +1,49 @@
+{
+  "header": {
+    "messageId": "msg-0050",
+    "senderId": "excavator-01",
+    "receiverId": "site-agent-01",
+    "workPackageId": "wp-001",
+    "planHash": "a1b2c3d4e5f6",
+    "sentAt": "2026-03-19T08:03:00Z"
+  },
+  "agentDialogue": {
+    "dialogueId": "dlg-0001",
+    "participantIds": ["excavator-01", "site-agent-01"],
+    "taskId": "task-1042",
+    "messages": [
+      {
+        "messageId": "dmsg-0001",
+        "intent": "DIALOGUE_INTENT_SITUATION_REPORT",
+        "situationReport": {
+          "machineId": "excavator-01",
+          "taskId": "task-1042",
+          "situationSummary": "土質が予想より硬い。粘土層に到達し、掘削速度が40%低下している。",
+          "observedFacts": [
+            { "key": "soil_type", "value": "clay", "unit": "", "dtype": "string" },
+            { "key": "digging_rate_reduction", "value": "0.4", "unit": "ratio", "dtype": "float" },
+            { "key": "current_depth_m", "value": "2.1", "unit": "m", "dtype": "float" }
+          ],
+          "recommendedAction": "掘削深度を0.3m浅くし、サイクルあたりの掘削量を減らすことを推奨",
+          "provenance": {
+            "agentId": "excavator-01",
+            "agentRole": "machine_agent",
+            "confidence": 0.82,
+            "modelId": "fake-rule-based",
+            "generatedAt": "2026-03-19T08:02:59Z",
+            "reasoningSummary": "Digging rate decrease detected over 3 consecutive cycles"
+          }
+        },
+        "provenance": {
+          "agentId": "excavator-01",
+          "agentRole": "machine_agent",
+          "confidence": 0.82,
+          "modelId": "fake-rule-based",
+          "generatedAt": "2026-03-19T08:02:59Z"
+        },
+        "timestamp": "2026-03-19T08:03:00Z"
+      }
+    ],
+    "createdAt": "2026-03-19T08:03:00Z"
+  }
+}

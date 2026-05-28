@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 CAP Authors
+version: v2
+modules:
+  # Reserved name on the Buf Schema Registry (BSR).
+  # Until the Phase 0.3 namespace reorganization moves proto files into
+  # core/ and domains/construction/, this single module covers everything
+  # and is published under the `cap-core` name. After reorganization, a
+  # second module entry will be added for `buf.build/cap-protocol/cap-construction`.
+  - path: proto
+    name: buf.build/cap-protocol/cap-core
+lint:
+  use:
+    - STANDARD
+  except:
+    - PACKAGE_VERSION_SUFFIX
+breaking:
+  use:
+    - FILE

@@ -1,0 +1,58 @@
+{
+  "header": {
+    "messageId": "msg-0070",
+    "senderId": "excavator-01",
+    "receiverId": "site-agent-01",
+    "sentAt": "2026-03-19T08:04:00Z"
+  },
+  "aloStateUpdate": {
+    "machineId": "excavator-01",
+    "alo": {
+      "aloId": "excavator-01",
+      "aloType": "machine",
+      "canonicalName": "バックホウ1号機",
+      "properties": [
+        { "key": "operating_weight_kg", "value": "20000", "unit": "kg", "dtype": "float" },
+        { "key": "bucket_capacity_m3", "value": "0.8", "unit": "m3", "dtype": "float" },
+        { "key": "current_fuel_percent", "value": "72.5", "unit": "%", "dtype": "float" }
+      ],
+      "subObjects": [
+        {
+          "subObjId": "boom-arm-bucket",
+          "subObjType": "attachment",
+          "description": "ブーム・アーム・バケットアセンブリ",
+          "properties": [
+            { "key": "max_reach_m", "value": "9.9", "unit": "m", "dtype": "float" },
+            { "key": "max_depth_m", "value": "6.7", "unit": "m", "dtype": "float" }
+          ]
+        }
+      ],
+      "stateDescription": "B3区画で掘削作業中。粘土層に到達し掘削速度低下。4サイクル完了、残4サイクル。",
+      "manager": {
+        "availableSkills": ["excavate_batch", "load_truck", "safe_wait"],
+        "interactionRules": [
+          "掘削中はダンプトラックとの距離を5m以上維持",
+          "人検知時は即座に動作停止"
+        ],
+        "relations": [
+          {
+            "relationType": "operates_in",
+            "targetAloId": "zone_B3",
+            "description": "B3区画で掘削作業を実施中"
+          }
+        ],
+        "stateTransitionRules": [
+          "掘削完了後は積込フェーズに遷移",
+          "障害物検知時はテレオペレーションに切替"
+        ],
+        "currentKnowledge": [
+          "B3区画の表層は砂質土、深さ2m以降は粘土層",
+          "ダンプトラックdump-01が待機中"
+        ]
+      },
+      "updatedAt": "2026-03-19T08:04:00Z",
+      "ownerAgentId": "excavator-01"
+    },
+    "updateReason": "state_change"
+  }
+}

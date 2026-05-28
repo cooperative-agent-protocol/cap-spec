@@ -1,0 +1,119 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Construction Domain Pack v0 — Equipment subtypes.
+//
+// CAP-Core's `cap.v0.core.common.MachineType` enum carries broad equipment
+// classes (EXCAVATOR / DUMP_TRUCK / DOZER / etc.). Those are intentionally
+// in Core because they are commonly understood across multiple domains
+// (an articulated truck is a haul vehicle in mining too).
+//
+// This file adds construction-specific equipment metadata that does NOT
+// belong in Core — articulated joint counts, hydraulic system details,
+// optional implement attachments — anything that, if added to Core,
+// would force agriculture / mining / etc. to know about it.
+
+syntax = "proto3";
+
+package cap.v0.domains.construction;
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0.domains.construction";
+
+
+// ─── Excavator subtype / configuration ───────────────────────────────
+
+enum ExcavatorSubtype {
+  EXCAVATOR_SUBTYPE_UNSPECIFIED = 0;
+  // Crawler-mounted hydraulic excavator (most common).
+  EXCAVATOR_SUBTYPE_CRAWLER     = 1;
+  // Wheel-mounted hydraulic excavator (urban / paved sites).
+  EXCAVATOR_SUBTYPE_WHEELED     = 2;
+  // Long-reach configuration (extended arm for canal / waterway work).
+  EXCAVATOR_SUBTYPE_LONG_REACH  = 3;
+  // Compact / mini excavator (sub-6t class).
+  EXCAVATOR_SUBTYPE_COMPACT     = 4;
+}
+
+message ExcavatorAttributes {
+  ExcavatorSubtype subtype       = 1;
+  double           swing_radius_m = 2;  // tail swing radius
+  double           bucket_capacity_m3 = 3;
+  bool             quick_coupler  = 4;  // can swap implements
+  repeated string  attachments    = 5;  // ["bucket", "breaker", "grapple", ...]
+}
+
+
+// ─── Hauler subtype ──────────────────────────────────────────────────
+
+enum HaulerSubtype {
+  HAULER_SUBTYPE_UNSPECIFIED      = 0;
+  // Rigid dump truck (off-highway, large capacity).
+  HAULER_SUBTYPE_RIGID            = 1;
+  // Articulated dump truck (uneven terrain, mid capacity).
+  HAULER_SUBTYPE_ARTICULATED      = 2;
+  // Crawler carrier (low-ground-pressure, tracked).
+  HAULER_SUBTYPE_CRAWLER_CARRIER  = 3;
+  // On-highway dump truck (smaller, road-legal).
+  HAULER_SUBTYPE_ON_HIGHWAY       = 4;
+}
+
+message HaulerAttributes {
+  HaulerSubtype subtype                  = 1;
+  double        payload_capacity_m3      = 2;
+  double        payload_capacity_kg      = 3;
+  bool          tailgate                 = 4;  // bottom-dump or rear-dump w/ tailgate
+  double        max_loaded_speed_mps     = 5;
+  double        max_unloaded_speed_mps   = 6;
+}
+
+
+// ─── Dozer subtype ───────────────────────────────────────────────────
+
+enum DozerSubtype {
+  DOZER_SUBTYPE_UNSPECIFIED = 0;
+  DOZER_SUBTYPE_CRAWLER     = 1;
+  DOZER_SUBTYPE_WHEELED     = 2;  // rare but exists
+}
+
+message DozerAttributes {
+  DozerSubtype subtype     = 1;
+  double       blade_width_m = 2;
+  bool         ripper       = 3;  // has ripper attachment in rear
+}
+
+
+// ─── Roller subtype ──────────────────────────────────────────────────
+
+enum RollerSubtype {
+  ROLLER_SUBTYPE_UNSPECIFIED = 0;
+  ROLLER_SUBTYPE_TANDEM      = 1;
+  ROLLER_SUBTYPE_PNEUMATIC   = 2;
+  ROLLER_SUBTYPE_VIBRATORY   = 3;
+  ROLLER_SUBTYPE_SHEEPSFOOT  = 4;
+}
+
+message RollerAttributes {
+  RollerSubtype subtype          = 1;
+  double        drum_width_m     = 2;
+  bool          vibration_enabled = 3;
+}
+
+
+// ─── Grader / Loader / Crane attributes ──────────────────────────────
+//
+// Subtype enums are intentionally minimal at v0.1; implementations may
+// extend via the `cap.v0.extensions.<org>` namespace per ADR-011.
+
+message GraderAttributes {
+  double blade_width_m = 1;
+}
+
+message LoaderAttributes {
+  double bucket_capacity_m3 = 1;
+}
+
+message CraneAttributes {
+  double max_lift_capacity_kg = 1;
+  double max_reach_m          = 2;
+}

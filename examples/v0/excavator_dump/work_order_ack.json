@@ -1,0 +1,17 @@
+{
+  "header": {
+    "messageId": "msg-0003",
+    "senderId": "excavator-01",
+    "receiverId": "site-agent-01",
+    "correlationId": "msg-0002",
+    "workPackageId": "earthwork-B3",
+    "planHash": "sha256:a1b2c3d4e5f6",
+    "sentAt": "2026-03-19T09:00:05Z"
+  },
+  "workOrderAck": {
+    "taskId": "task-1042",
+    "decision": "DECISION_ACCEPTED",
+    "reason": "",
+    "retryAfterSec": 0
+  }
+}

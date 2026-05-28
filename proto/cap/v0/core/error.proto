@@ -1,0 +1,88 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Error Domain ───────────────────────────────────────────────────
+//
+// Error codes are organized by domain:
+//   TRANSPORT   (1xxx) — connection, timeout, serialization errors
+//   PROTOCOL    (2xxx) — state machine violations, unknown messages, version mismatches
+//   APPLICATION (3xxx) — reservation conflicts, task failures, safety violations
+
+enum ErrorDomain {
+  ERROR_DOMAIN_UNSPECIFIED = 0;
+  ERROR_DOMAIN_TRANSPORT   = 1;  // 1xxx: connection, heartbeat timeout, serialization
+  ERROR_DOMAIN_PROTOCOL    = 2;  // 2xxx: invalid state transition, unknown message, version mismatch
+  ERROR_DOMAIN_APPLICATION = 3;  // 3xxx: reservation conflict, machine busy, safety violation
+}
+
+// ─── Standard Error Codes ───────────────────────────────────────────
+//
+// Transport errors (1xxx):
+//   1001 = CONNECTION_TIMEOUT        — TCP/TLS handshake did not complete in time
+//   1002 = HEARTBEAT_TIMEOUT         — no heartbeat received within the configured interval
+//   1003 = SERIALIZATION_ERROR       — protobuf deserialization failure
+//   1004 = STREAM_RESET              — transport stream was unexpectedly closed
+//   1005 = TLS_HANDSHAKE_FAILED      — TLS/mTLS negotiation failed
+//
+// Protocol errors (2xxx):
+//   2001 = INVALID_STATE_TRANSITION  — attempted transition violates the state machine
+//   2002 = UNKNOWN_MESSAGE_TYPE      — received CapFrame with unrecognized body type
+//   2003 = VERSION_MISMATCH          — no common protocol version between peers
+//   2004 = INVALID_MESSAGE           — message is missing required fields or has invalid values
+//   2005 = DUPLICATE_MESSAGE_ID      — message_id has already been processed
+//   2006 = UNEXPECTED_MESSAGE        — valid message but not expected in current context
+//   2007 = SEQUENCE_VIOLATION        — message arrived out of the expected sequence
+//
+// Application errors (3xxx):
+//   3001 = RESERVATION_CONFLICT      — resource is already reserved by another holder
+//   3002 = TASK_NOT_FOUND            — referenced task_id does not exist
+//   3003 = MACHINE_BUSY              — machine has an active task and cannot accept a new one
+//   3004 = SKILL_NOT_SUPPORTED       — requested skill is not in the machine's CapabilityManifest
+//   3005 = SAFETY_VIOLATION          — action blocked by safety supervisor
+//   3006 = AUTHORIZATION_DENIED      — caller lacks permission for the requested action
+//   3007 = RESOURCE_NOT_FOUND        — referenced resource (zone, machine, etc.) does not exist
+//   3008 = PLAN_HASH_MISMATCH        — plan_hash in message does not match active plan
+//   3009 = CAPACITY_EXCEEDED         — requested volume/load exceeds machine capability
+//   3010 = RATE_LIMIT_EXCEEDED       — sender is exceeding the allowed message rate
+//   3011 = MESSAGE_TOO_LARGE         — serialized message exceeds max_message_size
+//   3012 = DIALOGUE_APPROVAL_TIMEOUT — no approval received within the dialogue timeout window
+
+// ─── CapError Message ───────────────────────────────────────────────
+
+// CapError is a structured error response sent as a CapFrame body.
+// The receiver MUST NOT close the stream upon receiving a CapError
+// unless the severity is CRITICAL.
+message CapError {
+  // Numeric error code (see standard error codes above).
+  uint32 error_code = 1;
+
+  // Domain classification for the error.
+  ErrorDomain domain = 2;
+
+  // Human-readable error description (primarily for logging/debugging).
+  string message = 3;
+
+  // message_id of the CapFrame that triggered this error (if applicable).
+  string related_message_id = 4;
+
+  // Severity of the error, reusing FaultSeverity for consistency.
+  FaultSeverity severity = 5;
+
+  // Machine-readable key-value details for programmatic error handling.
+  repeated KeyValue details = 6;
+
+  // Whether the failed operation can be retried.
+  bool retryable = 7;
+
+  // Suggested delay before retrying (seconds). Only meaningful if retryable is true.
+  int32 retry_after_sec = 8;
+}

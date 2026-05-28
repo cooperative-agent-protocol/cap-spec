@@ -1,0 +1,108 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Construction Domain Pack v0 — Skills.
+//
+// Skill name constants and per-skill parameter messages for the construction
+// domain. The CAP-Core protocol (`cap.v0.core`) defines the generic
+// SkillDefinition / SkillManifest / SkillExecutionStatus types; this file
+// supplies the construction-specific skill catalog.
+//
+// Skill names are dotted (`construction.<skill>`); this matches the
+// `SkillManifest.name` convention defined in CAP-Core and exposed to
+// implementations as opaque identifiers.
+
+syntax = "proto3";
+
+package cap.v0.domains.construction;
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0.domains.construction";
+
+
+// ─── Canonical skill name constants ──────────────────────────────────
+//
+// SkillName is *not* used on the wire as an enum; it exists purely to
+// provide an authoritative source of skill identifiers for generated
+// SDK constants (e.g. `cap_sdk_construction::Skills::ExcavateBatch`
+// in C++, `from cap.v0.domains.construction.skills_pb2 import SkillName`
+// in Python).
+//
+// Wire skill identifiers are always the string form
+// (`"construction.excavate_batch"`) on `SkillManifest.name`.
+enum SkillName {
+  SKILL_NAME_UNSPECIFIED      = 0;
+
+  // construction.excavate_batch — cycle-based excavation of a target
+  // zone. Stable since v0.1.
+  SKILL_NAME_EXCAVATE_BATCH   = 1;
+
+  // construction.haul_route — load → drive → dump cycle for a hauler.
+  // Stable since v0.1.
+  SKILL_NAME_HAUL_ROUTE       = 2;
+
+  // construction.dump — unload-only operation at a dump zone.
+  // Stable since v0.1.
+  SKILL_NAME_DUMP             = 3;
+}
+
+
+// ─── Per-skill parameters ────────────────────────────────────────────
+//
+// Each skill ships a strongly-typed parameter message so SDK consumers
+// can serialize / validate without parsing untyped `map<string, string>`
+// blobs. The CAP-Core `SkillInvocation` message carries these as an
+// `Any` field.
+
+// Parameters for `construction.excavate_batch`.
+message ExcavateBatchParams {
+  // Target excavation zone (must reference a zone of type
+  // ZONE_TYPE_EXCAVATION declared in the world model).
+  string target_zone_id = 1;
+
+  // Target volume to excavate. The skill terminates when this volume
+  // is reached or the zone is exhausted, whichever first.
+  double target_volume_m3 = 2;
+
+  // Optional cycle-count cap. 0 = no cap.
+  uint32 max_cycles = 3;
+}
+
+// Parameters for `construction.haul_route`.
+message HaulRouteParams {
+  // Source zone (where the load is picked up). Typically the same as
+  // the excavator's target_zone.
+  string source_zone_id = 1;
+
+  // Destination zone (where the load is dumped).
+  string dump_zone_id = 2;
+
+  // Total volume to haul across all cycles. 0 = until source exhausted.
+  double total_volume_m3 = 3;
+}
+
+// Parameters for `construction.dump`.
+message DumpParams {
+  // Dump zone identifier.
+  string dump_zone_id = 1;
+
+  // Volume to discharge from the machine's current payload. 0 = full.
+  double volume_m3 = 2;
+}
+
+
+// ─── Effect / verification keys ──────────────────────────────────────
+//
+// Metric keys used by `SkillManifest.expected_effects` for construction
+// skills. SDK consumers should reference these as constants to avoid
+// stringly-typed bugs.
+enum EffectKey {
+  EFFECT_KEY_UNSPECIFIED              = 0;
+  EFFECT_KEY_VOLUME_EXCAVATED_M3      = 1;  // produced by excavate_batch
+  EFFECT_KEY_BUCKET_FILL_AVG          = 2;  // produced by excavate_batch
+  EFFECT_KEY_VOLUME_DUMPED_M3         = 3;  // produced by haul_route, dump
+  EFFECT_KEY_PAYLOAD_DELTA_M3         = 4;  // produced by haul_route, dump
+  EFFECT_KEY_VOLUME_EXCAVATED_DELTA_MIN = 5;  // chain-scenario verification
+  EFFECT_KEY_ZONE_VOLUME_DUMPED_M3    = 6;  // chain-scenario verification
+  EFFECT_KEY_MACHINE_PAYLOAD_DELTA_M3 = 7;  // chain-scenario verification
+}

@@ -1,0 +1,14 @@
+{
+  "header": {
+    "messageId": "msg-0041",
+    "senderId": "site-agent-01",
+    "receiverId": "excavator-01",
+    "workPackageId": "wp-001",
+    "planHash": "a1b2c3d4e5f6",
+    "sentAt": "2026-03-19T08:07:00Z"
+  },
+  "cancelWorkOrder": {
+    "taskId": "task-1042",
+    "reason": "Re-planning due to partial failure in task graph"
+  }
+}

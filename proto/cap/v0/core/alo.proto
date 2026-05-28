@@ -1,0 +1,92 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── ALO (Abstract Language Object) ──────────────────────────────────
+// Based on Ochiai et al. (2304.04498): bridging linguistic objects and
+// Turing machine objects via language-grounded representations.
+
+// ALODescriptor represents an entity in the construction site as both
+// a human-readable linguistic object and a machine-queryable typed object.
+message ALODescriptor {
+  string alo_id          = 1;  // Globally unique, e.g. "zone_B3", "excavator-01"
+  string alo_type        = 2;  // "zone", "machine", "material", "load_point", "route"
+  string canonical_name  = 3;  // Human-readable name, e.g. "B3区画", "バックホウ1号機"
+
+  // Typed properties (machine-queryable)
+  repeated ALOProperty properties = 4;
+
+  // Sub-objects (components of this ALO)
+  repeated ALOSubObject sub_objects = 5;
+
+  // Natural language state description (LLM-generated or template-based)
+  string state_description = 6;
+
+  // Manager: what this ALO can do and how it relates to others
+  ALOManager manager = 7;
+
+  google.protobuf.Timestamp updated_at = 8;
+  string owner_agent_id = 9;  // Which agent maintains this ALO
+}
+
+// ALOProperty is a typed key-value pair with units.
+message ALOProperty {
+  string key   = 1;  // e.g. "area_m2", "volume_m3", "material_type"
+  string value = 2;  // e.g. "450", "clay"
+  string unit  = 3;  // e.g. "m2", "m3", ""
+  string dtype = 4;  // e.g. "float", "string", "enum"
+}
+
+// ALOSubObject represents a component of an ALO.
+message ALOSubObject {
+  string sub_obj_id   = 1;  // e.g. "B3_north_section", "bucket"
+  string sub_obj_type = 2;  // e.g. "zone_section", "attachment"
+  string description  = 3;  // Natural language description
+  repeated ALOProperty properties = 4;
+}
+
+// ALOManager describes capabilities, knowledge, and relations of an ALO.
+// Corresponds to ALO paper (Ochiai et al., 2304.04498) managerObj concept.
+message ALOManager {
+  repeated string available_skills        = 1;  // e.g. ["excavate_batch", "load_truck"]
+  repeated string interaction_rules       = 2;  // Natural language rules
+  repeated ALORelation relations          = 3;
+  repeated string state_transition_rules  = 4;  // LLM-generated state transition rules (Step 5-6)
+  repeated string current_knowledge       = 5;  // Domain knowledge (Step 2: knowledge list)
+}
+
+// ALORelation describes a relationship between two ALOs.
+message ALORelation {
+  string relation_type = 1;  // e.g. "loading_to", "waiting_for", "blocked_by"
+  string target_alo_id = 2;  // The other ALO in the relation
+  string description   = 3;  // Natural language description
+}
+
+// ─── ALO Messages ────────────────────────────────────────────────────
+
+// ALOStateUpdate synchronizes ALO state between agents.
+message ALOStateUpdate {
+  string machine_id    = 1;  // Sender machine
+  ALODescriptor alo    = 2;  // Updated ALO
+  string update_reason = 3;  // "periodic", "state_change", "anomaly_detected"
+}
+
+// ALOInteraction records when two ALOs interact.
+message ALOInteraction {
+  string interaction_id    = 1;
+  string initiator_alo_id  = 2;  // e.g. "excavator-01"
+  string target_alo_id     = 3;  // e.g. "zone_B3"
+  string interaction_type  = 4;  // e.g. "excavate", "load", "dump"
+  string description       = 5;  // Natural language description
+  repeated KeyValue parameters = 6;
+  google.protobuf.Timestamp timestamp = 7;
+}
