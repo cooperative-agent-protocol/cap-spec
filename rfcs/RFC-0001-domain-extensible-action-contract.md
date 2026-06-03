@@ -15,7 +15,7 @@ Copyright 2026 CAP Authors
 | Last Updated | 2026-06-04 |
 | Related ADR | (TBD) |
 | Related Discussion | (TBD) |
-| Reference Implementation | 中核 (`SkillInvocation` + Core conformance) は本リポジトリに additive 実装済 (`proto/cap/v0/core/skill.proto`, `cap-conformance/tests/test_skill_invocation.py`、未 push・要レビュー)。残り (intent 移設 / `parameters` 非推奨) は提案のまま。 |
+| Reference Implementation | **Phase-1 (additive・非破壊) 実装済** (未 push・要レビュー): `SkillInvocation`(core/skill.proto), `WorkOrder.invocation`(core/site_agent.proto), `parameters` の `deprecated` 化, Core conformance(`cap-conformance/tests/test_skill_invocation.py`)。buf lint clean、cap-reference Intent SDK 無回帰(47)、cap-pangaea 無回帰(209)。**Phase-2 (破壊的・据え置き)**: core/intent.proto の建設固有 intent を `domains/construction/` へ移設 + core tag reserve (cap-reference の Intent SDK 改修要)。 |
 
 ## Summary
 
