@@ -6,6 +6,7 @@ syntax = "proto3";
 package cap.v0.core;
 
 import "cap/v0/core/common.proto";
+import "cap/v0/core/skill.proto";
 
 option java_multiple_files = true;
 option java_package = "io.cap.v0";
@@ -28,7 +29,10 @@ message WorkOrder {
   GeoZoneRef source_zone      = 6;
   GeoZoneRef destination_zone = 7;
 
-  map<string, string> parameters = 8;
+  // DEPRECATED (RFC-0001): 型なし string blob。型付きパラメータは `invocation.typed_params`
+  // (SkillInvocation の google.protobuf.Any) に domain message として載せること。
+  // free-form なメタ情報のみ当面ここに残してよい。
+  map<string, string> parameters = 8 [deprecated = true];
 
   repeated Constraint preconditions      = 9;
   repeated Constraint safety_constraints = 10;
@@ -43,6 +47,12 @@ message WorkOrder {
   // Supplementary natural language context from the Site Agent or user.
   // NOT the normative contract — typed fields above take precedence.
   string human_context = 14;
+
+  // RFC-0001: 型付きアクション契約。`skill` (string) + `parameters` (deprecated string map) を
+  // 置き換える。`invocation.typed_params` (google.protobuf.Any) が domain-specific な typed
+  // パラメータ (例 cap.v0.domains.construction.ExcavateBatchParams) を運び、新 Domain Pack が
+  // CAP-Core を変更せず拡張できる。移行期は skill/parameters と併存 (dual-write 推奨)。
+  SkillInvocation invocation = 15;
 }
 
 // CancelWorkOrder requests cancellation of a previously issued work order.
