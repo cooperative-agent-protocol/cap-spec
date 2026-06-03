@@ -14,6 +14,8 @@ syntax = "proto3";
 
 package cap.v0.core;
 
+import "google/protobuf/any.proto";
+
 option java_multiple_files = true;
 option java_package = "io.cap.v0";
 
@@ -74,4 +76,24 @@ enum SkillExecutionStatus {
 message SkillCatalog {
   repeated SkillDefinition skills = 1;
   string catalog_version          = 2;  // Semantic version of the catalog
+}
+
+// ─── Skill Invocation (RFC-0001) ────────────────────────────────────
+
+// SkillInvocation is the domain-agnostic envelope for "invoke skill X with
+// typed parameters". The domain-specific parameters travel as a
+// google.protobuf.Any so a new Domain Pack (Construction / Agriculture /
+// Mining / Intralogistics / ...) can plug in its own strongly-typed parameter
+// message WITHOUT any change to CAP-Core. See RFC-0001.
+//
+// `skill_id` is domain-namespaced ("<domain>.<skill>", e.g.
+// "construction.excavate_batch"). `typed_params` carries the domain message
+// (e.g. cap.v0.domains.construction.ExcavateBatchParams). `metadata` is for
+// free-form, non-authoritative annotations only — NOT typed arguments
+// (those go in typed_params; map<string,string> blobs are what this replaces).
+message SkillInvocation {
+  string skill_id                  = 1;
+  string skill_name                = 2;
+  google.protobuf.Any typed_params = 3;
+  map<string, string> metadata     = 4;
 }
