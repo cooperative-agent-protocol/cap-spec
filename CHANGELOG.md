@@ -26,6 +26,10 @@ per [ADR-008](docs/adr/008-versioning.md).
   roadmap.
 - `proto/cap/v0/domains/construction/{skills,zones,equipment}.proto` —
   Construction Domain Pack v0 schemas.
+- `proto/cap/v0/domains/construction/intent.proto` — Construction
+  Domain Pack intent payloads carried by `Intent.domain_intent`.
+- RFC-0001 typed action path: `Intent.domain_intent`,
+  `SkillExecution.invocation`, and `SkillInvocation`-based typed payloads.
 - SPDX-License-Identifier headers across all source files (Apache-2.0).
 - buf.yaml `name: buf.build/cap-protocol/cap-core` for BSR module
   reservation.
@@ -41,6 +45,13 @@ per [ADR-008](docs/adr/008-versioning.md).
   `SKILL_EXECUTION_STATUS_*` (resolves pre-existing buf lint
   ENUM_VALUE_PREFIX violation; wire-format unchanged because value
   numbers remain stable).
+- Core construction-specific intent messages / oneof fields are deprecated
+  in favor of `cap.v0.domains.construction.*Intent` carried by
+  `Intent.domain_intent`; removal is deferred to the `cap.v1.core` boundary
+  per ADR-008.
+- `WorkOrder.parameters` and `SkillExecution.parameters` are deprecated in
+  favor of typed `SkillInvocation` payloads while remaining available for v0
+  dual-write compatibility.
 - `CONTRIBUTING.md` extended with DCO requirement + Domain Pack
   contribution workflow.
 
