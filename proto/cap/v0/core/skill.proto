@@ -55,10 +55,15 @@ message SkillExecution {
   string skill_id             = 2;
   string machine_id           = 3;
   string task_id              = 4;
-  map<string, string> parameters = 5;  // Actual parameter values
+  // [DEPRECATED] Removed in cap.v1.core. Actual typed arguments belong in
+  // `invocation.typed_params`; keep this string map only for v0 dual-write
+  // compatibility.
+  map<string, string> parameters = 5 [deprecated = true];
   SkillExecutionStatus status = 6;
   string result_summary       = 7;
   float duration_sec          = 8;
+  // RFC-0001 typed invocation that produced this execution record.
+  SkillInvocation invocation  = 9;
 }
 
 enum SkillExecutionStatus {

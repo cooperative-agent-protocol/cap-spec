@@ -15,11 +15,11 @@ Copyright 2026 CAP Authors
 | Last Updated | 2026-06-04 |
 | Related ADR | (TBD) |
 | Related Discussion | (TBD) |
-| Reference Implementation | **Phase-1 (additive・非破壊) 実装済** (未 push・要レビュー): `SkillInvocation`(core/skill.proto), `WorkOrder.invocation`(core/site_agent.proto), `parameters` の `deprecated` 化, Core conformance(`cap-conformance/tests/test_skill_invocation.py`)。buf lint clean、cap-reference Intent SDK 無回帰(47)、cap-pangaea 無回帰(209)。**Phase-2 (破壊的・据え置き)**: core/intent.proto の建設固有 intent を `domains/construction/` へ移設 + core tag reserve (cap-reference の Intent SDK 改修要)。 |
+| Reference Implementation | **Phase-1 landed (additive・非破壊)**: `SkillInvocation`(core/skill.proto), `WorkOrder.invocation`(core/site_agent.proto), `WorkOrder.parameters` の `deprecated` 化, Core conformance(`cap-conformance/tests/test_skill_invocation.py`)。**Phase-2 (additive・非破壊)**: `Intent.domain_intent`(Any) 追加、`domains/construction/intent.proto` 新設、旧 core 建設 intent/message/oneof fields の `deprecated` 化、`SkillExecution.invocation` 追加 + `SkillExecution.parameters` deprecated。削除・tag reserve は v0 では行わず、cap.v1 境界のみ。 |
 
 ## Summary
 
-CAP は「多分野・多者で使われる汎用協調プロトコル」を標榜するが、**機体に「何の動作を・どの引数で」やらせるか**の表現が現状 3〜4 通りに分裂し、しかも **core に建設(掘削機)固有の型が直書き**されている。本 RFC は、(1) core に**分野非依存の汎用アクション・エンベロープ** `SkillInvocation`(domains が `google.protobuf.Any` で型付き payload を差し込む) を定義し、(2) `core/intent.proto` の建設固有 intent (`DigIntent`/`LoadTruckIntent` 等) を `domains/construction/` へ移し、(3) `WorkOrder`/`SkillExecution` の `map<string,string> parameters` (= 型なし blob) を非推奨化する。これにより**新分野 (Agriculture/Mining/Intralogistics 等) が core を一切変更せず**、自分の typed param/intent を足して CAP に乗れるようになる。
+CAP は「多分野・多者で使われる汎用協調プロトコル」を標榜するが、**機体に「何の動作を・どの引数で」やらせるか**の表現が現状 3〜4 通りに分裂し、しかも **core に建設(掘削機)固有の型が直書き**されている。本 RFC は、(1) core に**分野非依存の汎用アクション・エンベロープ** `SkillInvocation`(domains が `google.protobuf.Any` で型付き payload を差し込む) を定義し、(2) `Intent.domain_intent`(Any) を追加して domain-specific intent を core 不変で運べるようにし、(3) 建設 intent の正本を `domains/construction/intent.proto` に置き、core に残る旧建設 intent を deprecated 化し、(4) `WorkOrder`/`SkillExecution` の `map<string,string> parameters` (= 型なし blob) を非推奨化する。ADR-008 により v0 は additive-only なので、core の旧 message/field は削除せず v0 中は並存させる。これにより**新分野 (Agriculture/Mining/Intralogistics 等) が core を一切変更せず**、自分の typed param/intent を足して CAP に乗れるようになる。
 
 ## Motivation
 
@@ -58,39 +58,45 @@ message SkillInvocation {
 }
 ```
 
-**(2) `Intent` を分野拡張可能に** (`core/intent.proto`): 汎用 (`drive`/`stop`) は core に残し、建設固有を `Any` 経由の generic arm に置換:
+**(2) `Intent` を分野拡張可能に** (`core/intent.proto`): 汎用 (`drive`/`stop`) は core に残す。建設固有 oneof arm は v0 では削除せず deprecated にし、domain-specific intent の新規送信は `Any` 経由の generic arm に移行する:
 
 ```protobuf
 // Before (core leaks construction specifics)
 message Intent {
   // ...
   oneof payload {
-    DriveIntent drive = 4;
-    DigIntent dig = 5;             // construction-specific — leaks into core
-    SwingIntent swing = 6;          // "
-    LoadTruckIntent load_truck = 7; // "
-    StabilizeArmIntent stabilize_arm = 8; // "
-    DumpIntent dump = 9;            // "
-    WaitForLoadIntent wait_for_load = 10; // "
-    StopIntent stop = 11;
+    DriveIntent drive = 10;
+    DigIntent dig = 11;             // construction-specific — leaks into core
+    SwingIntent swing = 12;          // "
+    LoadTruckIntent load_truck = 13; // "
+    StabilizeArmIntent stabilize_arm = 14; // "
+    DumpIntent dump = 15;            // "
+    WaitForLoadIntent wait_for_load = 16; // "
+    StopIntent stop = 30;
   }
 }
 
-// After (core stays domain-agnostic; domains extend via Any)
+// After in cap.v0 (additive-only: legacy arms remain, deprecated)
 message Intent {
   // ...
   oneof payload {
-    DriveIntent drive = 4;          // generic: any mobile agent
-    StopIntent  stop  = 11;         // generic
-    google.protobuf.Any domain_intent = 12;  // NEW: e.g. construction.DigIntent
+    DriveIntent drive = 10;         // generic: any mobile agent
+    DigIntent dig = 11 [deprecated = true];
+    SwingIntent swing = 12 [deprecated = true];
+    LoadTruckIntent load_truck = 13 [deprecated = true];
+    StabilizeArmIntent stabilize_arm = 14 [deprecated = true];
+    DumpIntent dump = 15 [deprecated = true];
+    WaitForLoadIntent wait_for_load = 16 [deprecated = true];
+    StopIntent stop = 30;           // generic
+    google.protobuf.Any domain_intent = 40;  // NEW: e.g. construction.DigIntent
   }
 }
-// DigIntent/SwingIntent/LoadTruckIntent/StabilizeArmIntent/DumpIntent/WaitForLoadIntent
-// MOVE to domains/construction/intent.proto (field tags 5-10 RESERVED for wire safety).
-reserved 5, 6, 7, 8, 9, 10;
+
+// At the cap.v1.core boundary only, the deprecated construction arms may be
+// removed and their field tags reserved. ADR-008 forbids doing that inside v0.
 ```
 
-**(3) 建設固有 intent を domain pack へ** (`domains/construction/intent.proto`, NEW): `DigIntent`/`SwingIntent`/`LoadTruckIntent`/`StabilizeArmIntent`/`DumpIntent`/`WaitForLoadIntent` を core からそのまま移設(フィールドは不変)。`construction/skills.proto` の `ExcavateBatchParams` 等と同居。
+**(3) 建設固有 intent を domain pack へ** (`domains/construction/intent.proto`, NEW): `DigIntent`/`SwingIntent`/`LoadTruckIntent`/`StabilizeArmIntent`/`DumpIntent`/`WaitForLoadIntent` を core から同一 shape で複製し、以後の正本とする。旧 core message は `option deprecated = true`、旧 oneof fields は `[deprecated = true]` とし、`[DEPRECATED] removed in cap.v1.core` コメントを付ける。
 
 **(4) 型なし blob の非推奨化** (`core/site_agent.proto`, `core/skill.proto`):
 
@@ -100,7 +106,11 @@ message WorkOrder {
   map<string, string> parameters = 8 [deprecated = true];  // 型なし blob → 非推奨
   SkillInvocation invocation = 15;                          // NEW: 型付きアクション
 }
-// SkillExecution.parameters (map<string,string>) も同様に deprecated + SkillInvocation 化。
+message SkillExecution {
+  // ...
+  map<string, string> parameters = 5 [deprecated = true];  // 型なし blob → 非推奨
+  SkillInvocation invocation = 9;                           // NEW: 型付き実行記録
+}
 ```
 
 ### State machine changes
@@ -109,13 +119,13 @@ message WorkOrder {
 
 ### Wire compatibility
 
-- **Additive**: `SkillInvocation invocation`/`Intent.domain_intent` は新フィールド。古い実装は未知フィールドを無視し、`parameters` map で動作継続(deprecation 期間中は両方を populate する dual-write を推奨)。
-- **moved messages**: `DigIntent` 等の core→domain 移設は **同一 field tag を core 側で `reserved`** にすることで wire 衝突を防ぐ(古い `Intent.dig=5` を新 schema が誤読しない)。
+- **Additive**: `WorkOrder.invocation`/`SkillExecution.invocation`/`Intent.domain_intent` は新フィールド。古い実装は未知フィールドを無視し、`parameters` map や legacy core intent arms で動作継続(deprecation 期間中は両方を populate する dual-write を推奨)。
+- **No v0 removal**: `DigIntent` 等の core→domain 移行は v0 では「domain 側に正本を追加 + core 側を deprecated」に留める。field tag の reserve は cap.v1.core で削除するときだけ行う。これは ADR-008 の additive-only 方針に従うため。
 - forward (古→新) / backward (新→古) いずれも deprecation window 中は string-map fallback で成立。
 
 ### Conformance impact
 
-- **Core conformance (Level 1/2)** は分野非依存を維持: `SkillInvocation` が**不透明な `Any` を round-trip**できること(type_url 保持、payload 透過)を検証する新テスト。具体 param 型は検証しない。
+- **Core conformance (Level 1/2)** は分野非依存を維持: `SkillInvocation` と `Intent.domain_intent` が**不透明な `Any` を round-trip**できること(type_url 保持、payload 透過)を検証する新テスト。具体 param 型は検証しない。
 - **Construction Domain Pack conformance** が `ExcavateBatchParams`/`DigIntent` 等の typed param を検証(現 Level の延長)。
 - **新 Domain Pack** は自分の conformance を同梱(domain-pack-template に追記)。core テストは新分野追加で不変。
 
@@ -147,17 +157,17 @@ message WorkOrder {
 
 ## Migration Plan
 
-breaking ではない(additive + deprecation)。
+breaking ではない(additive + deprecation)。ADR-008 により、v0 中の削除・rename・wire type 変更は禁止。
 
 1. **v0.(n)**: `SkillInvocation` + `Intent.domain_intent` を追加、`domains/construction/intent.proto` を新設(core の建設 intent と**並存**、core 側は `deprecated`)。`parameters` map を `deprecated` マーク。実装は dual-write(両方 populate)。
 2. **v0.(n+1)**: 全リファレンス実装・主要 Domain Pack が typed path に移行。conformance を typed path 必須へ。
-3. **v0.(n+2)**: core の建設固有 intent と `parameters` map を**削除**(field tags は `reserved` 維持)。deprecation window = 2 minor versions(governance 既定)。
+3. **cap.v1.core boundary**: 最低 2 minor releases の deprecation window 後、次 major package (`cap.v1.core`) でのみ core の建設固有 intent と `parameters` map を削除し、旧 field tags を `reserved` にする。cap.v0.core では削除しない。
 
 ## Rollout Plan
 
-- Reference 実装: `cap-reference` に `SkillInvocation`/`Any` round-trip を、`cap-pangaea`(construction 実装)に `parameters["dig_reach"]` 等 → `construction.ExcavateBatchParams`(Any) への移行を landed。
-- Conformance: Core に Any round-trip テスト、Construction Domain Pack に typed param テストを追加。
-- Docs: `domain-pack-template.md` に「typed params を `SkillInvocation.typed_params`(Any) で運ぶ」節を追記。
+- Reference 実装: `cap-reference` に `SkillInvocation`/`Any` round-trip を、`cap-pangaea`(construction 実装)に `parameters["dig_reach"]` 等 → `construction.ExcavateBatchParams`(Any) への移行を進める。
+- Conformance: Core に `SkillInvocation.typed_params` と `Intent.domain_intent` の Any round-trip テスト、Construction Domain Pack に typed param/intent テストを追加。
+- Docs: `domain-pack-template.md` に「typed params を `SkillInvocation.typed_params`(Any) で運び、domain intent を `Intent.domain_intent`(Any) で運ぶ」節を追記。
 
 ## References
 

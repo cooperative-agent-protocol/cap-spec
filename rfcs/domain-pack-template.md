@@ -9,7 +9,7 @@ Copyright 2026 CAP Authors
 > の項目をすべて埋めること。
 
 CAP は domain-agnostic な Core 仕様 (Manifest / WorkOrder / Heartbeat / Dialogue / ALO /
-Safety Supervisor) + ドメイン固有の **Domain Pack** (skills / zones / equipment) で構成
+Safety Supervisor) + ドメイン固有の **Domain Pack** (skills / intents / zones / equipment) で構成
 される。v0.x のリファレンス Domain Pack は Construction。Agriculture / Mining /
 Forestry / Intralogistics 等は本テンプレートに沿って提案する。
 
@@ -66,10 +66,24 @@ Forestry / Intralogistics 等は本テンプレートに沿って提案する。
 syntax = "proto3";
 package cap.v0.domains.agriculture;
 
-// Skill definitions specific to agricultural operations.
-message PlowSkill { /* … */ }
-message PlantSkill { /* … */ }
-// …
+// Skill names and typed parameter messages specific to agricultural operations.
+message PlowParams { /* … */ }
+message PlantParams { /* … */ }
+// These travel in cap.v0.core.SkillInvocation.typed_params (google.protobuf.Any).
+```
+
+### `intent.proto`
+
+```protobuf
+// cap-spec/proto/cap/v0/domains/agriculture/intent.proto
+syntax = "proto3";
+package cap.v0.domains.agriculture;
+
+// Fine-grained domain intents. These travel in
+// cap.v0.core.Intent.domain_intent (google.protobuf.Any); CAP-Core does not
+// add a new oneof arm for each domain.
+message PlowIntent { /* … */ }
+message PlantIntent { /* … */ }
 ```
 
 ### `zones.proto`
@@ -94,7 +108,9 @@ package cap.v0.domains.agriculture;
 
 Domain Pack 設計時に「Core にこの field が必要」となった場合、それは **別 RFC** として
 切り出すこと。Domain Pack RFC 内で Core 拡張を同時提案するのは推奨しない (議論の粒度が
-混ざる)。
+混ざる)。新しい skill parameter は `SkillInvocation.typed_params`、新しい domain intent は
+`Intent.domain_intent` で運ぶのが既定であり、Core oneof への domain-specific field 追加は
+避ける。
 
 ## Conformance test suite
 

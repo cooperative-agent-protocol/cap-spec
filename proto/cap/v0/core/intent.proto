@@ -7,6 +7,7 @@ package cap.v0.core;
 
 import "cap/v0/core/common.proto";
 import "cap/v0/core/lifecycle.proto";
+import "google/protobuf/any.proto";
 
 option java_multiple_files = true;
 option java_package = "io.cap.v0";
@@ -75,33 +76,55 @@ message DriveIntent {
   AbortPolicy abort_policy = 2;
 }
 
+// [DEPRECATED] Removed in cap.v1.core. Construction-specific intents do not
+// belong in domain-agnostic Core. Use `Intent.domain_intent` carrying
+// `cap.v0.domains.construction.DigIntent` instead.
+//
+// v0 is additive-only (ADR-008), so this legacy message remains on the wire
+// until the cap.v1.core boundary.
 message DigIntent {
+  option deprecated = true;
   double target_volume_m3 = 1;
   double bucket_capacity_m3 = 2;
   // Optional: explicit dig pose (for spatial dig planning).
   Pose3D approach_pose = 3;
 }
 
+// [DEPRECATED] Removed in cap.v1.core. Use `Intent.domain_intent` carrying
+// `cap.v0.domains.construction.SwingIntent` instead.
 message SwingIntent {
+  option deprecated = true;
   double target_yaw_rad = 1;
   // Optional: target truck for load alignment.
   string truck_id = 2;
 }
 
+// [DEPRECATED] Removed in cap.v1.core. Use `Intent.domain_intent` carrying
+// `cap.v0.domains.construction.LoadTruckIntent` instead.
 message LoadTruckIntent {
+  option deprecated = true;
   string truck_id = 1;
   double bucket_volume_m3 = 2;
 }
 
+// [DEPRECATED] Removed in cap.v1.core. Use `Intent.domain_intent` carrying
+// `cap.v0.domains.construction.StabilizeArmIntent` instead.
 message StabilizeArmIntent {
+  option deprecated = true;
   // Empty payload — declares "arm should be in stable carry pose".
 }
 
+// [DEPRECATED] Removed in cap.v1.core. Use `Intent.domain_intent` carrying
+// `cap.v0.domains.construction.DumpIntent` instead.
 message DumpIntent {
+  option deprecated = true;
   // Empty payload — truck side: bed up to dump payload.
 }
 
+// [DEPRECATED] Removed in cap.v1.core. Use `Intent.domain_intent` carrying
+// `cap.v0.domains.construction.WaitForLoadIntent` instead.
 message WaitForLoadIntent {
+  option deprecated = true;
   // Truck side: declare ready-to-load posture and wait.
   double timeout_sec = 1;  // 0 = no timeout
 }
@@ -139,13 +162,28 @@ message Intent {
 
   oneof payload {
     DriveIntent        drive          = 10;
-    DigIntent          dig            = 11;
-    SwingIntent        swing          = 12;
-    LoadTruckIntent    load_truck     = 13;
-    StabilizeArmIntent stabilize_arm  = 14;
-    DumpIntent         dump           = 15;
-    WaitForLoadIntent  wait_for_load  = 16;
+    // [DEPRECATED] Removed in cap.v1.core. Use `domain_intent` with
+    // `cap.v0.domains.construction.DigIntent`.
+    DigIntent          dig            = 11 [deprecated = true];
+    // [DEPRECATED] Removed in cap.v1.core. Use `domain_intent` with
+    // `cap.v0.domains.construction.SwingIntent`.
+    SwingIntent        swing          = 12 [deprecated = true];
+    // [DEPRECATED] Removed in cap.v1.core. Use `domain_intent` with
+    // `cap.v0.domains.construction.LoadTruckIntent`.
+    LoadTruckIntent    load_truck     = 13 [deprecated = true];
+    // [DEPRECATED] Removed in cap.v1.core. Use `domain_intent` with
+    // `cap.v0.domains.construction.StabilizeArmIntent`.
+    StabilizeArmIntent stabilize_arm  = 14 [deprecated = true];
+    // [DEPRECATED] Removed in cap.v1.core. Use `domain_intent` with
+    // `cap.v0.domains.construction.DumpIntent`.
+    DumpIntent         dump           = 15 [deprecated = true];
+    // [DEPRECATED] Removed in cap.v1.core. Use `domain_intent` with
+    // `cap.v0.domains.construction.WaitForLoadIntent`.
+    WaitForLoadIntent  wait_for_load  = 16 [deprecated = true];
     StopIntent         stop           = 30;
+    // Domain-specific intent payload. Implementations MUST unpack only
+    // allowlisted domain types; unknown type_url values are rejected safely.
+    google.protobuf.Any domain_intent = 40;
   }
 }
 

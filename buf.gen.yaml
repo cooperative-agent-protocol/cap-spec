@@ -28,3 +28,8 @@ plugins:
   # project (e.g. via a ``Packages/com.cap.proto/Runtime/`` symlink).
   - remote: buf.build/protocolbuffers/csharp
     out: gen/csharp
+    # Core and Domain Packs may both define files such as `intent.proto`.
+    # Emit by namespace so `Cap.V0.Core.Intent` and
+    # `Cap.V0.Domains.Construction.Intent` do not collide as flat `Intent.cs`.
+    opt:
+      - base_namespace=Cap

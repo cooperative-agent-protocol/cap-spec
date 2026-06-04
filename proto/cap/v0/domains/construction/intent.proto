@@ -1,0 +1,60 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+// Construction Domain Pack — domain-specific Intent payloads.
+//
+// CAP-Core (`cap.v0.core`) defines the generic action envelope: the
+// `SkillInvocation.typed_params` (google.protobuf.Any) and the
+// `Intent.domain_intent` (Any) carry these domain messages so CAP-Core stays
+// domain-agnostic. New Domain Packs (Agriculture / Mining / Intralogistics /
+// ...) ship their own analogous `intent.proto` under `cap.v0.domains.<name>`
+// WITHOUT any change to Core. See RFC-0001.
+//
+// These messages are the canonical home for the excavator/truck intents that
+// historically lived in `cap.v0.core.intent` (now deprecated there; removed at
+// the cap.v1 boundary per ADR-008 — v0 is additive-only).
+
+syntax = "proto3";
+
+package cap.v0.domains.construction;
+
+import "cap/v0/core/common.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0.domains.construction";
+
+// DigIntent: excavate up to a target volume.
+message DigIntent {
+  double target_volume_m3 = 1;
+  double bucket_capacity_m3 = 2;
+  // Optional: explicit dig pose (for spatial dig planning).
+  cap.v0.core.Pose3D approach_pose = 3;
+}
+
+// SwingIntent: rotate the upper structure to a target yaw.
+message SwingIntent {
+  double target_yaw_rad = 1;
+  // Optional: target truck for load alignment.
+  string truck_id = 2;
+}
+
+// LoadTruckIntent: discharge bucket payload onto the named truck.
+message LoadTruckIntent {
+  string truck_id = 1;
+  double bucket_volume_m3 = 2;
+}
+
+// StabilizeArmIntent: declare "arm should be in stable carry pose".
+message StabilizeArmIntent {
+  // Empty payload.
+}
+
+// DumpIntent: truck side — bed up to dump payload.
+message DumpIntent {
+  // Empty payload.
+}
+
+// WaitForLoadIntent: truck side — declare ready-to-load posture and wait.
+message WaitForLoadIntent {
+  double timeout_sec = 1;  // 0 = no timeout
+}

@@ -14,6 +14,7 @@ on top of CAP Core.
 | File | Contents |
 |---|---|
 | `cap.v0.domains.construction.skills` | `construction.excavate_batch`, `construction.haul_route`, `construction.dump` + parameter messages + effect-key enums |
+| `cap.v0.domains.construction.intent` | Construction-specific fine-grained intent payloads carried by `cap.v0.core.Intent.domain_intent` |
 | `cap.v0.domains.construction.zones` | `excavation` / `dump` / `haul_road` / `terrain` / `staging` zone types + soil-class enum + per-type attribute messages |
 | `cap.v0.domains.construction.equipment` | Excavator / Hauler / Dozer / Roller / Grader / Loader / Crane subtype enums + attribute messages |
 
