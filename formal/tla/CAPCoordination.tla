@@ -1,33 +1,54 @@
 ------------------------ MODULE CAPCoordination ------------------------
 (* TLA+ composite model: multi-machine CAP coordination.
  *
- * Models 2 excavators + 1 dump truck contending for a shared load point.
- * Combines TaskState and ReservationState machines.
+ * Models a set of excavators and carriers (dumps) contending for a set of
+ * shared load-point resources, combining the TaskState and
+ * ReservationState machines into a single concurrent specification.
+ *
+ * The model is parameterised so that the same specification covers the
+ * minimal reference instance and a bounded scalability sweep:
+ *   Excavators, Dumps  -- the machine sets (N = |Excavators| + |Dumps|)
+ *   Resources          -- the shared resource set (R = |Resources|)
+ *   MaxTasks           -- per-machine completed-task counter saturates here
+ *                         (keeps the state space finite WITHOUT a state
+ *                          constraint, so liveness checking is sound)
+ *   QueuedGrants       -- FALSE: a busy resource bounces a request (deny);
+ *                         TRUE : a busy resource queues the request (the
+ *                                requester waits in REQUESTED until grantable)
  *
  * Verifies:
- *   Safety:   No deadlock — at least one machine can always make progress.
- *   Safety:   Load point never has two simultaneous holders.
- *   Safety:   Reservation + task state consistency.
- *   Liveness: No starvation — every machine eventually completes a task.
+ *   Safety:   No deadlock -- at least one machine can always make progress.
+ *   Safety:   No resource ever has two simultaneous GRANTED holders.
+ *   Safety:   Reservation + holder + target consistency.
+ *   Liveness: No starvation -- every machine eventually completes a task
+ *             (sound only under the appropriate fairness/queueing regime;
+ *              see ReservationState/MachineMode for the component liveness).
  *)
 
-EXTENDS Naturals, FiniteSets
+EXTENDS Naturals, FiniteSets, TLC
 
 CONSTANTS
     Excavators,     \* e.g., {"exc1", "exc2"}
     Dumps,          \* e.g., {"dump1"}
-    LoadPoint       \* e.g., "LP-1" (single shared resource)
+    Resources,      \* e.g., {"LP-1"} or {"LP-1", "LP-2"}
+    MaxTasks,       \* saturation bound for the per-machine task counter
+    QueuedGrants    \* BOOLEAN: TRUE = site agent queues instead of denying
 
 \* All machines
 Machines == Excavators \cup Dumps
 
 VARIABLES
-    taskState,      \* taskState[m] ∈ TaskStates
-    resState,       \* resState[m] ∈ ReservationStates  (for LoadPoint)
-    lpHolder,       \* Current holder of LoadPoint ("NONE" or machine_id)
-    taskCount       \* taskCount[m] = number of completed tasks (for starvation check)
+    taskState,      \* taskState[m] in TaskStates
+    resState,       \* resState[m] in ResStates (single outstanding reservation)
+    resTarget,      \* resTarget[m] in Resources \cup {"NONE"}: the resource m targets
+    holder,         \* holder[r] in Machines \cup {"NONE"}: current grant holder of r
+    taskCount       \* taskCount[m] = completed-task count (saturating, for starvation)
 
-vars == <<taskState, resState, lpHolder, taskCount>>
+vars == <<taskState, resState, resTarget, holder, taskCount>>
+
+\* Symmetry: machines of the same role and resources are interchangeable.
+\* (Sound for SAFETY checking only; never used in liveness configurations.)
+Symm == Permutations(Excavators) \cup Permutations(Dumps) \cup Permutations(Resources)
 
 \* ─── State Definitions ────────────────────────────────────────────────
 
@@ -35,7 +56,7 @@ TaskStates == { "IDLE", "PENDING", "RUNNING", "BLOCKED", "SUCCEEDED" }
 
 ResStates == { "NONE", "REQUESTED", "GRANTED", "DENIED", "RELEASED" }
 
-\* ─── State Constraint (for model checking) ───────────────────────────
+\* ─── State Constraint (legacy regression only) ───────────────────────
 
 BoundedTaskCount == \A m \in Machines : taskCount[m] <= 2
 
@@ -44,29 +65,38 @@ BoundedTaskCount == \A m \in Machines : taskCount[m] <= 2
 TypeOK ==
     /\ \A m \in Machines : taskState[m] \in TaskStates
     /\ \A m \in Machines : resState[m] \in ResStates
-    /\ lpHolder \in Machines \cup {"NONE"}
-    /\ \A m \in Machines : taskCount[m] \in 0..3
+    /\ resTarget \in [Machines -> Resources \cup {"NONE"}]
+    /\ holder \in [Resources -> Machines \cup {"NONE"}]
+    /\ \A m \in Machines : taskCount[m] \in 0..MaxTasks
 
 \* ─── Safety Properties ──────────────────────────────────────────────
 
-\* Load point has at most one holder
+\* No resource has two simultaneous GRANTED holders (no double-grant).
 NoDoubleGrant ==
-    Cardinality({ m \in Machines : resState[m] = "GRANTED" }) <= 1
+    \A r \in Resources :
+        Cardinality({ m \in Machines :
+                        resState[m] = "GRANTED" /\ resTarget[m] = r }) <= 1
 
-\* Holder consistency
+\* Holder tracking is consistent with reservation state, per resource.
 HolderConsistent ==
-    \/ (lpHolder = "NONE" /\ \A m \in Machines : resState[m] /= "GRANTED")
-    \/ (\E m \in Machines : lpHolder = m /\ resState[m] = "GRANTED")
+    \A r \in Resources :
+        \/ (holder[r] = "NONE"
+              /\ \A m \in Machines :
+                   ~(resState[m] = "GRANTED" /\ resTarget[m] = r))
+        \/ (\E m \in Machines :
+                holder[r] = m /\ resState[m] = "GRANTED" /\ resTarget[m] = r)
 
-\* No global deadlock: at least one action is always possible
-\* (This is checked by TLC automatically as a deadlock check)
+\* A machine holds a resource target exactly while a reservation exists.
+TargetConsistent ==
+    \A m \in Machines : (resState[m] = "NONE") <=> (resTarget[m] = "NONE")
 
 \* ─── Initial State ──────────────────────────────────────────────────
 
 Init ==
     /\ taskState = [m \in Machines |-> "IDLE"]
-    /\ resState = [m \in Machines |-> "NONE"]
-    /\ lpHolder = "NONE"
+    /\ resState  = [m \in Machines |-> "NONE"]
+    /\ resTarget = [m \in Machines |-> "NONE"]
+    /\ holder    = [r \in Resources |-> "NONE"]
     /\ taskCount = [m \in Machines |-> 0]
 
 \* ─── Task Transitions ───────────────────────────────────────────────
@@ -75,82 +105,95 @@ Init ==
 DispatchTask(m) ==
     /\ taskState[m] = "IDLE"
     /\ taskState' = [taskState EXCEPT ![m] = "PENDING"]
-    /\ UNCHANGED <<resState, lpHolder, taskCount>>
+    /\ UNCHANGED <<resState, resTarget, holder, taskCount>>
 
 \* Machine accepts the task
 AcceptTask(m) ==
     /\ taskState[m] = "PENDING"
     /\ taskState' = [taskState EXCEPT ![m] = "RUNNING"]
-    /\ UNCHANGED <<resState, lpHolder, taskCount>>
+    /\ UNCHANGED <<resState, resTarget, holder, taskCount>>
 
-\* Machine needs load point → request reservation
-RequestLoadPoint(m) ==
+\* Machine needs a resource → request reservation on r
+RequestResource(m, r) ==
     /\ taskState[m] = "RUNNING"
     /\ resState[m] = "NONE"
-    /\ resState' = [resState EXCEPT ![m] = "REQUESTED"]
-    /\ UNCHANGED <<taskState, lpHolder, taskCount>>
+    /\ resState'  = [resState  EXCEPT ![m] = "REQUESTED"]
+    /\ resTarget' = [resTarget EXCEPT ![m] = r]
+    /\ UNCHANGED <<taskState, holder, taskCount>>
 
-\* Site agent grants load point
-GrantLoadPoint(m) ==
+\* Site agent grants the targeted resource (it is free)
+GrantResource(m) ==
     /\ resState[m] = "REQUESTED"
-    /\ lpHolder = "NONE"
+    /\ holder[resTarget[m]] = "NONE"
     /\ resState' = [resState EXCEPT ![m] = "GRANTED"]
-    /\ lpHolder' = m
-    /\ UNCHANGED <<taskState, taskCount>>
+    /\ holder'   = [holder EXCEPT ![resTarget[m]] = m]
+    /\ UNCHANGED <<taskState, resTarget, taskCount>>
 
-\* Site agent denies (another machine holds it)
-DenyLoadPoint(m) ==
+\* Site agent denies (another machine holds the targeted resource).
+\* Disabled when the site agent queues requests instead of bouncing them.
+DenyResource(m) ==
+    /\ ~QueuedGrants
     /\ resState[m] = "REQUESTED"
-    /\ lpHolder /= "NONE"
+    /\ holder[resTarget[m]] /= "NONE"
     /\ resState' = [resState EXCEPT ![m] = "DENIED"]
-    /\ UNCHANGED <<taskState, lpHolder, taskCount>>
+    /\ UNCHANGED <<taskState, resTarget, holder, taskCount>>
 
-\* Denied machine transitions to BLOCKED
+\* Denied machine transitions to BLOCKED and clears its target for re-request.
+\* (Enabled from RUNNING or BLOCKED: a machine denied again after a retry must
+\*  still be able to leave the DENIED state -- otherwise BLOCKED/DENIED is an
+\*  absorbing trap. This repairs a defect found during the sweep.)
 BlockOnDenial(m) ==
-    /\ taskState[m] = "RUNNING"
+    /\ taskState[m] \in {"RUNNING", "BLOCKED"}
     /\ resState[m] = "DENIED"
     /\ taskState' = [taskState EXCEPT ![m] = "BLOCKED"]
-    /\ resState' = [resState EXCEPT ![m] = "NONE"]  \* Reset for re-request
-    /\ UNCHANGED <<lpHolder, taskCount>>
+    /\ resState'  = [resState  EXCEPT ![m] = "NONE"]
+    /\ resTarget' = [resTarget EXCEPT ![m] = "NONE"]
+    /\ UNCHANGED <<holder, taskCount>>
 
-\* Blocked machine retries reservation
-RetryReservation(m) ==
+\* Blocked machine retries the reservation (may re-target any resource)
+RetryReservation(m, r) ==
     /\ taskState[m] = "BLOCKED"
     /\ resState[m] = "NONE"
-    /\ resState' = [resState EXCEPT ![m] = "REQUESTED"]
-    /\ UNCHANGED <<taskState, lpHolder, taskCount>>
+    /\ resState'  = [resState  EXCEPT ![m] = "REQUESTED"]
+    /\ resTarget' = [resTarget EXCEPT ![m] = r]
+    /\ UNCHANGED <<taskState, holder, taskCount>>
 
 \* Blocked machine gets unblocked (reservation granted)
 UnblockOnGrant(m) ==
     /\ taskState[m] = "BLOCKED"
     /\ resState[m] = "GRANTED"
     /\ taskState' = [taskState EXCEPT ![m] = "RUNNING"]
-    /\ UNCHANGED <<resState, lpHolder, taskCount>>
+    /\ UNCHANGED <<resState, resTarget, holder, taskCount>>
 
-\* Machine completes task and releases load point
+\* Saturating increment of the completed-task counter
+Inc(c) == IF c < MaxTasks THEN c + 1 ELSE c
+
+\* Machine completes task and releases its resource
 CompleteTask(m) ==
     /\ taskState[m] = "RUNNING"
     /\ resState[m] = "GRANTED"
     /\ taskState' = [taskState EXCEPT ![m] = "SUCCEEDED"]
-    /\ resState' = [resState EXCEPT ![m] = "RELEASED"]
-    /\ lpHolder' = "NONE"
-    /\ taskCount' = [taskCount EXCEPT ![m] = taskCount[m] + 1]
+    /\ resState'  = [resState  EXCEPT ![m] = "RELEASED"]
+    /\ holder'    = [holder EXCEPT ![resTarget[m]] = "NONE"]
+    /\ taskCount' = [taskCount EXCEPT ![m] = Inc(@)]
+    /\ UNCHANGED resTarget
 
-\* Machine completes without needing load point (e.g., pure hauling leg)
-CompleteWithoutLP(m) ==
+\* Machine completes without needing a resource (e.g., pure hauling leg)
+CompleteWithoutResource(m) ==
     /\ taskState[m] = "RUNNING"
     /\ resState[m] = "NONE"
     /\ taskState' = [taskState EXCEPT ![m] = "SUCCEEDED"]
-    /\ taskCount' = [taskCount EXCEPT ![m] = taskCount[m] + 1]
-    /\ UNCHANGED <<resState, lpHolder>>
+    /\ taskCount' = [taskCount EXCEPT ![m] = Inc(@)]
+    /\ UNCHANGED <<resState, resTarget, holder>>
 
 \* Reset after completion (ready for next cycle)
 ResetTask(m) ==
     /\ taskState[m] = "SUCCEEDED"
     /\ resState[m] \in {"RELEASED", "NONE"}
     /\ taskState' = [taskState EXCEPT ![m] = "IDLE"]
-    /\ resState' = [resState EXCEPT ![m] = "NONE"]
-    /\ UNCHANGED <<lpHolder, taskCount>>
+    /\ resState'  = [resState  EXCEPT ![m] = "NONE"]
+    /\ resTarget' = [resTarget EXCEPT ![m] = "NONE"]
+    /\ UNCHANGED <<holder, taskCount>>
 
 \* ─── Next-State Relation ────────────────────────────────────────────
 
@@ -158,43 +201,65 @@ Next ==
     \E m \in Machines :
         \/ DispatchTask(m)
         \/ AcceptTask(m)
-        \/ RequestLoadPoint(m)
-        \/ GrantLoadPoint(m)
-        \/ DenyLoadPoint(m)
+        \/ \E r \in Resources : RequestResource(m, r)
+        \/ GrantResource(m)
+        \/ DenyResource(m)
         \/ BlockOnDenial(m)
-        \/ RetryReservation(m)
+        \/ \E r \in Resources : RetryReservation(m, r)
         \/ UnblockOnGrant(m)
         \/ CompleteTask(m)
-        \/ CompleteWithoutLP(m)
+        \/ CompleteWithoutResource(m)
         \/ ResetTask(m)
 
 \* ─── Fairness ───────────────────────────────────────────────────────
 
-Fairness ==
+FairnessWeak ==
     \A m \in Machines :
-        /\ WF_vars(GrantLoadPoint(m))
-        /\ WF_vars(DenyLoadPoint(m))
+        /\ WF_vars(GrantResource(m))
+        /\ WF_vars(DenyResource(m))
         /\ WF_vars(AcceptTask(m))
         /\ WF_vars(UnblockOnGrant(m))
-        /\ SF_vars(CompleteTask(m))       \* Strong: eventually completes with LP
-        /\ SF_vars(CompleteWithoutLP(m))  \* Strong: eventually completes without LP
+        /\ WF_vars(BlockOnDenial(m))
+        /\ SF_vars(CompleteTask(m))
+        /\ SF_vars(CompleteWithoutResource(m))
         /\ WF_vars(ResetTask(m))
         /\ SF_vars(DispatchTask(m))
-        /\ WF_vars(RetryReservation(m))
+        /\ WF_vars(\E r \in Resources : RetryReservation(m, r))
 
-Spec == Init /\ [][Next]_vars /\ Fairness
+\* Strongly fair site agent on the grant action (used for the queued-grant
+\* no-starvation result): a continuously grantable request is eventually granted.
+FairnessStrong ==
+    \A m \in Machines :
+        /\ SF_vars(GrantResource(m))
+        /\ WF_vars(DenyResource(m))
+        /\ WF_vars(AcceptTask(m))
+        /\ WF_vars(UnblockOnGrant(m))
+        /\ WF_vars(BlockOnDenial(m))
+        /\ SF_vars(CompleteTask(m))
+        /\ SF_vars(CompleteWithoutResource(m))
+        /\ WF_vars(ResetTask(m))
+        /\ SF_vars(DispatchTask(m))
+        /\ WF_vars(\E r \in Resources : RetryReservation(m, r))
+
+Spec       == Init /\ [][Next]_vars /\ FairnessWeak
+SpecStrong == Init /\ [][Next]_vars /\ FairnessStrong
 
 \* ─── Liveness: No Starvation ────────────────────────────────────────
 
-\* Every machine eventually completes at least one task
+\* Every machine eventually completes at least one task.
 NoStarvation ==
     \A m \in Machines : <>(taskCount[m] > 0)
+
+\* Stronger: under perpetual operation, every machine reaches SUCCEEDED
+\* infinitely often (no machine is permanently shut out of the resource).
+AlwaysEventuallyCompletes ==
+    \A m \in Machines : []<>(taskState[m] = "SUCCEEDED")
 
 \* ─── Properties ─────────────────────────────────────────────────────
 
 THEOREM Spec => []TypeOK
 THEOREM Spec => []NoDoubleGrant
 THEOREM Spec => []HolderConsistent
-THEOREM Spec => NoStarvation
+THEOREM Spec => []TargetConsistent
 
 ========================================================================

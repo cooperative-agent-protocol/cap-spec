@@ -12,6 +12,12 @@
 
 EXTENDS Naturals
 
+CONSTANTS
+    EnableFaults        \* BOOLEAN: TRUE enables SafetyTrigger and HandoverTimeout.
+                        \* FALSE (fault-free regime) is used to show that a
+                        \* handover completes through its productive path alone,
+                        \* without relying on the timeout/SafeStop escape.
+
 VARIABLES
     mode,               \* Current MachineMode
     handoverState       \* HandoverEvent flow state (NONE when no handover in progress)
@@ -90,6 +96,7 @@ MaintenanceToManual ==
 
 \* Safety Supervisor trigger: any mode → SAFE_STOP (unconditional)
 SafetyTrigger ==
+    /\ EnableFaults
     /\ mode /= "SAFE_STOP"
     /\ mode' = "SAFE_STOP"
     /\ handoverState' = IF handoverState \in {"REQUESTED", "ACKNOWLEDGED", "IN_PROGRESS"}
@@ -138,6 +145,7 @@ HandoverCleanup ==
 
 \* Handover timeout: no acknowledgement → SAFE_STOP
 HandoverTimeout ==
+    /\ EnableFaults
     /\ handoverState \in {"REQUESTED", "ACKNOWLEDGED", "IN_PROGRESS"}
     /\ handoverState' = "TIMED_OUT"
     /\ mode' = "SAFE_STOP"
@@ -193,6 +201,15 @@ HandoverEventuallyResolved ==
 \* SAFE_STOP is eventually recoverable (via physical reset)
 SafeStopRecoverable ==
     [](mode = "SAFE_STOP" => <>(mode = "MANUAL"))
+
+\* P3b (productive progress): with faults disabled (EnableFaults = FALSE),
+\* a requested handover always reaches COMPLETED through the
+\* acknowledge → mode-command → complete path -- i.e. handover progress does
+\* not depend on the timeout/SafeStop escape. (Vacuously true when faults are
+\* enabled, since a timeout may divert to TIMED_OUT; meaningful only in the
+\* fault-free configuration.)
+HandoverCompletesWithoutFaults ==
+    [](handoverState = "REQUESTED" => <>(handoverState = "COMPLETED"))
 
 \* ─── Properties ─────────────────────────────────────────────────────
 

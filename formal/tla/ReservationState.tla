@@ -13,7 +13,10 @@ EXTENDS Naturals, FiniteSets
 
 CONSTANTS
     Machines,       \* Set of machine IDs (e.g., {"m1", "m2"})
-    Resources       \* Set of resource IDs (e.g., {"zone-A", "zone-B"})
+    Resources,      \* Set of resource IDs (e.g., {"zone-A", "zone-B"})
+    EnableTimeouts  \* BOOLEAN: TRUE enables DenyTimeout and ExpireGrant.
+                    \* FALSE isolates whether request resolution depends on the
+                    \* timeout escape or holds under fairness alone (P3b).
 
 VARIABLES
     resState,       \* resState[m][r] ∈ ReservationStates ∪ {"NONE"}
@@ -76,6 +79,7 @@ Deny(m, r) ==
 
 \* Deny due to request timeout (Ch06 §6.3.4 footnote 1)
 DenyTimeout(m, r) ==
+    /\ EnableTimeouts
     /\ resState[m][r] = "REQUESTED"
     /\ resState' = [resState EXCEPT ![m][r] = "DENIED"]
     /\ UNCHANGED holders
@@ -89,6 +93,7 @@ Release(m, r) ==
 
 \* Reservation expires (granted_window elapsed)
 ExpireGrant(m, r) ==
+    /\ EnableTimeouts
     /\ resState[m][r] = "GRANTED"
     /\ holders[r] = m
     /\ resState' = [resState EXCEPT ![m][r] = "EXPIRED"]
@@ -120,7 +125,16 @@ Fairness ==
         /\ WF_vars(Deny(m, r))
         /\ WF_vars(DenyTimeout(m, r))
 
-Spec == Init /\ [][Next]_vars /\ Fairness
+\* Strongly fair site agent on grant/deny (used to test whether request
+\* resolution holds WITHOUT the timeout escape).
+StrongFairness ==
+    \A m \in Machines, r \in Resources :
+        /\ SF_vars(Grant(m, r))
+        /\ SF_vars(Deny(m, r))
+        /\ WF_vars(DenyTimeout(m, r))
+
+Spec       == Init /\ [][Next]_vars /\ Fairness
+SpecStrong == Init /\ [][Next]_vars /\ StrongFairness
 
 \* ─── Liveness ───────────────────────────────────────────────────────
 
