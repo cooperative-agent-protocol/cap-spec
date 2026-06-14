@@ -33,3 +33,5 @@ site/
 .idea/
 .vscode/
 *.swp
+formal/tla/*_TTrace_*
+formal/tla/logs/

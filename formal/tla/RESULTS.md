@@ -5,67 +5,160 @@ Copyright 2026 CAP Authors
 
 # TLA+ Formal Verification Results
 
-Verified with TLC v1.7.1, Java 1.8.0_381.
+**Toolchain.** TLC 2 version 2026.05.26 (`tla2tools.jar` v1.8.0,
+sha256 `237332bdcc79a35c7d26efa7b82c77c85c2744591c5598673a8a45085ff2a4fb`)
+on Eclipse Temurin 21.0.5+11 (LTS), Apple Silicon (arm64), macOS.
+All runs are reproduced by `./run_sweep.sh` (which verifies the jar digest,
+runs every configuration below, and asserts each verdict against its
+expected outcome — the negative results are first-class and a silent flip
+in either direction fails the script). Per-run logs are written to `logs/`.
 
-## TaskState
+The composite model `CAPCoordination` is parameterised over machine sets
+(`Excavators`, `Dumps`), a resource set (`Resources`), a saturating
+per-machine task counter (`MaxTasks`), and a `QueuedGrants` boolean that
+selects the reservation regime (deny-on-busy vs. queue-on-busy). The
+per-machine counter saturates rather than growing without bound, so the
+state space is finite **without** a state constraint; this makes liveness
+checking sound (TLC liveness under a state constraint is unsound).
 
+---
+
+## Component specifications
+
+### TaskState
 ```
-Model: 2 tasks (t1, t2)
+Model:      2 tasks (t1, t2)
 Properties: TypeOK, AtMostOneActive (safety), EventuallyTerminal (liveness)
-Result: Model checking completed. No error has been found.
-States: 203 generated, 77 distinct
-Time: <1s
+Result:     No error has been found.
+States:     203 generated, 77 distinct
 ```
+Terminal states are absorbing; at most one task is active at a time; every
+task eventually terminates (strong fairness on completion).
 
-**Verified properties:**
-- Terminal states are absorbing (no exit from SUCCEEDED/FAILED/CANCELLED/REJECTED/EXPIRED)
-- At most one task in RUNNING or BLOCKED at any time
-- Every task eventually reaches a terminal state (with strong fairness on completion)
+### ReservationState
+N machines competing for M resources; `EnableTimeouts` gates `DenyTimeout`
+and `ExpireGrant`.
 
-## ReservationState
+| Config | Spec | EnableTimeouts | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|---|
+| `ReservationState.cfg` | weak-fair | TRUE | TypeOK, NoDoubleGrant, HolderConsistent, EventuallyDecided | **holds** | 93 / 35 |
+| `ReservationState_notimeout.cfg` | weak-fair | FALSE | EventuallyDecided | **violated** | 47 / 23 |
+| `ReservationState_notimeout_strong.cfg` | strong-fair | FALSE | EventuallyDecided | **holds** | 47 / 23 |
 
+**Finding (request resolution).** With timeouts disabled and only weak
+fairness, `EventuallyDecided` is *violated*: the published liveness result
+relies on `DenyTimeout`'s weak fairness. Counterexample lasso (m2 starves
+while m1 cycles grant→release→re-request):
 ```
-Model: 2 machines (m1, m2), 1 resource (zone-A)
-Properties: TypeOK, NoDoubleGrant, HolderConsistent (safety), EventuallyDecided (liveness)
-Result: Model checking completed. No error has been found.
-Time: <1s
+Request(m2) ; Request(m1) ; Grant(m1) ; Release(m1) ; [back to Request(m2)] ...
 ```
+Under a **strongly fair** grant/deny arbiter the property holds again, with
+no timeouts. So request resolution requires *either* timeouts (the current
+protocol) *or* a strongly fair site agent — both regimes are verified.
 
-**Verified properties:**
-- No resource has two simultaneous GRANTED holders (safety)
-- Holder tracking is consistent with reservation state
-- Every request eventually reaches GRANTED or DENIED (liveness)
+### MachineMode + HandoverEvent
+Six modes + six handover states; `EnableFaults` gates `SafetyTrigger` and
+`HandoverTimeout`.
 
-## MachineMode + HandoverEvent
+| Config | EnableFaults | Properties | Verdict | States (gen/dist) |
+|---|---|---|---|---|
+| `MachineMode.cfg` | TRUE | TypeOK, HandoverTimeoutImpliesSafeStop, HandoverEventuallyResolved, SafeStopRecoverable | **holds** | 38 / 14 |
+| `MachineMode_nofault.cfg` | FALSE | HandoverCompletesWithoutFaults, HandoverEventuallyResolved | **holds** | 17 / 11 |
 
+**Finding (productive progress, P3b).** With faults disabled, a requested
+handover always reaches `COMPLETED` through the
+acknowledge → mode-command → complete path
+(`HandoverCompletesWithoutFaults`). Handover progress therefore does not
+depend on the timeout/`SafeStop` escape — it answers the objection that
+"progress is trivial because a timeout always fires."
+
+---
+
+## Composite: CAPCoordination
+
+### Safety + deadlock sweep (no starvation/liveness)
+All instances check `TypeOK`, `NoDoubleGrant`, `HolderConsistent`,
+`TargetConsistent` and `CHECK_DEADLOCK TRUE` (except the regression cfg,
+which mirrors the original `CHECK_DEADLOCK FALSE`). `QueuedGrants = FALSE`
+(deny-based). Contention is exercised wherever machines > resources.
+
+| Config | (|E|,|D|,|R|) | N | Symmetry | Generated | Distinct | Time | Verdict |
+|---|---|---|---|---|---|---|---|
+| `CAPCoordination_safety.cfg` (regression) | (1,1,1), MaxTasks≤2 | 2 | no | 1,779 | **802** | <1 s | holds |
+| `CAPCoordination_N2R1.cfg` | (1,1,1) | 2 | no | 1,779 | 802 | <1 s | holds |
+| `CAPCoordination_N3R1.cfg` | (2,1,1) | 3 | no | 100,768 | 30,547 | 1 s | holds |
+| `CAPCoordination_N3R2.cfg` | (2,1,2) | 3 | no | 422,539 | 119,601 | 1 s | holds |
+| `CAPCoordination_N4R2.cfg` | (2,2,2) | 4 | yes | 4,110,603 | 869,223 (orbit) | 5 s | holds |
+| `CAPCoordination_N4R2_nosym.cfg` | (2,2,2) | 4 | no | 31,622,209 | 6,706,875 | 25 s | holds |
+| `CAPCoordination_N5R2.cfg` | (3,2,2) | 5 | yes | 92,497,506 | 15,643,374 (orbit) | 2 min | holds |
+
+No invariant violation and **no deadlock** at any instance. The model is
+structurally deadlock-free (every reachable state leaves at least one
+machine with an enabled action), which is *why* the meaningful progress
+question is no-starvation (below), not deadlock.
+
+**Symmetry soundness cross-check.** At (2,2,2) the symmetry-reduced run and
+the full run reach the same verdict; the distinct-state ratio
+6,706,875 / 869,223 ≈ 7.7 is consistent with the symmetry group
+|Perm(2)×Perm(2)×Perm(2)| = 8 (slightly below 8 because some states are
+fixed by a permutation). Symmetry is used for safety configs only and
+never for liveness (it is unsound with liveness in TLC).
+
+**Stop rule.** Each run is bounded by a 2 h / 8 GB budget; the sweep stops
+at (3,2,2). N=6 raw is out of laptop reach and adds nothing qualitative.
+
+### No-starvation (liveness, P3c)
+No symmetry, no state constraint, `MaxTasks = 1`, strongly fair site agent
+(`SpecStrong`). `QueuedGrants` selects the reservation regime.
+
+| Config | (|E|,|D|,|R|) | QueuedGrants | Properties | Verdict | States (gen/dist) |
+|---|---|---|---|---|---|---|
+| `CAPCoordination_live_N2R1_retry.cfg` | (1,1,1) | FALSE | NoStarvation, AlwaysEventuallyCompletes | **violated** | 685 / 308 |
+| `CAPCoordination_live_N2R1_queued.cfg` | (1,1,1) | TRUE | NoStarvation, AlwaysEventuallyCompletes | **holds** | 321 / 140 |
+| `CAPCoordination_live_N3R1_queued.cfg` | (2,1,1) | TRUE | NoStarvation, AlwaysEventuallyCompletes | **holds** | 5,401 / 1,600 |
+| `CAPCoordination_live_N3R2_queued.cfg` | (2,1,2) | TRUE | NoStarvation, AlwaysEventuallyCompletes | **holds** | 16,264 / 4,537 |
+
+**Finding (no-starvation, P3c).** Deny-based reservation can *starve* a
+machine even at the minimal (1,1,1) instance and even under a strongly fair
+site agent: the loser of a grant is denied → blocked → retries, while the
+winner completes, releases, and re-acquires before the retry lands.
+Counterexample lasso (exc1's `taskCount` stays 0 forever):
 ```
-Model: Single machine, 6 modes + 6 handover states
-Properties: TypeOK, HandoverTimeoutImpliesSafeStop, HandoverEventuallyResolved, SafeStopRecoverable
-Result: Model checking completed. No error has been found.
-Time: <1s
+Dispatch(exc1) ; Accept(exc1) ; Request(exc1,LP-1) ;
+Dispatch(dump1) ; Accept(dump1) ; Request(dump1,LP-1) ;
+Grant(dump1) ; Deny(exc1) ; CompleteTask(dump1) ; BlockOnDenial(exc1) ;
+ResetTask(dump1) ; [dump1 re-acquires LP-1 ahead of exc1's retry] ...
 ```
+Switching the site agent to **queue** requests instead of bouncing them
+(`QueuedGrants = TRUE`) restores starvation-freedom: with the grant action
+strongly fair, a queued request is eventually granted. Verified for
+(1,1,1), (2,1,1) and (2,1,2). Liveness was checked to ~10^3–10^4 states
+while safety was checked to ~10^7 states; the negative result at (1,1,1)
+shows the liveness machinery has teeth at this scale.
 
-**Verified properties:**
-- SAFE_STOP can only transition to MANUAL (physical reset)
-- Handover timeout always results in SAFE_STOP
-- Handover requests are eventually resolved (COMPLETED or TIMED_OUT)
-- SAFE_STOP is eventually recoverable (via physical reset)
+---
 
-## CAPCoordination (Composite)
+## Changelog (this revision)
 
-```
-Model: 1 excavator + 1 dump, 1 shared load point, taskCount bounded to 2
-Properties: TypeOK, NoDoubleGrant, HolderConsistent (safety)
-Result: Model checking completed. No error has been found.
-States: 1683 generated, 802 distinct
-Time: 1s
-```
-
-**Verified properties:**
-- No double-grant on the shared load point
-- Holder tracking consistent with reservation state
-- No deadlock in the coordination protocol (with CHECK_DEADLOCK FALSE for terminal states)
-
-Note: Liveness (NoStarvation) verification for the composite model requires
-strong fairness and large state space exploration. Safety properties are verified
-for the full state space within the bounded model.
+- **Generalised `CAPCoordination`** from a single scalar load point to a
+  resource *set* (`holder` is now a per-resource function and each machine
+  tracks one outstanding `resTarget`). With `Resources = {"LP-1"}` and the
+  task-count constraint, the model reproduces the original result exactly
+  (**802 distinct states**); generated rose 1,683 → 1,779 because of the
+  bug fix below (extra edges, no new states).
+- **Repaired an absorbing-state defect** found during the sweep:
+  `BlockOnDenial` was enabled only from `RUNNING`, so a machine denied
+  again *after* a retry was trapped in `BLOCKED/DENIED`. The guard now
+  admits `RUNNING` and `BLOCKED`; the trap is gone and the model is
+  deadlock-free under `CHECK_DEADLOCK TRUE` across the whole sweep.
+- **Saturating task counter** (`MaxTasks`) replaces the unbounded
+  increment, so liveness configs need no (unsound) state constraint.
+- **Added gating constants** `EnableFaults` (MachineMode) and
+  `EnableTimeouts` (ReservationState); the baseline configs set them to
+  TRUE and reproduce the prior results bit-for-bit (38/14 and 93/35).
+- **Removed the previous `CAPCoordination.cfg`**: it combined
+  `PROPERTIES NoStarvation` with `CHECK_DEADLOCK TRUE` and *no* state
+  constraint, so `TypeOK` was violated once a machine's `taskCount`
+  exceeded its bound (the counter was unbounded). It never ran in CI
+  (only `CAPCoordination_safety.cfg` did) and is superseded by the
+  liveness configs above.
