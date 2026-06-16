@@ -132,6 +132,34 @@ holds **iff** the Layer-C supervisor has priority over the protocol and the
 authority to stop actuation deterministically. This is the verified form of
 the paper's "LLM-independent safety supervisor" thesis.
 
+### MultiResource (hold-and-wait deadlock + acquisition order)
+
+`CAPCoordination` tracks one outstanding reservation per machine, so it is
+*structurally* deadlock-free and `CHECK_DEADLOCK` over it is a tautology. This
+component models genuine multi-resource **hold-and-wait** — every machine needs
+the whole resource set and acquires resources one at a time — so circular-wait
+deadlock is expressible. `ResourceOrder` selects the discipline.
+
+| Config | ResourceOrder | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|
+| `MultiResource_ordered.cfg` | TRUE | TypeOK, HoldsOwnerConsistent, NoDoubleOwner, `CHECK_DEADLOCK` | **holds** (deadlock-free) | 7 / 5 |
+| `MultiResource_unordered.cfg` | FALSE | (same) | **deadlock** | 3-state circular wait |
+
+**Finding (deadlock-freedom requires an acquisition order).** Without an order,
+TLC reaches a circular wait and reports a global deadlock:
+```
+Acquire(m1, 1) ; Acquire(m2, 2)
+→ owner = (1 ↦ m1, 2 ↦ m2),  holds = (m1 ↦ {1}, m2 ↦ {2})
+   m1 waits for 2 (held by m2); m2 waits for 1 (held by m1); no action enabled.
+```
+Enforcing a total acquisition order (a machine acquires resource `r` only once
+it holds every needed resource ordered before `r`) makes the circular wait
+unreachable and the model deadlock-free. Mutual exclusion (`NoDoubleOwner`,
+`HoldsOwnerConsistent`) holds in both regimes — the order buys deadlock-freedom,
+not exclusivity. This converts the composite's structural deadlock-freedom into
+a verified property over real multi-hold contention and names the required
+discipline.
+
 ---
 
 ## Composite: CAPCoordination
@@ -247,6 +275,11 @@ defect is specifically a *receiver-ownership* violation, not a double-grant.
 
 ## Changelog (this revision)
 
+- **Added `MultiResource`**, a hold-and-wait model over a resource set, turning
+  the composite's structural (tautological) deadlock-freedom into a verified
+  property: without a total acquisition order TLC reaches a circular-wait
+  deadlock; with the order the model is deadlock-free. `run_sweep.sh` now also
+  treats a TLC ``Deadlock reached'' as a (first-class) negative verdict.
 - **Added `SafetySupervisor`**, an independent-process model of Layer C that
   races the protocol/LLM layer and verifies the non-interference invariant
   `InhibitStops` (inhibit ⇒ not actuating). Holds under supervisor priority,
