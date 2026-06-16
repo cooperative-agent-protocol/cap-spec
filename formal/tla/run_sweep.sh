@@ -63,6 +63,9 @@ RUNS=(
   "CAPCoordination|CAPCoordination_live_N2R1_queued.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_live_N3R1_queued.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_live_N3R2_queued.cfg|CAPCoordination|PASS|1"
+  "CAPCoordination|CAPCoordination_ho_N2R1_atomic.cfg|CAPCoordination|PASS|0"
+  "CAPCoordination|CAPCoordination_ho_N3R1_atomic.cfg|CAPCoordination|PASS|0"
+  "CAPCoordination|CAPCoordination_ho_N3R1_naive.cfg|CAPCoordination|FAIL|0"
 )
 
 printf '\n%-40s %-6s %-6s %12s %12s %8s\n' "config" "exp" "got" "generated" "distinct" "time"

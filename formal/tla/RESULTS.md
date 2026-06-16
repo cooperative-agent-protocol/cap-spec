@@ -136,10 +136,64 @@ strongly fair, a queued request is eventually granted. Verified for
 while safety was checked to ~10^7 states; the negative result at (1,1,1)
 shows the liveness machinery has teeth at this scale.
 
+### Handover receiver ownership (P4)
+
+The composite now models a **machine-to-machine load-point handover** (an
+excavator hands the shared load point directly to a waiting carrier rather
+than completing-and-releasing it). `EnableHandover` gates the sub-protocol
+and `AtomicHandover` selects the transfer discipline. The invariant
+`HandoverReceiverOwnership` (P4) states that throughout a handover's
+`IN_PROGRESS` window the named receiver is the **unique** grant holder of the
+handed-over resource — formally,
+`hoState[r] = IN_PROGRESS  =>  holder[r] = hoReceiver[r]` and no other machine
+is `GRANTED` on `r`.
+
+| Config | (\|E\|,\|D\|,\|R\|) | AtomicHandover | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|---|
+| `CAPCoordination_ho_N2R1_atomic.cfg` | (1,1,1) | TRUE | + HandoverReceiverOwnership | **holds** | 441 / 204 |
+| `CAPCoordination_ho_N3R1_atomic.cfg` | (2,1,1) | TRUE | + HandoverReceiverOwnership | **holds** | 9,625 / 3,088 |
+| `CAPCoordination_ho_N3R1_naive.cfg` | (2,1,1) | FALSE | HandoverReceiverOwnership | **violated** | 11-state counterexample |
+
+(The two atomic instances are exhaustive — no error — so their state counts
+are deterministic; the naive instance reports the first counterexample TLC
+reaches, so the exact generated/distinct count varies with worker count, but
+the shortest counterexample is 11 states deep and the verdict is invariant.)
+
+All handover configs use the queued regime (`QueuedGrants = TRUE`) so the
+receiver waits in `REQUESTED` for the offer, and check `TypeOK`,
+`NoDoubleGrant`, `HolderConsistent`, `TargetConsistent` alongside P4.
+
+**Finding (handover must be atomic).** With `AtomicHandover = TRUE` the
+ownership of `r` passes sender → receiver in a single step, so P4 **holds**,
+including at (2,1,1) where a *third* machine (`exc2`) is simultaneously queued
+for the same load point and cannot steal it. With `AtomicHandover = FALSE`
+(a naive release-then-regrant) P4 is **violated**: the sender releases `r`
+*before* the receiver is re-granted, so the `IN_PROGRESS` window opens with the
+load point unheld. Counterexample (the violating state):
+```
+InitiateHandover(exc1, LP-1, exc2) ; AckHandover(LP-1) ; BeginHandoverNaive(LP-1)
+→  hoState[LP-1] = "IN_PROGRESS"   (handover in progress)
+   holder[LP-1]  = "NONE"          (load point unheld — receiver does not yet own it)
+   resState      = [exc1 ↦ RELEASED, exc2 ↦ REQUESTED, dump1 ↦ NONE]
+```
+At this state a third machine can acquire `LP-1` via ordinary `GrantResource`,
+so two machines could occupy the load point during the transfer. This is why
+CAP specifies the handover as an **atomic ownership transfer** (the receiver
+is granted in the same step the sender releases), not a release-then-regrant.
+The other three safety invariants still hold under the naive regime, so the
+defect is specifically a *receiver-ownership* violation, not a double-grant.
+
 ---
 
 ## Changelog (this revision)
 
+- **Composed a machine-to-machine handover into `CAPCoordination`** and added
+  the P4 invariant `HandoverReceiverOwnership`, verified across atomic
+  (holds, incl. with a third contender) and naive (violated) regimes. The
+  reservation-only sweep is reproduced bit-for-bit: with `EnableHandover =
+  FALSE` the new handover transitions are disabled and the two new variables
+  (`hoState`, `hoReceiver`) stay constant, so `CAPCoordination_safety.cfg`
+  still yields 802 distinct states and every prior verdict is unchanged.
 - **Generalised `CAPCoordination`** from a single scalar load point to a
   resource *set* (`holder` is now a per-resource function and each machine
   tracks one outstanding `resTarget`). With `Resources = {"LP-1"}` and the
