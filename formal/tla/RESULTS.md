@@ -101,6 +101,37 @@ empirical result that a dropped `ReservationStatus` causes exclusivity
 violations without arbitration: the *protocol-level* fix is a fencing token on
 the grant, which the composite's reliable-delivery abstraction cannot see.
 
+### SafetySupervisor (independent Layer-C non-interference)
+
+CAP's central architectural claim is that safety is **decoupled** from the LLM
+and the coordination protocol (ADR-003): a deterministic Safety Supervisor can
+inhibit actuation in any interleaving and its inhibit has priority over any
+protocol authorization. This component models the supervisor as an independent
+process racing the protocol, so the decoupling becomes a checkable
+non-interference invariant `InhibitStops` (`inhibit[m] ⇒ op[m] = STOPPED`).
+The protocol/LLM layer is deliberately unaware of the safety channel (it may
+authorize while inhibited), so safety cannot rest on its cooperation.
+
+| Config | SupervisorPriority | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|
+| `SafetySupervisor_priority.cfg` | TRUE | TypeOK, InhibitStops | **holds** | 121 / 25 |
+| `SafetySupervisor_nopriority.cfg` | FALSE | InhibitStops | **violated** | 4-state counterexample |
+
+**Finding (safety decoupling requires supervisor priority).** With
+`SupervisorPriority = TRUE` — actuation gated by `~inhibit` and an inhibit
+forcing an immediate stop in the same step — `InhibitStops` **holds** across
+every interleaving of the protocol and the supervisor. Without priority it is
+**violated** by a 4-state behavior:
+```
+ProtocolAuthorize(m1) ; StartMove(m1)        ; m1 MOVING
+SupervisorInhibit(m1)                          ; inhibit[m1] = TRUE but op[m1] stays MOVING
+→ m1 is inhibited AND actuating.
+```
+So the architecture's safety guarantee is not free from the layering: it
+holds **iff** the Layer-C supervisor has priority over the protocol and the
+authority to stop actuation deterministically. This is the verified form of
+the paper's "LLM-independent safety supervisor" thesis.
+
 ---
 
 ## Composite: CAPCoordination
@@ -216,6 +247,12 @@ defect is specifically a *receiver-ownership* violation, not a double-grant.
 
 ## Changelog (this revision)
 
+- **Added `SafetySupervisor`**, an independent-process model of Layer C that
+  races the protocol/LLM layer and verifies the non-interference invariant
+  `InhibitStops` (inhibit ⇒ not actuating). Holds under supervisor priority,
+  violated without it — the verified form of the "LLM-independent safety
+  supervisor" thesis, and a negative result showing the decoupling requires
+  Layer-C priority + immediate-stop authority.
 - **Added `ReservationFencing`**, a component model of adversarial delivery
   (lost expiry/release notification → stale holder) showing that a monotonic
   grant epoch (fencing token) restores `ExclusiveActuation`: holds with the
