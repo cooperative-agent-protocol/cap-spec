@@ -27,7 +27,7 @@ CAP enables:
   dialogue for collision-free cooperative operations.
 - **Human-machine teaming** — graduated autonomy levels (manual → teleop → supervised
   autonomy → full autonomy) with explicit handover protocols.
-- **Language-grounded object representation** — Abstract Language Objects (ALO) provide
+- **Language-grounded object representation** — entity descriptors provide
   a unified, human-readable description of machines, zones, and materials.
 - **Auditability** — every state transition, decision, and plan is traceable via
   plan hashes, dialogue provenance, and audit events.
@@ -43,7 +43,7 @@ This specification defines:
 4. **Transport profiles** — gRPC (primary), MQTT (IoT), and WebSocket (browser)
 5. **Security model** — authentication, authorization, and encryption requirements
 6. **Conformance levels** — criteria for implementations to claim CAP conformance
-7. **ALO integration** — how Abstract Language Objects are used within CAP messages
+7. **Entity-descriptor integration** — how entity descriptors are used within CAP messages
 8. **Agent dialogue** — structured communication between Machine Agents and Site Agents
 
 ## 1.3 Out of Scope
@@ -59,7 +59,7 @@ This specification does NOT define:
 4. **Specific LLM models or prompts** — the protocol defines interfaces for LLM
    integration but does not mandate specific models or prompt strategies.
 5. **Hardware abstraction** — machine-specific HAL implementations are outside CAP.
-6. **Construction domain ontology** — while ALO provides a representation model,
+6. **Construction domain ontology** — while entity descriptors provide a representation model,
    CAP does not define a comprehensive construction ontology.
 
 ## 1.4 Relationship to Other Standards
@@ -70,7 +70,7 @@ This specification does NOT define:
 | **MCP (Model Context Protocol)** | AI model interaction protocol. CAP's agent dialogue is inspired by MCP's structured tool use but extends it with safety constraints and multi-agent coordination. |
 | **ROS 2** | Robot middleware. CAP is transport-neutral and can coexist with ROS 2 at the motion control layer. CAP handles task-level orchestration; ROS 2 handles sensor/actuator I/O. |
 | **ISO 15143-3 (AEMP 2.0)** | Telematics data exchange for construction. CAP extends beyond telemetry to active task coordination. |
-| **ALO (Ochiai, 2304.04498)** | Abstract Language Objects. CAP integrates ALO as the representation model for machines, zones, and materials. |
+| **Entity descriptor (Ochiai et al., 2304.04498)** | A language-grounded, typed object representation. CAP adopts it as the representation model for machines, zones, and materials. |
 
 ## 1.5 Architecture Overview
 

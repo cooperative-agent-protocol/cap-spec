@@ -14,7 +14,7 @@ Copyright 2026 CAP Authors
 CAP is partitioned into two layers:
 
 1. **CAP-Core** — domain-agnostic primitives (Manifest, Heartbeat, WorkOrder,
-   Lifecycle, Dialogue, ALO, Frame, Safety Supervisor contract, 3-Layer
+   Lifecycle, Dialogue, EntityDescriptor, Frame, Safety Supervisor contract, 3-Layer
    Architecture) shared across every industrial domain.
 2. **CAP Domain Packs** — domain-specific extensions defining skills, zone
    types, equipment classes, and conformance suites for one industrial domain.
@@ -53,7 +53,7 @@ contribute a new domain low (only a small set of proto files + an SDK module
 - Lifecycle, Intent, PlanContractWire, TrajectoryRequest, VelocityCommand
 - Frame, CapFrame, transport profiles
 - AgentDialogue, DialogueIntent, SituationReport, LocalDecision, PlanProposal
-- ALODescriptor, ALOManager, ALOProperty, ALOInteraction, ALOStateUpdate
+- EntityDescriptor, EntityManager, EntityProperty, EntityInteraction, EntityStateUpdate
 - WorldDelta, ZoneConstraintGridDelta (without domain-specific zone types),
   ObservationFrame
 - AbortCause (generic causes only — slope, clearance, hazard intrusion etc.;
@@ -103,7 +103,7 @@ cap-spec/proto/cap/v0/
 │   ├── intent.proto
 │   ├── world_model.proto
 │   ├── events.proto
-│   ├── alo.proto
+│   ├── entity.proto
 │   ├── dialogue.proto
 │   ├── error.proto
 │   ├── skill.proto
@@ -250,7 +250,7 @@ through the RFC process and demonstrating community uptake.
 - ADR-008 (Versioning) — independent versioning of Core and Domain Packs.
 - ADR-002 (Transport-Neutral Semantics) — transport profile is Core-only.
 - ADR-003 (Independent Safety Channel) — Safety Supervisor contract is Core.
-- ADR-004 (ALO Representation) — ALO is Core.
+- ADR-004 (Entity Descriptor Representation) — the entity descriptor is Core.
 - `rfcs/domain-pack-template.md` — template for proposing new Domain Packs.
 - ISO TC127 (Earth-moving machinery) — Construction Domain Pack alignment.
 - ISO TC23 (Tractors and machinery for agriculture and forestry) — future

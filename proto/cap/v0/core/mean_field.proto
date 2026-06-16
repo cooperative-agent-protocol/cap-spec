@@ -21,7 +21,7 @@ option java_package = "io.cap.v0";
 
 // MeanFieldSnapshot captures the current population state of the site.
 // Updated by the MeanFieldEstimator service at ~1 Hz from Heartbeat,
-// ProgressEvent, ReservationStatus, and ALO world model.
+// ProgressEvent, ReservationStatus, and entity world model.
 message MeanFieldSnapshot {
   string snapshot_id = 1;
   google.protobuf.Timestamp timestamp = 2;

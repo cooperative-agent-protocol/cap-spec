@@ -6,7 +6,7 @@ syntax = "proto3";
 package cap.v0.core;
 
 import "cap/v0/core/common.proto";
-import "cap/v0/core/alo.proto";
+import "cap/v0/core/entity.proto";
 
 option java_multiple_files = true;
 option java_package = "io.cap.v0";
@@ -28,7 +28,7 @@ message CapabilityManifest {
   string hal_profile           = 5;  // e.g. "komatsu/pc200-11"
   string software_version      = 6;
   repeated KeyValue metadata   = 7;
-  ALODescriptor alo_descriptor = 8;  // Machine's self-description as ALO
+  EntityDescriptor entity_descriptor = 8;  // Machine's self-description as a language-grounded entity
 }
 
 // Heartbeat is sent periodically to report machine health and pose.
@@ -43,7 +43,7 @@ message Heartbeat {
   double fuel_or_battery_percent      = 8;
   repeated string active_reservations = 9;
   repeated KeyValue health            = 10;
-  string alo_state_summary             = 11;  // Model-generated natural language state description (LLM/SLM)
+  string entity_state_summary          = 11;  // Model-generated natural language state description (LLM/SLM)
 }
 
 // WorkOrderAck is the machine's response to a received WorkOrder.

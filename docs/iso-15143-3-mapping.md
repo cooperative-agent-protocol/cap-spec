@@ -21,7 +21,7 @@ CE, Hitachi CM, Liebherr) publish telematics under variants of this schema.
 ISO 15143-3 sits at the **machine telematics** layer. CAP sits at the
 **task-level coordination** layer. They are complementary; this mapping
 shows how a CAP-conformant Machine Agent can ingest an ISO 15143-3 feed and
-expose the relevant fields via the CAP `Heartbeat` / `Manifest` / ALO
+expose the relevant fields via the CAP `Heartbeat` / `Manifest` / Entity Descriptor
 messages.
 
 ## Field correspondence (high-level)

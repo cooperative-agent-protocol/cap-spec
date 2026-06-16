@@ -5,11 +5,11 @@
     "receiverId": "site-agent-01",
     "sentAt": "2026-03-19T08:04:00Z"
   },
-  "aloStateUpdate": {
+  "entityStateUpdate": {
     "machineId": "excavator-01",
-    "alo": {
-      "aloId": "excavator-01",
-      "aloType": "machine",
+    "descriptor": {
+      "entityId": "excavator-01",
+      "entityType": "machine",
       "canonicalName": "バックホウ1号機",
       "properties": [
         { "key": "operating_weight_kg", "value": "20000", "unit": "kg", "dtype": "float" },
@@ -37,7 +37,7 @@
         "relations": [
           {
             "relationType": "operates_in",
-            "targetAloId": "zone_B3",
+            "targetEntityId": "zone_B3",
             "description": "B3区画で掘削作業を実施中"
           }
         ],

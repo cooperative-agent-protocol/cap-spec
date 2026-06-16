@@ -46,7 +46,7 @@ Accepted
 |-------|-------------|
 | `site_admin` | 全操作。WorkOrder 発行、ModeCommand（AUTONOMY への遷移含む）、ユーザー管理 |
 | `operator` | WorkOrder 発行、ModeCommand（AUTONOMY 以外）、HandoverEvent 応答、ダッシュボード閲覧 |
-| `machine_agent` | CapabilityManifest 送信、Heartbeat 送信、WorkOrderAck、ProgressEvent、FaultEvent、HandoverEvent、SafetyEvent、AgentDialogue、ALOStateUpdate |
+| `machine_agent` | CapabilityManifest 送信、Heartbeat 送信、WorkOrderAck、ProgressEvent、FaultEvent、HandoverEvent、SafetyEvent、AgentDialogue、EntityStateUpdate |
 | `observer` | 読み取りのみ。ダッシュボード閲覧、Audit 参照 |
 
 CapFrame body type ごとに送信可能なロールを定義し、認可違反時は `CapError(3006, AUTHORIZATION_DENIED)` を返す。

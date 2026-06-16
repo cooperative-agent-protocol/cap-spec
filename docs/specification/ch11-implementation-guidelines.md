@@ -107,7 +107,7 @@ Implementations SHOULD:
 | ProgressEvent | 100–300 bytes | 64 KB |
 | WorkOrder | 500–2000 bytes | 64 KB |
 | CapabilityManifest | 1–10 KB | 64 KB |
-| ALODescriptor | 2–20 KB | 1 MB |
+| EntityDescriptor | 2–20 KB | 1 MB |
 | AgentDialogue | 1–50 KB | 1 MB |
 | CapFrame (any) | — | 4 MB |
 

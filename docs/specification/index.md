@@ -54,7 +54,7 @@ Status: Draft
 - [ADR-001: LLM Placement (Revised)](../adr/001-llm-site-agent-only.md)
 - [ADR-002: Transport-Neutral Semantics](../adr/002-transport-neutral-semantics.md)
 - [ADR-003: Independent Safety Channel](../adr/003-independent-safety-channel.md)
-- [ADR-004: ALO Representation](../adr/004-alo-representation.md)
+- [ADR-004: Entity Descriptor Representation](../adr/004-entity-representation.md)
 - [ADR-005: Agent Dialogue Protocol](../adr/005-agent-dialogue-protocol.md)
 - [ADR-006: Security Architecture](../adr/006-security-architecture.md)
 - [Safety Boundary](../safety-boundary.md)
@@ -66,7 +66,7 @@ Status: Draft
 - [`machine_agent.proto`](../../proto/cap/v0/machine_agent.proto) — Machine → Site messages
 - [`events.proto`](../../proto/cap/v0/events.proto) — Event messages
 - [`error.proto`](../../proto/cap/v0/error.proto) — Error model
-- [`alo.proto`](../../proto/cap/v0/alo.proto) — Abstract Language Objects
+- [`entity.proto`](../../proto/cap/v0/entity.proto) — entity descriptors
 - [`dialogue.proto`](../../proto/cap/v0/dialogue.proto) — Agent dialogue
 - [`runtime.proto`](../../proto/cap/v0/runtime.proto) — CapFrame envelope and service
 

@@ -205,7 +205,7 @@ First message in any CAP stream. Declares machine identity and capabilities.
 | `hal_profile` | string | 5 | SHOULD | HAL implementation (e.g., "komatsu/pc200-11") |
 | `software_version` | string | 6 | SHOULD | Agent software version |
 | `metadata` | repeated KeyValue | 7 | MAY | Additional metadata |
-| `alo_descriptor` | ALODescriptor | 8 | SHOULD | Machine's ALO self-description |
+| `entity_descriptor` | EntityDescriptor | 8 | SHOULD | Machine's entity self-description |
 
 ### Heartbeat
 
@@ -223,7 +223,7 @@ Periodic health report. MUST be sent every `heartbeat_interval` (default 5s).
 | `fuel_or_battery_percent` | double | 8 | SHOULD | Fuel/battery level (0.0–100.0) |
 | `active_reservations` | repeated string | 9 | MAY | Held reservation IDs |
 | `health` | repeated KeyValue | 10 | MAY | Detailed health metrics |
-| `alo_state_summary` | string | 11 | MAY | LLM-generated natural language state description |
+| `entity_state_summary` | string | 11 | MAY | LLM-generated natural language state description |
 
 ### WorkOrderAck
 
@@ -336,23 +336,23 @@ See Chapter 8 for error handling semantics.
 
 ---
 
-## 7.6 ALO Messages (`alo.proto`)
+## 7.6 Entity-Descriptor Messages (`entity.proto`)
 
-### ALODescriptor
+### EntityDescriptor
 
 | Field | Type | Number | Required | Description |
 |-------|------|--------|----------|-------------|
-| `alo_id` | string | 1 | MUST | Globally unique identifier |
-| `alo_type` | string | 2 | MUST | Entity type ("zone", "machine", "material", etc.) |
+| `entity_id` | string | 1 | MUST | Globally unique identifier |
+| `entity_type` | string | 2 | MUST | Entity type ("zone", "machine", "material", etc.) |
 | `canonical_name` | string | 3 | MUST | Human-readable name |
-| `properties` | repeated ALOProperty | 4 | SHOULD | Typed attributes |
-| `sub_objects` | repeated ALOSubObject | 5 | MAY | Component entities |
+| `properties` | repeated EntityProperty | 4 | SHOULD | Typed attributes |
+| `sub_objects` | repeated EntitySubObject | 5 | MAY | Component entities |
 | `state_description` | string | 6 | SHOULD | Natural language state |
-| `manager` | ALOManager | 7 | SHOULD | Capabilities and knowledge |
+| `manager` | EntityManager | 7 | SHOULD | Capabilities and knowledge |
 | `updated_at` | Timestamp | 8 | MUST | Last update time |
 | `owner_agent_id` | string | 9 | MUST | Maintaining agent |
 
-### ALOProperty
+### EntityProperty
 
 | Field | Type | Number | Description |
 |-------|------|--------|-------------|
@@ -361,48 +361,48 @@ See Chapter 8 for error handling semantics.
 | `unit` | string | 3 | Unit of measurement (empty if N/A) |
 | `dtype` | string | 4 | Data type ("float", "string", "int", "bool", "enum") |
 
-### ALOSubObject
+### EntitySubObject
 
 | Field | Type | Number | Description |
 |-------|------|--------|-------------|
 | `sub_obj_id` | string | 1 | Sub-object identifier |
 | `sub_obj_type` | string | 2 | Sub-object type |
 | `description` | string | 3 | Natural language description |
-| `properties` | repeated ALOProperty | 4 | Sub-object properties |
+| `properties` | repeated EntityProperty | 4 | Sub-object properties |
 
-### ALOManager
+### EntityManager
 
 | Field | Type | Number | Description |
 |-------|------|--------|-------------|
 | `available_skills` | repeated string | 1 | Skills this entity can perform |
 | `interaction_rules` | repeated string | 2 | Natural language interaction rules |
-| `relations` | repeated ALORelation | 3 | Relationships to other ALOs |
+| `relations` | repeated EntityRelation | 3 | Relationships to other entities |
 | `state_transition_rules` | repeated string | 4 | State transition descriptions |
 | `current_knowledge` | repeated string | 5 | Domain knowledge |
 
-### ALORelation
+### EntityRelation
 
 | Field | Type | Number | Description |
 |-------|------|--------|-------------|
 | `relation_type` | string | 1 | Relationship type |
-| `target_alo_id` | string | 2 | Related ALO |
+| `target_entity_id` | string | 2 | Related entity |
 | `description` | string | 3 | Natural language description |
 
-### ALOStateUpdate
+### EntityStateUpdate
 
 | Field | Type | Number | Required | Description |
 |-------|------|--------|----------|-------------|
 | `machine_id` | string | 1 | MUST | Sending machine |
-| `alo` | ALODescriptor | 2 | MUST | Updated ALO descriptor |
+| `descriptor` | EntityDescriptor | 2 | MUST | Updated entity descriptor |
 | `update_reason` | string | 3 | SHOULD | Reason ("periodic", "state_change", "anomaly_detected") |
 
-### ALOInteraction
+### EntityInteraction
 
 | Field | Type | Number | Required | Description |
 |-------|------|--------|----------|-------------|
 | `interaction_id` | string | 1 | MUST | Unique interaction ID |
-| `initiator_alo_id` | string | 2 | MUST | Initiating entity |
-| `target_alo_id` | string | 3 | MUST | Target entity |
+| `initiator_entity_id` | string | 2 | MUST | Initiating entity |
+| `target_entity_id` | string | 3 | MUST | Target entity |
 | `interaction_type` | string | 4 | MUST | Interaction type (e.g., "excavate") |
 | `description` | string | 5 | SHOULD | Natural language description |
 | `parameters` | repeated KeyValue | 6 | MAY | Interaction parameters |
@@ -430,7 +430,7 @@ See Chapter 8 for error handling semantics.
 | `machine_id` | string | 1 | MUST | Reporting machine |
 | `task_id` | string | 2 | SHOULD | Related task |
 | `situation_summary` | string | 3 | MUST | Natural language situation |
-| `observed_facts` | repeated ALOProperty | 4 | SHOULD | Structured observations |
+| `observed_facts` | repeated EntityProperty | 4 | SHOULD | Structured observations |
 | `recommended_action` | string | 5 | MAY | Suggested action |
 | `provenance` | DialogueProvenance | 6 | MUST | Origin metadata |
 
@@ -510,8 +510,8 @@ Universal message envelope.
 | 33 | HandoverEvent | Machine → Site |
 | 34 | SafetyEvent | Machine → Site |
 | 35 | AuditEvent | Either |
-| 40 | ALOStateUpdate | Machine → Site |
-| 41 | ALOInteraction | Either |
+| 40 | EntityStateUpdate | Machine → Site |
+| 41 | EntityInteraction | Either |
 | 42 | AgentDialogue | Either |
 | 50 | CapError | Either |
 

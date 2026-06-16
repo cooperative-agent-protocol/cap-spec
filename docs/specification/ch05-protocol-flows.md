@@ -22,7 +22,7 @@ sequenceDiagram
     M->>S: [Transport connect] (TLS/mTLS handshake)
     M->>S: CapFrame { CapabilityManifest }
     Note over S: Register machine, store manifest
-    Note over S: Extract ALO descriptor if present
+    Note over S: Extract entity descriptor if present
 
     loop Every heartbeat_interval (default 5s)
         M->>S: CapFrame { Heartbeat }
@@ -214,7 +214,7 @@ sequenceDiagram
 
 ---
 
-## 5.7 ALO Synchronization Flow
+## 5.7 Entity-Descriptor Synchronization Flow
 
 ```mermaid
 sequenceDiagram
@@ -222,11 +222,11 @@ sequenceDiagram
     participant S as Site Agent
 
     Note over M: Machine state changes significantly
-    M->>S: CapFrame { ALOStateUpdate(alo=updated_descriptor, reason="task_progress") }
-    Note over S: Update ALO in world model
+    M->>S: CapFrame { EntityStateUpdate(descriptor=updated_descriptor, reason="task_progress") }
+    Note over S: Update entity in world model
 
-    Note over S: ALO interaction occurs (e.g., excavator interacts with soil)
-    S->>M: CapFrame { ALOInteraction(initiator=excavator-01, target=soil-B3, type="excavate") }
+    Note over S: Entity interaction occurs (e.g., excavator interacts with soil)
+    S->>M: CapFrame { EntityInteraction(initiator=excavator-01, target=soil-B3, type="excavate") }
 ```
 
 ---

@@ -132,7 +132,7 @@ nav:
       - "001 — 3-Layer LLM Architecture": adr/001-llm-site-agent-only.md
       - "002 — Transport-Neutral Semantics": adr/002-transport-neutral-semantics.md
       - "003 — Independent Safety Channel": adr/003-independent-safety-channel.md
-      - "004 — ALO Representation": adr/004-alo-representation.md
+      - "004 — Entity Descriptor Representation": adr/004-entity-representation.md
       - "005 — Agent Dialogue Protocol": adr/005-agent-dialogue-protocol.md
       - "006 — Security Architecture": adr/006-security-architecture.md
       - "007 — Formal Verification": adr/007-formal-verification.md

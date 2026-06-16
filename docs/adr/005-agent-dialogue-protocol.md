@@ -87,7 +87,7 @@ M3 までの CAP は WorkOrder / ProgressEvent / HandoverEvent による命令�
 - **段階的自律**: MICRO は即時実行、TASK/CROSS_TASK は承認付きで安全性を維持
 - **監査可能**: Provenance によりすべての対話に出所と信頼度が記録される
 - **モデル安全性**: Advisory only — actuator 非制御の原則により ADR-003 の安全チャネル独立性を維持
-- **研究貢献**: ALO-grounded 2 層 LLM multi-agent 協調は新規性の核
+- **研究貢献**: entity-descriptor-grounded 2 層 LLM multi-agent 協調は新規性の核
 
 ### 制約
 
@@ -99,6 +99,6 @@ M3 までの CAP は WorkOrder / ProgressEvent / HandoverEvent による命令�
 
 - ADR-001 (revised) — 2 層 LLM アーキテクチャ（本 ADR で具体化）
 - ADR-003 — Safety channel 独立性（Layer [C] の原則）
-- ADR-004 — ALO 表現（対話の共有コンテキスト）
+- ADR-004 — Entity Descriptor 表現（対話の共有コンテキスト）
 - [dialogue.proto](../../proto/cap/v0/dialogue.proto) — 対話メッセージ定義
 - [safety-boundary.md](../safety-boundary.md) — LLM scope の制限
