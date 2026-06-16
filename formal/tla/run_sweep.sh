@@ -52,6 +52,8 @@ RUNS=(
   "ReservationState|ReservationState_notimeout_strong.cfg|ReservationState|PASS|0"
   "MachineMode|MachineMode.cfg|MachineMode|PASS|0"
   "MachineMode|MachineMode_nofault.cfg|MachineMode|PASS|0"
+  "ReservationFencing|ReservationFencing_fenced.cfg|ReservationFencing|PASS|0"
+  "ReservationFencing|ReservationFencing_unfenced.cfg|ReservationFencing|FAIL|0"
   "CAPCoordination|CAPCoordination_safety.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_N2R1.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_N3R1.cfg|CAPCoordination|PASS|0"
