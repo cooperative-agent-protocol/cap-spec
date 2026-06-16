@@ -191,6 +191,28 @@ self-report. This is the verified form of CAP's central trust model: the
 protocol's safety does not depend on machine agents (or the LLMs driving them)
 behaving correctly.
 
+### TimedHandover (bounded-time resolution)
+
+The untimed models show a handover is *eventually* resolved; for a
+safety-relevant protocol, "eventually safe-stops" is not a safety property ---
+"safe-stops within a bounded time" is. This component adds a discrete clock and
+verifies a bounded-response property: from a request, the handover resolves
+(Completed, or TimedOut → SafeStop) within `Deadline` ticks. `Enforced` toggles
+whether the deadline is guaranteed to fire.
+
+| Config | Enforced | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|
+| `TimedHandover_enforced.cfg` | TRUE (Deadline=3) | TypeOK, BoundedResolution | **holds** | 31 / 18 |
+| `TimedHandover_unenforced.cfg` | FALSE (Deadline=3) | BoundedResolution | **violated** | clock ages past the deadline |
+
+**Finding (bounded time, not just eventually).** With the deadline enforced --- a
+pending handover cannot let time pass once `clock = Deadline` without resolving
+or timing out --- `BoundedResolution` (a pending handover never ages past
+`Deadline`) **holds**. Without that guarantee, time advances while the handover
+stays `REQUESTED`, the clock climbs past `Deadline`, and the invariant is
+**violated**. This upgrades the untimed `HandoverEventuallyResolved` to a
+bounded-time guarantee, the form a real-time safety argument needs.
+
 ---
 
 ## Composite: CAPCoordination
@@ -306,6 +328,11 @@ defect is specifically a *receiver-ownership* violation, not a double-grant.
 
 ## Changelog (this revision)
 
+- **Added `TimedHandover`**, a discrete-time bounded-response model: with the
+  deadline enforced a pending handover resolves within `Deadline` ticks
+  (BoundedResolution holds); without it the clock ages past the deadline
+  (violated). Upgrades the untimed eventual-resolution result to a bounded-time
+  guarantee.
 - **Added `ByzantineReservation`**, modelling a lying machine: exclusive
   actuation holds under a trusted arbiter and is violated when the design
   honours a machine's self-asserted hold. Verifies that CAP's exclusivity is
