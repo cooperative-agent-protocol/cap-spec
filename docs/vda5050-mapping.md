@@ -5,13 +5,13 @@ Copyright 2026 CAP Authors
 
 # CAP ↔ VDA 5050 Crosswalk
 
-A field-level mapping between **VDA 5050 v3.0.0** (the open standard for
+A field-level mapping between **VDA 5050 v2.0.0** (the open standard for
 communication between mobile-robot fleets and a central fleet controller, widely
 adopted in intralogistics) and **CAP**. The purpose is to make the relationship
 precise: *where the two standards correspond*, and *what CAP adds* for
 task-level coordination of heterogeneous construction machines.
 
-VDA 5050 field/enum names below are taken verbatim from the v3.0.0
+VDA 5050 field/enum names below are taken verbatim from the v2.0.0
 specification (`VDA5050/VDA5050`); CAP names refer to the message reference in
 `docs/specification/ch07-message-reference.md`.
 
@@ -41,7 +41,7 @@ sit at different abstraction levels and standardise different things:
 
 ## Message-level crosswalk
 
-| VDA 5050 v3.0.0 | Principal fields (verbatim) | CAP equivalent | CAP delta |
+| VDA 5050 v2.0.0 | Principal fields (verbatim) | CAP equivalent | CAP delta |
 |---|---|---|---|
 | `order` | `orderId`, `orderUpdateId`, `nodes[]`, `edges[]`, `actions[]` | `WorkOrder` (`task_id`, `skill`, zones, `invocation`) | Task-level skill, not a node/edge route; the machine plans motion. |
 | `order.nodes[]` / `edges[]` | `nodeId`/`edgeId`, `sequenceId`, `released`, `position`, `trajectory`, `actions[]` | — (motion-layer; below CAP's task level) | Out of CAP scope by design (CAP is transport- and motion-neutral). |
