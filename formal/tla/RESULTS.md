@@ -249,7 +249,28 @@ inductive step (`--init=IndInv --inv=IndInv --length=1`) both discharge under
 Apalache over symbolic sets, so a stale (older-token) holder can never
 co-actuate with the current grantee, for any fleet size. `Singletons` and
 `EpochDominates` are the supporting invariants that make `ExclusiveActuation`
-inductive. Extending inductive proofs to the remaining invariants is future work.
+inductive.
+
+**Handover ownership, inductively (`HandoverInductive`).** The handover
+receiver-ownership property (P4) is likewise proved as an inductive invariant
+for the **atomic** ownership-transfer discipline: throughout a handover's
+`IN_PROGRESS` window the handover-point resource is held by the receiver, never
+momentarily unheld. The atomic transfer (sender release + receiver grant in one
+step) together with plain acquire/release being disabled while a handover on the
+resource is active is what makes ownership inductive; `IndInv == TypeOK /\
+Singletons /\ NoDoubleGrant /\ ReceiverOwnership`, and the base
+(`check --cinit=ConstInit --init=Init --inv=IndInv --length=0`) and inductive
+step (`check --cinit=ConstInit --init=IndInv --inv=IndInv --length=1`) both
+discharge (EXITCODE OK) under Apalache over symbolic machine/resource sets, with
+the non-inductive sanity predicate `NotInductive` ("no handover is ever
+IN_PROGRESS") failing its step as expected (EXITCODE ERROR 12). The naive
+release-then-reacquire discipline, which the TLC sweep shows VIOLATES P4, is
+correctly NOT inductive and is excluded from this model.
+
+Three of the core safety invariants --- no-double-grant, fencing exclusivity,
+and handover receiver-ownership --- are thus established by induction,
+independent of fleet size; extending inductive proofs to deadlock-freedom is
+future work.
 
 ---
 

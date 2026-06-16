@@ -35,3 +35,4 @@ site/
 *.swp
 formal/tla/*_TTrace_*
 formal/tla/logs/
+formal/tla/_apalache-out/
