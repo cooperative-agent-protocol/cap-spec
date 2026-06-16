@@ -56,6 +56,8 @@ RUNS=(
   "ReservationFencing|ReservationFencing_unfenced.cfg|ReservationFencing|FAIL|0"
   "SafetySupervisor|SafetySupervisor_priority.cfg|SafetySupervisor|PASS|0"
   "SafetySupervisor|SafetySupervisor_nopriority.cfg|SafetySupervisor|FAIL|0"
+  "MultiResource|MultiResource_ordered.cfg|MultiResource|PASS|0"
+  "MultiResource|MultiResource_unordered.cfg|MultiResource|FAIL|0"
   "CAPCoordination|CAPCoordination_safety.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_N2R1.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_N3R1.cfg|CAPCoordination|PASS|0"
@@ -91,7 +93,7 @@ for row in "${RUNS[@]}"; do
 
   if grep -q "Model checking completed. No error has been found" "$log"; then
     got="PASS"
-  elif grep -qE "Error: (Invariant|Temporal|Property|.*violated|.*were violated)|Error: The following behavior constitutes a counter-example" "$log"; then
+  elif grep -qE "Error: (Invariant|Temporal|Property|.*violated|.*were violated)|Error: The following behavior constitutes a counter-example|Error: Deadlock reached" "$log"; then
     got="FAIL"
   else
     got="ERR"
