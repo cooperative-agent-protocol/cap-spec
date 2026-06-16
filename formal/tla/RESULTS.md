@@ -143,7 +143,7 @@ deadlock is expressible. `ResourceOrder` selects the discipline.
 | Config | ResourceOrder | Property | Verdict | States (gen/dist) |
 |---|---|---|---|---|
 | `MultiResource_ordered.cfg` | TRUE | TypeOK, HoldsOwnerConsistent, NoDoubleOwner, `CHECK_DEADLOCK` | **holds** (deadlock-free) | 7 / 5 |
-| `MultiResource_unordered.cfg` | FALSE | (same) | **deadlock** | 3-state circular wait |
+| `MultiResource_unordered.cfg` | FALSE | (same) | **deadlock** | 15 / 9 (3-state circular-wait CEX) |
 
 **Finding (deadlock-freedom requires an acquisition order).** Without an order,
 TLC reaches a circular wait and reports a global deadlock:
