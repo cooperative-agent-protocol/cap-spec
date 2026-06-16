@@ -1,0 +1,454 @@
+{
+  "name": "ApalacheIR",
+  "version": "1.0",
+  "description": "https://apalache-mc.org/docs/adr/005adr-json.html",
+  "modules": [
+    {
+      "kind": "TlaModule",
+      "name": "counterexample",
+      "declarations": [
+        {
+          "type": "(() => Bool)",
+          "kind": "TlaOperDecl",
+          "name": "ConstInit",
+          "formalParams": [],
+          "isRecursive": false,
+          "body": {
+            "type": "Bool",
+            "kind": "OperEx",
+            "oper": "AND",
+            "args": [
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "Set(MACHINE)",
+                    "kind": "NameEx",
+                    "name": "Machines"
+                  },
+                  {
+                    "type": "Set(MACHINE)",
+                    "kind": "OperEx",
+                    "oper": "SET_ENUM",
+                    "args": [
+                      {
+                        "type": "MACHINE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH10_OF_MACHINE"
+                        }
+                      },
+                      {
+                        "type": "MACHINE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH9_OF_MACHINE"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "Set(RESOURCE)",
+                    "kind": "NameEx",
+                    "name": "Resources"
+                  },
+                  {
+                    "type": "Set(RESOURCE)",
+                    "kind": "OperEx",
+                    "oper": "SET_ENUM",
+                    "args": [
+                      {
+                        "type": "RESOURCE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH13_OF_RESOURCE"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "(() => Bool)",
+          "kind": "TlaOperDecl",
+          "name": "State0",
+          "formalParams": [],
+          "isRecursive": false,
+          "body": {
+            "type": "Bool",
+            "kind": "OperEx",
+            "oper": "AND",
+            "args": [
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "Set(MACHINE)",
+                    "kind": "NameEx",
+                    "name": "Machines"
+                  },
+                  {
+                    "type": "Set(MACHINE)",
+                    "kind": "OperEx",
+                    "oper": "SET_ENUM",
+                    "args": [
+                      {
+                        "type": "MACHINE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH10_OF_MACHINE"
+                        }
+                      },
+                      {
+                        "type": "MACHINE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH9_OF_MACHINE"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "Set(RESOURCE)",
+                    "kind": "NameEx",
+                    "name": "Resources"
+                  },
+                  {
+                    "type": "Set(RESOURCE)",
+                    "kind": "OperEx",
+                    "oper": "SET_ENUM",
+                    "args": [
+                      {
+                        "type": "RESOURCE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH13_OF_RESOURCE"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "(MACHINE -> Set(RESOURCE))",
+                    "kind": "NameEx",
+                    "name": "held"
+                  },
+                  {
+                    "type": "(MACHINE -> Set(RESOURCE))",
+                    "kind": "OperEx",
+                    "oper": "Apalache!SetAsFun",
+                    "args": [
+                      {
+                        "type": "Set(<<MACHINE, Set(RESOURCE)>>)",
+                        "kind": "OperEx",
+                        "oper": "SET_ENUM",
+                        "args": [
+                          {
+                            "type": "<<MACHINE, Set(RESOURCE)>>",
+                            "kind": "OperEx",
+                            "oper": "TUPLE",
+                            "args": [
+                              {
+                                "type": "MACHINE",
+                                "kind": "ValEx",
+                                "value": {
+                                  "kind": "TlaStr",
+                                  "value": "FRESH10_OF_MACHINE"
+                                }
+                              },
+                              {
+                                "type": "Set(RESOURCE)",
+                                "kind": "OperEx",
+                                "oper": "SET_ENUM",
+                                "args": []
+                              }
+                            ]
+                          },
+                          {
+                            "type": "<<MACHINE, Set(RESOURCE)>>",
+                            "kind": "OperEx",
+                            "oper": "TUPLE",
+                            "args": [
+                              {
+                                "type": "MACHINE",
+                                "kind": "ValEx",
+                                "value": {
+                                  "kind": "TlaStr",
+                                  "value": "FRESH9_OF_MACHINE"
+                                }
+                              },
+                              {
+                                "type": "Set(RESOURCE)",
+                                "kind": "OperEx",
+                                "oper": "SET_ENUM",
+                                "args": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "(() => Bool)",
+          "kind": "TlaOperDecl",
+          "name": "State1",
+          "formalParams": [],
+          "isRecursive": false,
+          "body": {
+            "type": "Bool",
+            "kind": "OperEx",
+            "oper": "AND",
+            "args": [
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "Set(MACHINE)",
+                    "kind": "NameEx",
+                    "name": "Machines"
+                  },
+                  {
+                    "type": "Set(MACHINE)",
+                    "kind": "OperEx",
+                    "oper": "SET_ENUM",
+                    "args": [
+                      {
+                        "type": "MACHINE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH10_OF_MACHINE"
+                        }
+                      },
+                      {
+                        "type": "MACHINE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH9_OF_MACHINE"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "Set(RESOURCE)",
+                    "kind": "NameEx",
+                    "name": "Resources"
+                  },
+                  {
+                    "type": "Set(RESOURCE)",
+                    "kind": "OperEx",
+                    "oper": "SET_ENUM",
+                    "args": [
+                      {
+                        "type": "RESOURCE",
+                        "kind": "ValEx",
+                        "value": {
+                          "kind": "TlaStr",
+                          "value": "FRESH13_OF_RESOURCE"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EQ",
+                "args": [
+                  {
+                    "type": "(MACHINE -> Set(RESOURCE))",
+                    "kind": "NameEx",
+                    "name": "held"
+                  },
+                  {
+                    "type": "(MACHINE -> Set(RESOURCE))",
+                    "kind": "OperEx",
+                    "oper": "Apalache!SetAsFun",
+                    "args": [
+                      {
+                        "type": "Set(<<MACHINE, Set(RESOURCE)>>)",
+                        "kind": "OperEx",
+                        "oper": "SET_ENUM",
+                        "args": [
+                          {
+                            "type": "<<MACHINE, Set(RESOURCE)>>",
+                            "kind": "OperEx",
+                            "oper": "TUPLE",
+                            "args": [
+                              {
+                                "type": "MACHINE",
+                                "kind": "ValEx",
+                                "value": {
+                                  "kind": "TlaStr",
+                                  "value": "FRESH122_OF_MACHINE"
+                                }
+                              },
+                              {
+                                "type": "Set(RESOURCE)",
+                                "kind": "OperEx",
+                                "oper": "SET_ENUM",
+                                "args": [
+                                  {
+                                    "type": "RESOURCE",
+                                    "kind": "ValEx",
+                                    "value": {
+                                      "kind": "TlaStr",
+                                      "value": "FRESH125_OF_RESOURCE"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "<<MACHINE, Set(RESOURCE)>>",
+                            "kind": "OperEx",
+                            "oper": "TUPLE",
+                            "args": [
+                              {
+                                "type": "MACHINE",
+                                "kind": "ValEx",
+                                "value": {
+                                  "kind": "TlaStr",
+                                  "value": "FRESH130_OF_MACHINE"
+                                }
+                              },
+                              {
+                                "type": "Set(RESOURCE)",
+                                "kind": "OperEx",
+                                "oper": "SET_ENUM",
+                                "args": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "(() => Bool)",
+          "kind": "TlaOperDecl",
+          "name": "InvariantViolation",
+          "formalParams": [],
+          "isRecursive": false,
+          "body": {
+            "type": "Bool",
+            "kind": "OperEx",
+            "oper": "Apalache!Skolem",
+            "args": [
+              {
+                "type": "Bool",
+                "kind": "OperEx",
+                "oper": "EXISTS3",
+                "args": [
+                  {
+                    "type": "MACHINE",
+                    "kind": "NameEx",
+                    "name": "m$5"
+                  },
+                  {
+                    "type": "Set(MACHINE)",
+                    "kind": "NameEx",
+                    "name": "Machines"
+                  },
+                  {
+                    "type": "Bool",
+                    "kind": "OperEx",
+                    "oper": "NOT",
+                    "args": [
+                      {
+                        "type": "Bool",
+                        "kind": "OperEx",
+                        "oper": "EQ",
+                        "args": [
+                          {
+                            "type": "Set(RESOURCE)",
+                            "kind": "OperEx",
+                            "oper": "FUN_APP",
+                            "args": [
+                              {
+                                "type": "(MACHINE -> Set(RESOURCE))",
+                                "kind": "NameEx",
+                                "name": "held"
+                              },
+                              {
+                                "type": "MACHINE",
+                                "kind": "NameEx",
+                                "name": "m$5"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Set(RESOURCE)",
+                            "kind": "OperEx",
+                            "oper": "SET_ENUM",
+                            "args": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

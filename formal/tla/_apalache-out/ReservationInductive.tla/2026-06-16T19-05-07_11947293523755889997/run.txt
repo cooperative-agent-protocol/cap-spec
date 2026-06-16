@@ -1,0 +1,1 @@
+ check --cinit=ConstInit --init=NotInductive --inv=NotInductive --length=1 ReservationInductive.tla

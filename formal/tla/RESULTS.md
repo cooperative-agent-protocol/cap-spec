@@ -213,6 +213,32 @@ stays `REQUESTED`, the clock climbs past `Deadline`, and the invariant is
 **violated**. This upgrades the untimed `HandoverEventuallyResolved` to a
 bounded-time guarantee, the form a real-time safety argument needs.
 
+### ReservationInductive (Apalache inductive invariant — unbounded by induction)
+
+The composite safety sweep is explicit-state model checking up to a bounded
+instance (N <= 5). This result establishes the core exclusivity invariant the
+stronger way --- as an **inductive invariant**, checked by **Apalache 0.58.0**
+(symbolic / SMT) over symbolic machine and resource sets (`Gen(4)`). An
+inductive invariant holds in every reachable state by induction (preserved by
+every step from any state that satisfies it), rather than being merely free of a
+counterexample within an explored depth/instance.
+
+`Disjoint` (NoDoubleGrant): no resource is held by two machines.
+
+| Check | apalache-mc invocation | Verdict |
+|---|---|---|
+| base: `Init => IndInv` | `check --cinit=ConstInit --init=Init --inv=IndInv --length=0` | **OK** |
+| step: `IndInv /\ Next => IndInv'` | `check --cinit=ConstInit --init=IndInv --inv=IndInv --length=1` | **OK** |
+| non-vacuity sanity: a non-inductive predicate's step | `check --init=NotInductive --inv=NotInductive --length=1` | **violation found** (as expected) |
+
+`IndInv == TypeOK /\ Disjoint`. The base and inductive step both pass, so
+`Disjoint` holds in all reachable states; the deliberately non-inductive
+`NotInductive` ("nobody ever holds anything") fails its inductive step,
+confirming the SMT check discriminates (the positive result is not vacuous).
+This complements the TLC sweep with a proof-by-induction of exclusivity that
+does not depend on enumerating a fixed fleet size. (Apalache is a separate
+toolchain from the TLC `run_sweep.sh`; the three invocations above reproduce it.)
+
 ---
 
 ## Composite: CAPCoordination
@@ -328,6 +354,11 @@ defect is specifically a *receiver-ownership* violation, not a double-grant.
 
 ## Changelog (this revision)
 
+- **Added `ReservationInductive`** (Apalache 0.58.0): NoDoubleGrant verified as
+  an inductive invariant (base + inductive step both OK) over symbolic
+  machine/resource sets, with a non-vacuity sanity check (a non-inductive
+  predicate's step fails). Complements the bounded TLC sweep with a
+  proof-by-induction that does not enumerate a fixed fleet size.
 - **Added `TimedHandover`**, a discrete-time bounded-response model: with the
   deadline enforced a pending handover resolves within `Deadline` ticks
   (BoundedResolution holds); without it the clock ages past the deadline
