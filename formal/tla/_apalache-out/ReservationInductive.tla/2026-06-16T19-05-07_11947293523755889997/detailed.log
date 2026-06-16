@@ -1,0 +1,98 @@
+2026-06-16T19:05:07,849 [main] INFO  a.f.a.t.Tool$ - # APALACHE version: 0.58.0 | build: 711dce6
+2026-06-16T19:05:07,866 [main] INFO  a.f.a.t.t.o.CheckCmd - Tuning: search.outputTraces=false
+2026-06-16T19:05:08,075 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #0: SanyParser
+2026-06-16T19:05:08,282 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #0: SanyParser [OK]
+2026-06-16T19:05:08,282 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #1: TypeCheckerSnowcat
+2026-06-16T19:05:08,283 [main] INFO  a.f.a.t.p.t.EtcTypeCheckerPassImpl -  > Running Snowcat .::.
+2026-06-16T19:05:08,477 [main] INFO  a.f.a.t.p.t.EtcTypeCheckerPassImpl -  > Your types are purrfect!
+2026-06-16T19:05:08,477 [main] INFO  a.f.a.t.p.t.EtcTypeCheckerPassImpl -  > All expressions are typed
+2026-06-16T19:05:08,477 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #1: TypeCheckerSnowcat [OK]
+2026-06-16T19:05:08,478 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #2: ConfigurationPass
+2026-06-16T19:05:08,480 [main] INFO  a.f.a.t.p.p.ConfigurationPassImpl -   > Set the initialization predicate to NotInductive
+2026-06-16T19:05:08,481 [main] INFO  a.f.a.t.p.p.ConfigurationPassImpl -   > Set the transition predicate to Next
+2026-06-16T19:05:08,481 [main] INFO  a.f.a.t.p.p.ConfigurationPassImpl -   > Set the constant initialization predicate to ConstInit
+2026-06-16T19:05:08,481 [main] INFO  a.f.a.t.p.p.ConfigurationPassImpl -   > Set an invariant to NotInductive
+2026-06-16T19:05:08,484 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #2: ConfigurationPass [OK]
+2026-06-16T19:05:08,485 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #3: DesugarerPass
+2026-06-16T19:05:08,485 [main] INFO  a.f.a.t.p.p.DesugarerPassImpl -   > Desugaring...
+2026-06-16T19:05:08,491 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #3: DesugarerPass [OK]
+2026-06-16T19:05:08,492 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #4: InlinePass
+2026-06-16T19:05:08,492 [main] INFO  a.f.a.t.p.p.InlinePassImpl - Leaving only relevant operators: ConstInit, ConstInitPrimed, Next, NotInductive, NotInductivePrimed
+2026-06-16T19:05:08,523 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #4: InlinePass [OK]
+2026-06-16T19:05:08,523 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #5: TemporalPass
+2026-06-16T19:05:08,523 [main] INFO  a.f.a.t.p.p.TemporalPassImpl -   > Rewriting temporal operators...
+2026-06-16T19:05:08,523 [main] INFO  a.f.a.t.p.p.TemporalPassImpl -   > No temporal property specified, nothing to encode
+2026-06-16T19:05:08,523 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #5: TemporalPass [OK]
+2026-06-16T19:05:08,523 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #6: InlinePass
+2026-06-16T19:05:08,524 [main] INFO  a.f.a.t.p.p.InlinePassImpl - Leaving only relevant operators: ConstInit, ConstInitPrimed, Next, NotInductive, NotInductivePrimed
+2026-06-16T19:05:08,526 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #6: InlinePass [OK]
+2026-06-16T19:05:08,526 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #7: PrimingPass
+2026-06-16T19:05:08,528 [main] INFO  a.f.a.t.p.a.PrimingPassImpl -   > Introducing ConstInitPrimed for ConstInit'
+2026-06-16T19:05:08,729 [main] INFO  a.f.a.t.p.a.PrimingPassImpl -   > Introducing NotInductivePrimed for NotInductive'
+2026-06-16T19:05:08,730 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #7: PrimingPass [OK]
+2026-06-16T19:05:08,730 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #8: VCGen
+2026-06-16T19:05:08,731 [main] INFO  a.f.a.t.b.p.VCGenPassImpl -   > Producing verification conditions from the invariant NotInductive
+2026-06-16T19:05:08,736 [main] INFO  a.f.a.t.b.VCGenerator -   > VCGen produced 2 verification condition(s)
+2026-06-16T19:05:08,738 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #8: VCGen [OK]
+2026-06-16T19:05:08,738 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #9: PreprocessingPass
+2026-06-16T19:05:08,738 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > Before preprocessing: unique renaming
+2026-06-16T19:05:08,748 [main] INFO  a.f.a.t.p.p.PreproPassImpl -  > Applying standard transformations:
+2026-06-16T19:05:08,749 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > PrimePropagation
+2026-06-16T19:05:08,750 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > Desugarer
+2026-06-16T19:05:08,751 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > UniqueRenamer
+2026-06-16T19:05:08,754 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > Normalizer
+2026-06-16T19:05:08,755 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > SetMembershipSimplifier
+2026-06-16T19:05:08,758 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > Keramelizer
+2026-06-16T19:05:08,762 [main] INFO  a.f.a.t.p.p.PreproPassImpl -   > After preprocessing: UniqueRenamer
+2026-06-16T19:05:08,766 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #9: PreprocessingPass [OK]
+2026-06-16T19:05:08,766 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #10: TransitionFinderPass
+2026-06-16T19:05:08,798 [main] INFO  a.f.a.t.p.a.TransitionPassImpl -   > Found 1 initializing transitions
+2026-06-16T19:05:08,807 [main] INFO  a.f.a.t.p.a.TransitionPassImpl -   > Found 2 transitions
+2026-06-16T19:05:08,808 [main] INFO  a.f.a.t.p.a.TransitionPassImpl -   > Found constant initializer ConstInit
+2026-06-16T19:05:08,811 [main] INFO  a.f.a.t.p.a.TransitionPassImpl -   > Applying unique renaming
+2026-06-16T19:05:08,816 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #10: TransitionFinderPass [OK]
+2026-06-16T19:05:08,817 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #11: OptimizationPass
+2026-06-16T19:05:08,822 [main] INFO  a.f.a.t.p.p.OptPassImpl -  > Applying optimizations:
+2026-06-16T19:05:08,822 [main] INFO  a.f.a.t.p.p.OptPassImpl -   > ConstSimplifier
+2026-06-16T19:05:08,825 [main] INFO  a.f.a.t.p.p.OptPassImpl -   > ExprOptimizer
+2026-06-16T19:05:08,825 [main] INFO  a.f.a.t.p.p.OptPassImpl -   > SetMembershipSimplifier
+2026-06-16T19:05:08,826 [main] INFO  a.f.a.t.p.p.OptPassImpl -   > ConstSimplifier
+2026-06-16T19:05:08,827 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #11: OptimizationPass [OK]
+2026-06-16T19:05:08,828 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #12: AnalysisPass
+2026-06-16T19:05:08,829 [main] INFO  a.f.a.t.b.p.AnalysisPassImpl -  > Marking skolemizable existentials and sets to be expanded...
+2026-06-16T19:05:08,829 [main] INFO  a.f.a.t.b.p.AnalysisPassImpl -   > Skolemization
+2026-06-16T19:05:08,830 [main] INFO  a.f.a.t.b.p.AnalysisPassImpl -   > Expansion
+2026-06-16T19:05:08,830 [main] INFO  a.f.a.t.b.p.AnalysisPassImpl -   > Remove unused let-in defs
+2026-06-16T19:05:08,831 [main] INFO  a.f.a.t.b.p.AnalysisPassImpl -  > Running analyzers...
+2026-06-16T19:05:08,833 [main] INFO  a.f.a.t.b.p.AnalysisPassImpl -   > Introduced expression grades
+2026-06-16T19:05:08,833 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #12: AnalysisPass [OK]
+2026-06-16T19:05:08,833 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #13: BoundedChecker
+2026-06-16T19:05:08,853 [main] DEBUG a.f.a.t.b.s.Z3SolverContext - Creating Z3 solver context 0
+2026-06-16T19:05:09,900 [main] DEBUG a.f.a.t.b.t.TransitionExecutorImpl - Initializing CONSTANTS
+2026-06-16T19:05:09,953 [main] DEBUG a.f.a.t.b.t.TransitionExecutorImpl - Step #0, transition #0
+2026-06-16T19:05:09,953 [main] DEBUG a.f.a.t.b.t.TransitionExecutorImpl - Translating to SMT
+2026-06-16T19:05:10,080 [main] DEBUG a.f.a.t.b.SeqModelChecker - Step 0: Transition #0. Is it enabled?
+2026-06-16T19:05:10,085 [main] DEBUG a.f.a.t.b.SeqModelChecker - Step 0: Transition #0 is enabled
+2026-06-16T19:05:10,086 [main] INFO  a.f.a.t.b.SeqModelChecker - State 0: Checking 2 state invariants
+2026-06-16T19:05:10,087 [main] DEBUG a.f.a.t.b.SeqModelChecker - State 0: Checking state invariant 0
+2026-06-16T19:05:10,197 [main] INFO  a.f.a.t.b.SeqModelChecker - State 0: state invariant 0 holds.
+2026-06-16T19:05:10,200 [main] DEBUG a.f.a.t.b.SeqModelChecker - State 0: Checking state invariant 1
+2026-06-16T19:05:10,218 [main] INFO  a.f.a.t.b.SeqModelChecker - State 0: state invariant 1 holds.
+2026-06-16T19:05:10,220 [main] INFO  a.f.a.t.b.t.TransitionExecutorImpl - Step 0: picking a transition out of 1 transition(s)
+2026-06-16T19:05:10,225 [main] DEBUG a.f.a.t.b.t.TransitionExecutorImpl - Step #1, transition #0
+2026-06-16T19:05:10,225 [main] DEBUG a.f.a.t.b.t.TransitionExecutorImpl - Translating to SMT
+2026-06-16T19:05:10,310 [main] DEBUG a.f.a.t.b.SeqModelChecker - Step 1: Transition #0. Is it enabled?
+2026-06-16T19:05:10,312 [main] DEBUG a.f.a.t.b.SeqModelChecker - Step 1: Transition #0 is enabled
+2026-06-16T19:05:10,312 [main] INFO  a.f.a.t.b.SeqModelChecker - State 1: Checking 2 state invariants
+2026-06-16T19:05:10,313 [main] DEBUG a.f.a.t.b.SeqModelChecker - State 1: Checking state invariant 0
+2026-06-16T19:05:10,385 [main] INFO  a.f.a.t.b.SeqModelChecker - State 1: state invariant 0 holds.
+2026-06-16T19:05:10,387 [main] DEBUG a.f.a.t.b.SeqModelChecker - State 1: Checking state invariant 1
+2026-06-16T19:05:10,554 [main] INFO  a.f.a.t.b.DumpFilesModelCheckerListener$ - Check the trace in: /Users/okauchiryota/main_desk/UTokyo/from_202604/cooperative-agent-protocol/cap-spec/formal/tla/_apalache-out/ReservationInductive.tla/2026-06-16T19-05-07_11947293523755889997/violation1.tla, /Users/okauchiryota/main_desk/UTokyo/from_202604/cooperative-agent-protocol/cap-spec/formal/tla/_apalache-out/ReservationInductive.tla/2026-06-16T19-05-07_11947293523755889997/MCviolation1.out, /Users/okauchiryota/main_desk/UTokyo/from_202604/cooperative-agent-protocol/cap-spec/formal/tla/_apalache-out/ReservationInductive.tla/2026-06-16T19-05-07_11947293523755889997/violation1.json, /Users/okauchiryota/main_desk/UTokyo/from_202604/cooperative-agent-protocol/cap-spec/formal/tla/_apalache-out/ReservationInductive.tla/2026-06-16T19-05-07_11947293523755889997/violation1.itf.json
+2026-06-16T19:05:10,554 [main] INFO  a.f.a.t.b.SeqModelChecker - State 1: state invariant 1 violated.
+2026-06-16T19:05:10,556 [main] INFO  a.f.a.t.b.SeqModelChecker - Found 1 error(s)
+2026-06-16T19:05:10,556 [main] DEBUG a.f.a.t.b.s.Z3SolverContext - Disposing Z3 solver context 0
+2026-06-16T19:05:10,561 [main] INFO  a.f.a.t.b.p.BoundedCheckerPassImpl - The outcome is: Error
+2026-06-16T19:05:10,589 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #13: BoundedChecker [FAIL]
+2026-06-16T19:05:10,589 [main] INFO  a.f.a.t.Tool$ - Checker has found an error
+2026-06-16T19:05:10,589 [main] INFO  a.f.a.t.Tool$ - It took me 0 days  0 hours  0 min  2 sec
+2026-06-16T19:05:10,589 [main] INFO  a.f.a.t.Tool$ - Total time: 2.737 sec

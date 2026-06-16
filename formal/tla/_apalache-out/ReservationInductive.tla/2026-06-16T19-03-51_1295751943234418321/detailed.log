@@ -1,0 +1,8 @@
+2026-06-16T19:03:52,025 [main] INFO  a.f.a.t.Tool$ - # APALACHE version: 0.58.0 | build: 711dce6
+2026-06-16T19:03:52,047 [main] INFO  a.f.a.t.t.o.CheckCmd - Tuning: search.outputTraces=false
+2026-06-16T19:03:52,306 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #0: SanyParser
+2026-06-16T19:03:52,433 [main] ERROR a.f.a.t.p.i.SanyParserPassImpl - Parsing error: Unknown SANY error (exit code=SEMANTIC_ANALYSIS_OR_LEVEL_CHECKING_FAILURE)
+2026-06-16T19:03:52,463 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #0: SanyParser [FAIL]
+2026-06-16T19:03:52,464 [main] INFO  a.f.a.t.Tool$ - Checker has found an error
+2026-06-16T19:03:52,464 [main] INFO  a.f.a.t.Tool$ - It took me 0 days  0 hours  0 min  0 sec
+2026-06-16T19:03:52,464 [main] INFO  a.f.a.t.Tool$ - Total time: 0.436 sec
