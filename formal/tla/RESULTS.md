@@ -160,6 +160,37 @@ not exclusivity. This converts the composite's structural deadlock-freedom into
 a verified property over real multi-hold contention and names the required
 discipline.
 
+### ByzantineReservation (untrusted agents, trusted arbiter)
+
+Every other model assumes agents follow the protocol. CAP's architecture
+assumes the opposite — machine agents and their LLMs are untrusted, and the
+Site Agent's arbiter (and the Safety Supervisor) are the trusted enforcement
+points. This component lets a machine **lie** (assert it holds a resource it
+was never granted) and checks whether exclusive actuation survives.
+`TrustedArbiter` selects whether actuation is gated by the arbiter's
+authoritative holder map or by the machine's self-asserted claim.
+
+| Config | TrustedArbiter | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|
+| `ByzantineReservation_trusted.cfg` | TRUE | TypeOK, ArbiterExclusive, NoTwoActuators | **holds** | 21 / 8 |
+| `ByzantineReservation_untrusted.cfg` | FALSE | NoTwoActuators | **violated** | 3-state counterexample |
+
+**Finding (exclusivity is an invariant of the arbiter, not of agent honesty).**
+With `TrustedArbiter = TRUE`, a machine actuates a resource only if the
+arbiter's authoritative map recognises it as the holder, so a false self-claim
+carries no authority and `NoTwoActuators` **holds**. With
+`TrustedArbiter = FALSE` it is **violated**:
+```
+Grant(m1, LP-1)          ; arbiter grants LP-1 to m1 (m1 actuates)
+ByzantineClaim(m2, LP-1) ; m2 lies — asserts LP-1 without a grant
+→ both m1 (true grantee) and m2 (liar) actuate LP-1.
+```
+`ArbiterExclusive` (the arbiter's own map is single-holder) holds in both
+regimes — the lie corrupts actuation only when the design trusts the agent's
+self-report. This is the verified form of CAP's central trust model: the
+protocol's safety does not depend on machine agents (or the LLMs driving them)
+behaving correctly.
+
 ---
 
 ## Composite: CAPCoordination
@@ -275,6 +306,11 @@ defect is specifically a *receiver-ownership* violation, not a double-grant.
 
 ## Changelog (this revision)
 
+- **Added `ByzantineReservation`**, modelling a lying machine: exclusive
+  actuation holds under a trusted arbiter and is violated when the design
+  honours a machine's self-asserted hold. Verifies that CAP's exclusivity is
+  an invariant of the arbiter, not of agent honesty (the architecture's
+  untrusted-agent premise).
 - **Added `MultiResource`**, a hold-and-wait model over a resource set, turning
   the composite's structural (tautological) deadlock-freedom into a verified
   property: without a total acquisition order TLC reaches a circular-wait

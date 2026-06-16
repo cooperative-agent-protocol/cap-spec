@@ -58,6 +58,8 @@ RUNS=(
   "SafetySupervisor|SafetySupervisor_nopriority.cfg|SafetySupervisor|FAIL|0"
   "MultiResource|MultiResource_ordered.cfg|MultiResource|PASS|0"
   "MultiResource|MultiResource_unordered.cfg|MultiResource|FAIL|0"
+  "ByzantineReservation|ByzantineReservation_trusted.cfg|ByzantineReservation|PASS|0"
+  "ByzantineReservation|ByzantineReservation_untrusted.cfg|ByzantineReservation|FAIL|0"
   "CAPCoordination|CAPCoordination_safety.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_N2R1.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_N3R1.cfg|CAPCoordination|PASS|0"
