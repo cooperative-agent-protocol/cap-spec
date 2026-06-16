@@ -146,6 +146,10 @@ Task assignment to a specific machine.
 | `safety_constraints` | repeated Constraint | 10 | MAY | Safety constraints during execution |
 | `execution_window` | TimeWindow | 11 | SHOULD | Time window for execution |
 | `priority` | int32 | 12 | MAY | Priority (higher = more urgent) |
+| `success_criteria` | repeated string | 13 | SHOULD | Machine-verifiable completion conditions |
+| `human_context` | string | 14 | MAY | Advisory natural-language context (non-normative) |
+| `invocation` | SkillInvocation | 15 | SHOULD | Typed action contract (RFC-0001; supersedes `parameters`) |
+| `assignment_epoch` | uint64 | 16 | SHOULD | Re-dispatch fencing token; a repeat `task_id` in a non-terminal state is an idempotent no-op (§4.4.7) |
 
 ### CancelWorkOrder
 
@@ -163,6 +167,8 @@ Task assignment to a specific machine.
 | `holder_id` | string | 3 | MUST | Requesting machine |
 | `requested_window` | TimeWindow | 4 | SHOULD | Requested reservation period |
 | `reason` | string | 5 | MAY | Reason for reservation |
+| `priority` | int32 | 6 | MAY | Arbitration priority in the queued regime (higher = earlier) |
+| `preemptable` | bool | 7 | MAY | Whether a higher-priority request may preempt this one |
 
 ### ReservationRelease
 
@@ -178,6 +184,7 @@ Task assignment to a specific machine.
 | `machine_id` | string | 1 | MUST | Target machine |
 | `requested_mode` | MachineMode | 2 | MUST | Target mode |
 | `reason` | string | 3 | SHOULD | Reason for mode change |
+| `mode_epoch` | uint64 | 4 | SHOULD | Mode-arbitration fencing token; the machine ignores a command with `mode_epoch` ≤ the last applied (§6.3.6) |
 
 ---
 
@@ -302,6 +309,10 @@ Direction: **Site Agent → Machine Agent**
 | `state` | ReservationState | 4 | MUST | Current state |
 | `reason` | string | 5 | SHOULD (MUST if DENIED) | State reason |
 | `granted_window` | TimeWindow | 6 | MUST (if GRANTED) | Granted time window |
+| `grant_epoch` | uint64 | 7 | MUST (if GRANTED) | Per-resource fencing token; the holder echoes it and stale-epoch actions are rejected (§6.3.6) |
+| `queue_position` | uint32 | 8 | MUST (if QUEUED) | Place in line under the queued regime (1 = next); 0 otherwise |
+
+(The `state` enum includes `QUEUED` — a busy resource queues the request in FIFO-with-priority order rather than denying it; see §6.3.5.)
 
 ### AuditEvent
 
@@ -357,9 +368,11 @@ See Chapter 8 for error handling semantics.
 | Field | Type | Number | Description |
 |-------|------|--------|-------------|
 | `key` | string | 1 | Property name |
-| `value` | string | 2 | Property value |
-| `unit` | string | 3 | Unit of measurement (empty if N/A) |
-| `dtype` | string | 4 | Data type ("float", "string", "int", "bool", "enum") |
+| `value` | string | 2 | Human-readable surface; MUST agree with `typed_value` |
+| `unit` | string | 3 | Canonical UCUM code (e.g. "m2", "m3", "kg", "%"); empty if N/A |
+| `dtype` | string | 4 | DEPRECATED free-form type string; use `value_type` |
+| `value_type` | ValueType (enum) | 5 | Closed value type: `DOUBLE` / `INT` / `BOOL` / `STRING` / `ENUM` |
+| `typed_value` | oneof | 6–9 | Normative typed value: `num_value` (double, 6), `int_value` (int64, 7), `bool_value` (bool, 8), `str_value` (string, 9) — the arm matching `value_type` |
 
 ### EntitySubObject
 

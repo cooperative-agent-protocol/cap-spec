@@ -187,10 +187,14 @@ route segment). Reservations prevent deadlocks and collisions in multi-machine o
 stateDiagram-v2
     [*] --> REQUESTED : ReservationRequest sent
 
-    REQUESTED --> GRANTED : Resource available, no conflict
-    REQUESTED --> DENIED  : Resource occupied or conflict detected
+    REQUESTED --> GRANTED : Resource free
+    REQUESTED --> QUEUED  : Resource busy (queued regime — DEFAULT)
+    REQUESTED --> DENIED  : Resource busy (deny regime — OPTIONAL)
 
-    GRANTED --> RELEASED : ReservationRelease by holder
+    QUEUED --> GRANTED : Resource released; this request is next in order
+    QUEUED --> [*]     : Request withdrawn
+
+    GRANTED --> RELEASED : ReservationRelease / atomic handover
     GRANTED --> EXPIRED  : granted_window.latest exceeded
 
     DENIED  --> [*]
@@ -203,31 +207,70 @@ stateDiagram-v2
 | State | Description |
 |-------|-------------|
 | `REQUESTED` | Machine Agent has sent a `ReservationRequest`. Awaiting Site Agent decision. |
-| `GRANTED` | Reservation is active. The holder has exclusive access to the resource within the `granted_window`. |
-| `DENIED` | Reservation was denied. `reason` field describes why (e.g., "occupied by dump-01"). Machine SHOULD retry after `retry_after_sec` or request an alternative resource. |
-| `RELEASED` | Holder has explicitly released the reservation via `ReservationRelease`. |
-| `EXPIRED` | Reservation has expired because `granted_window.latest` was reached. The resource is now available. |
+| `QUEUED` | Resource is busy; the request is held in FIFO-with-priority order and will be granted when the resource is released. `queue_position` reports the place in line (1 = next). This is the **default** regime (see §6.3.5). |
+| `GRANTED` | Reservation is active. The holder has exclusive access to the resource within the `granted_window`, identified by the fencing token `grant_epoch` (see §6.3.6). |
+| `DENIED` | Reservation was denied (deny regime only). `reason` describes why. Machine SHOULD retry or request an alternative resource. **Deny-on-busy can starve a machine — see §6.3.5.** |
+| `RELEASED` | Holder has explicitly released the reservation via `ReservationRelease`, or transferred it through an atomic handover (§6.4). |
+| `EXPIRED` | Reservation expired because `granted_window.latest` was reached. The resource is now available. |
 
 ### 6.3.3 Transition Rules
 
 | From | Event / Trigger | To | Condition |
 |------|----------------|----|-----------|
-| `REQUESTED` | `ReservationStatus(GRANTED)` | `GRANTED` | No conflicting active reservation |
-| `REQUESTED` | `ReservationStatus(DENIED)` | `DENIED` | Resource is occupied or policy conflict |
+| `REQUESTED` | `ReservationStatus(GRANTED)` | `GRANTED` | Resource free, no conflict |
+| `REQUESTED` | `ReservationStatus(QUEUED)` | `QUEUED` | Resource busy, queued regime (default) |
+| `REQUESTED` | `ReservationStatus(DENIED)` | `DENIED` | Resource busy, deny regime (optional) |
+| `QUEUED` | `ReservationStatus(GRANTED)` | `GRANTED` | Resource released and this request is first in order |
 | `GRANTED` | `ReservationRelease` | `RELEASED` | Holder sends release |
 | `GRANTED` | `granted_window.latest` elapsed | `EXPIRED` | Automatic expiration |
 
 ### 6.3.4 State × Event Matrix
 
-| Current \ Event | ReservationStatus (GRANTED) | ReservationStatus (DENIED) | ReservationRelease | Window Expiry |
-|---|---|---|---|---|
-| **REQUESTED** | GRANTED | DENIED | ERROR | DENIED¹ |
-| **GRANTED** | ERROR | ERROR | RELEASED | EXPIRED |
-| **DENIED** | ERROR | ERROR | ERROR | — |
-| **RELEASED** | ERROR | ERROR | ERROR | — |
-| **EXPIRED** | ERROR | ERROR | ERROR | — |
+| Current \ Event | RS(GRANTED) | RS(QUEUED) | RS(DENIED) | ReservationRelease | Window Expiry |
+|---|---|---|---|---|---|
+| **REQUESTED** | GRANTED | QUEUED | DENIED | ERROR | DENIED¹ |
+| **QUEUED** | GRANTED | QUEUED | DENIED | ERROR | — |
+| **GRANTED** | ERROR | ERROR | ERROR | RELEASED | EXPIRED |
+| **DENIED** | ERROR | ERROR | ERROR | ERROR | — |
+| **RELEASED** | ERROR | ERROR | ERROR | ERROR | — |
+| **EXPIRED** | ERROR | ERROR | ERROR | ERROR | — |
 
 > ¹ If the request times out before a response, it is treated as DENIED with reason "request_timeout".
+
+### 6.3.5 Reservation Regime and Starvation (normative)
+
+A Site Agent arbitrates a busy resource in one of two regimes:
+
+- **Queued (DEFAULT).** A request for a busy resource transitions to `QUEUED`
+  and is granted in **FIFO-with-priority** order when the resource is released.
+  A conformant Level-2 arbiter MUST implement the queued regime and MUST NOT
+  indefinitely defer a continuously-grantable queued request.
+- **Deny-on-busy (OPTIONAL).** The arbiter MAY instead deny a busy request,
+  requiring the machine to retry. Implementations choosing this regime MUST
+  document that it **does not guarantee starvation-freedom**.
+
+This requirement follows a model-checking result: under deny-on-busy, a machine
+can be **starved** even at the minimal one-resource instance and even under a
+strongly fair arbiter (the loser of a grant is denied, blocks, and retries
+while the winner completes, releases, and re-acquires ahead of the retry). The
+queued regime restores starvation-freedom (`NoStarvation` holds with a strongly
+fair grant action). Both regimes are verified in
+`cap-spec/formal/tla/CAPCoordination` (configs `*_retry` = violated,
+`*_queued` = holds).
+
+### 6.3.6 Fencing Token (normative)
+
+Each grant carries a monotonically increasing per-resource `grant_epoch`. The
+holder MUST echo `grant_epoch` on any action gated by the reservation, and the
+resource owner / Safety Supervisor MUST reject an action whose epoch is older
+than the resource's current grant epoch. This keeps exclusive access safe when
+a `ReservationStatus` (grant, expiry, or release) is delayed, dropped, or
+replayed: a stale holder whose expiry notification was lost cannot act on the
+resource after it has been re-granted. The mechanism and its necessity are
+verified in `cap-spec/formal/tla/ReservationFencing` (`ExclusiveActuation`
+holds with the token, is violated without it). The same discipline applies to
+`ModeCommand.mode_epoch` (a machine ignores a mode command older than the last
+applied) and `WorkOrder.assignment_epoch` (re-dispatch idempotency, §4.4.7).
 
 ---
 

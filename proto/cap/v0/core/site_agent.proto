@@ -53,6 +53,14 @@ message WorkOrder {
   // パラメータ (例 cap.v0.domains.construction.ExcavateBatchParams) を運び、新 Domain Pack が
   // CAP-Core を変更せず拡張できる。移行期は skill/parameters と併存 (dual-write 推奨)。
   SkillInvocation invocation = 15;
+
+  // Fencing token for re-dispatch idempotency: a monotonically increasing
+  // per-task assignment epoch. CAP delivery is at-least-once, so a WorkOrder
+  // may be re-sent after a lost WorkOrderAck. A machine MUST treat a WorkOrder
+  // whose task_id is already in a non-terminal state as an idempotent no-op
+  // (re-emit the last WorkOrderAck), never a second execution; the epoch lets
+  // it distinguish a genuine re-assignment from a duplicate.
+  uint64 assignment_epoch = 16;
 }
 
 // CancelWorkOrder requests cancellation of a previously issued work order.
@@ -69,6 +77,13 @@ message ReservationRequest {
   string holder_id      = 3;
   TimeWindow requested_window = 4;
   string reason         = 5;
+
+  // Arbitration priority for the queued regime (higher = served earlier within
+  // FIFO-with-priority). Optional; default 0.
+  int32 priority        = 6;
+
+  // Whether this reservation may be preempted by a higher-priority request.
+  bool preemptable      = 7;
 }
 
 // ReservationRelease frees a previously granted reservation.
@@ -82,4 +97,10 @@ message ModeCommand {
   string machine_id        = 1;
   MachineMode requested_mode = 2;
   string reason            = 3;
+
+  // Fencing token for mode arbitration: a monotonically increasing per-machine
+  // mode-command epoch. The machine MUST ignore a ModeCommand whose epoch is
+  // older than the last one it applied, so a stale, reordered, or replayed
+  // ModeCommand cannot override a newer one (critical for AUTONOMY transitions).
+  uint64 mode_epoch        = 4;
 }
