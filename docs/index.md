@@ -23,7 +23,7 @@ The v0.x reference Domain Pack is **Construction**.
 | Layer LLMs into the loop without breaking safety guarantees | 3-layer architecture: Site Agent (LLM) → Machine Agent (advisory LLM) → Safety Supervisor (deterministic) (ADR-001 / ADR-003) |
 | Talk natural-language between agents | `AgentDialogue` (ADR-005) |
 | Resolve resource conflicts between machines | Reservation protocol + handover (Ch06) |
-| Express tasks and zones in human-readable terms | Abstract Language Objects (ALO) (ADR-004) |
+| Express tasks and zones in human-readable terms | Entity Descriptors (ADR-004) |
 | Prove correctness of coordination state machines | TLA+ formal models (ADR-007) |
 | Plug new domains in without forking | Domain Pack architecture (ADR-011) |
 

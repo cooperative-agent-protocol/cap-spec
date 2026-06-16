@@ -11,7 +11,7 @@ Copyright 2026 CAP Authors
 
 CAP (Cooperative Agent Protocol) は、LLM ベースの Site Agent と産業機械の Machine Agent 間の
 通信セマンティクスを定義する domain-agnostic なプロトコルです。Core (Manifest / WorkOrder /
-Heartbeat / Dialogue / ALO / Safety Supervisor) は任意の重機・農機・鉱山機械等で利用可能で、
+Heartbeat / Dialogue / Entity Descriptor / Safety Supervisor) は任意の重機・農機・鉱山機械等で利用可能で、
 ドメイン固有の skill / zone / equipment 定義は **Domain Pack** として切り出されています。
 v0.x のリファレンスドメインは **Construction** (建設重機) です。
 
@@ -34,7 +34,7 @@ proto/cap/v0/
 ├── machine_agent.proto  # Machine → Site (Manifest, Heartbeat, WorkOrderAck)
 ├── events.proto         # イベント (Progress, Fault, Handover, Safety, Reservation, Audit)
 ├── error.proto          # 構造化エラー (CapError, ErrorDomain, 15+ エラーコード)
-├── alo.proto            # Abstract Language Objects (ALODescriptor, ALOManager)
+├── entity.proto            # Entity Descriptors (EntityDescriptor, EntityManager)
 ├── dialogue.proto       # エージェント対話 (SituationReport, LocalDecision, PlanProposal)
 └── runtime.proto        # CapFrame envelope + CapRuntimeService gRPC
 ```
@@ -43,7 +43,7 @@ proto/cap/v0/
 
 | Message | Direction | Purpose |
 |---------|-----------|---------|
-| `CapabilityManifest` | Machine → Site | 接続時に機体のスキル・ALO 記述を宣言 |
+| `CapabilityManifest` | Machine → Site | 接続時に機体のスキル・Entity Descriptor 記述を宣言 |
 | `Heartbeat` | Machine → Site | 定期的な死活監視・状態報告 |
 | `WorkOrder` | Site → Machine | スキルレベルのタスク指示 |
 | `WorkOrderAck` | Machine → Site | タスクの受理/拒否/延期 |
@@ -52,7 +52,7 @@ proto/cap/v0/
 | `ModeCommand` | Site → Machine | 運転モード変更指示 |
 | `ReservationRequest/Status` | Both | 共有リソースの予約・競合管理 |
 | `AgentDialogue` | Both | エージェント間対話（状況報告、判断提案） |
-| `ALOStateUpdate` | Machine → Site | ALO 状態の動的更新 |
+| `EntityStateUpdate` | Machine → Site | Entity Descriptor 状態の動的更新 |
 | `CapError` | Both | 構造化エラー応答 |
 
 ## Formal Specification
@@ -91,7 +91,7 @@ proto/cap/v0/
 | [ADR-001](docs/adr/001-llm-site-agent-only.md) | 3 層 LLM アーキテクチャ（改訂版: Machine Agent にも LLM、advisory only） |
 | [ADR-002](docs/adr/002-transport-neutral-semantics.md) | Transport-Neutral Semantics |
 | [ADR-003](docs/adr/003-independent-safety-channel.md) | Safety Channel は独立系統 |
-| [ADR-004](docs/adr/004-alo-representation.md) | ALO as machine and site object representation |
+| [ADR-004](docs/adr/004-entity-representation.md) | Entity Descriptor as machine and site object representation |
 | [ADR-005](docs/adr/005-agent-dialogue-protocol.md) | Agent Dialogue Protocol |
 | [ADR-006](docs/adr/006-security-architecture.md) | Security Architecture (mTLS, RBAC, STRIDE) |
 | [ADR-007](docs/adr/007-formal-verification.md) | Formal Verification with TLA+ |

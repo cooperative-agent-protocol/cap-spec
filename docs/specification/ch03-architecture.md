@@ -24,14 +24,14 @@ tactical awareness, and safety-critical execution:
 │  │ (LLM)    │  │ (determ.)│  │          │  │               │  │
 │  └──────────┘  └──────────┘  └──────────┘  └───────────────┘  │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐                     │
-│  │ Dialogue │  │ ALO World│  │ Audit    │                     │
+│  │ Dialogue │  │ Entity   │  │ Audit    │                     │
 │  │ Handler  │  │ Model    │  │ Service  │                     │
 │  └──────────┘  └──────────┘  └──────────┘                     │
 ├─────────────────── CAP Protocol ──────────────────────────────┤
 │  Layer [B]: Machine Agent (Tactical)          × N machines     │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐                     │
-│  │ Skill    │  │ Situation│  │ ALO      │                     │
-│  │ Executor │  │ Assessor │  │ Descriptor│                     │
+│  │ Skill    │  │ Situation│  │ Entity   │                     │
+│  │ Executor │  │ Assessor │  │Descriptor│                     │
 │  │          │  │ (SLM/LLM)│  │ Generator│                     │
 │  └──────────┘  └──────────┘  └──────────┘                     │
 ├───────────────────────────────────────────────────────────────┤
@@ -54,7 +54,7 @@ The Site Agent is the central coordinator for a construction site. It:
 - Dispatches WorkOrders to Machine Agents via CAP
 - Manages reservations to prevent resource conflicts
 - Processes events, dialogues, and fault reports from Machine Agents
-- Maintains an ALO-based world model of all site entities
+- Maintains an entity-descriptor-based world model of all site entities
 - Records all actions in the audit trail
 
 ### 3.1.2 Layer [B]: Machine Agent
@@ -66,7 +66,7 @@ Each Machine Agent runs on or near a physical construction machine. It:
 - Receives and executes WorkOrders
 - Reports progress, faults, and safety events
 - Provides situation reports and plan proposals via Agent Dialogue
-- Maintains and synchronizes its ALO descriptor
+- Maintains and synchronizes its entity descriptor
 - May use an SLM/LLM for situation assessment (advisory only)
 
 **Key constraint**: Layer [B] LLMs are **advisory only**. They generate situation reports
@@ -102,7 +102,7 @@ The Safety Supervisor is independent of CAP (see ADR-003):
 │  └────┬───────┘                      └──────────────────┘    │
 │       │                                                       │
 │  ┌────┴───────┐  ┌────────────────┐  ┌──────────────────┐    │
-│  │ Task       │  │  Reservation   │  │  ALO World       │    │
+│  │ Task       │  │  Reservation   │  │  Entity World    │    │
 │  │ Compiler   │  │  Service       │  │  Model           │    │
 │  └────┬───────┘  └────────────────┘  └──────────────────┘    │
 │       │                                                       │
@@ -127,14 +127,14 @@ The Safety Supervisor is independent of CAP (see ADR-003):
 
 ---
 
-## 3.3 ALO Integration Model
+## 3.3 Entity-Descriptor Integration Model
 
-Abstract Language Objects (ALO) provide a unified representation model across CAP:
+Entity descriptors provide a unified representation model across CAP:
 
 ```
-┌─── ALO World Model (Site Agent) ──────────────────────────────┐
+┌─── Entity World Model (Site Agent) ───────────────────────────┐
 │                                                                │
-│  Zone ALOs           Machine ALOs           Material ALOs      │
+│  Zone entities      Machine entities      Material entities    │
 │  ┌──────────┐       ┌──────────────┐       ┌──────────────┐  │
 │  │ B3区画    │       │ バックホウ1号機│       │ 土砂-B3      │  │
 │  │ type:zone │       │ type:machine │       │ type:material│  │
@@ -148,10 +148,10 @@ Abstract Language Objects (ALO) provide a unified representation model across CA
 └───────────────────────────────────────────────────────────────┘
 ```
 
-- **CapabilityManifest** carries the machine's `ALODescriptor` on connection.
-- **Heartbeat** carries `alo_state_summary` (natural language state description).
-- **ALOStateUpdate** synchronizes machine ALO state with the Site Agent's world model.
-- **ALOInteraction** records interactions between ALO entities.
+- **CapabilityManifest** carries the machine's `EntityDescriptor` on connection.
+- **Heartbeat** carries `entity_state_summary` (natural language state description).
+- **EntityStateUpdate** synchronizes the machine's entity state with the Site Agent's world model.
+- **EntityInteraction** records interactions between entities.
 
 ---
 

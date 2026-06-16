@@ -19,7 +19,7 @@ lower levels.
 |-------|------|-------------|
 | **Level 1** | **Core** | Basic connectivity, task lifecycle, and error handling |
 | **Level 2** | **Coordination** | Multi-machine coordination with reservations and handovers |
-| **Level 3** | **Intelligence** | ALO integration and agent dialogue |
+| **Level 3** | **Intelligence** | Entity-descriptor integration and agent dialogue |
 
 ---
 
@@ -105,12 +105,12 @@ In addition to Level 1 requirements, Level 2 conformance MUST:
 
 In addition to Level 2 requirements, Level 3 conformance MUST:
 
-### 10.4.1 ALO Integration
+### 10.4.1 Entity-Descriptor Integration
 
-- [ ] Include `ALODescriptor` in `CapabilityManifest`
-- [ ] Send `ALOStateUpdate` when machine state changes significantly
-- [ ] Process `ALOInteraction` messages
-- [ ] Include `alo_state_summary` in `Heartbeat`
+- [ ] Include `EntityDescriptor` in `CapabilityManifest`
+- [ ] Send `EntityStateUpdate` when machine state changes significantly
+- [ ] Process `EntityInteraction` messages
+- [ ] Include `entity_state_summary` in `Heartbeat`
 
 ### 10.4.2 Agent Dialogue
 
@@ -142,7 +142,7 @@ The `cap-conformance` repository provides automated test suites:
 | `test_concurrent_work_orders` | 1 | 1+ | Busy machine rejection |
 | `test_reconnection` | 1 | 1+ | Disconnect and reconnect |
 | `test_timeout_cascade` | 2 | 1+ | Heartbeat timeout → SAFE_STOP |
-| `test_alo_lifecycle` | 3 | 3 | ALO in manifest, state updates, heartbeat summary |
+| `test_entity_descriptor_lifecycle` | 3 | 3 | Entity descriptor in manifest, state updates, heartbeat summary |
 | `test_dialogue` | 3 | 4 | Round-trip, provenance, intent, approval |
 
 ---
@@ -182,12 +182,12 @@ Test Results: cap-conformance v0.1.0
 | HandoverEvent | 2 | MUST |
 | SafetyEvent/FaultEvent | 2 | MUST |
 | TLS 1.3 | 2 | MUST |
-| ALODescriptor | 3 | MUST |
-| ALOStateUpdate | 3 | MUST |
+| EntityDescriptor | 3 | MUST |
+| EntityStateUpdate | 3 | MUST |
 | AgentDialogue | 3 | MUST |
 | DialogueProvenance | 3 | MUST |
 | mTLS + RBAC | 3 | MUST |
-| ALOInteraction | 3 | SHOULD |
+| EntityInteraction | 3 | SHOULD |
 | AuditEvent | 2 | SHOULD |
 | Version negotiation | 1 | SHOULD |
 | MQTT transport | — | OPTIONAL |

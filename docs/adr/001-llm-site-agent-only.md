@@ -59,8 +59,8 @@ Machine Agent は deterministic なスキル実行エンジンとし、LLM を�
 - MICRO: 自律実行可（パラメータ微調整）
 - TASK / CROSS_TASK: Site Agent 承認必須
 
-**ALO 統合** (ADR-004): ALO (Ochiai, 2304.04498) を機械の自己表現モデルとして採用。
-CapabilityManifest に ALODescriptor を含め、Heartbeat に alo_state_summary を追加。
+**Entity Descriptor 統合** (ADR-004): Entity Descriptor (Ochiai, 2304.04498) を機械の自己表現モデルとして採用。
+CapabilityManifest に EntityDescriptor を含め、Heartbeat に entity_state_summary を追加。
 
 **Agent Dialogue Protocol** (ADR-005): 構造化された対話プロトコルで
 SituationReport / LocalDecision / PlanProposal をサポート。
@@ -69,5 +69,5 @@ SituationReport / LocalDecision / PlanProposal をサポート。
 
 - [safety-boundary.md](../safety-boundary.md) — LLM は Task レベルのみを担当
 - ADR-003 — Safety channel の独立性
-- ADR-004 — ALO を現場オブジェクトの統一表現として採用
+- ADR-004 — Entity Descriptor を現場オブジェクトの統一表現として採用
 - ADR-005 — Agent Dialogue Protocol

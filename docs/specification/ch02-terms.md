@@ -11,9 +11,9 @@ in each chapter.
 
 ---
 
-**Abstract Language Object (ALO)**
+**Entity Descriptor**
 : A structured, language-grounded representation of a physical or logical entity
-  (machine, zone, material) based on Ochiai (2304.04498). Each ALO has an identifier,
+  (machine, zone, material) based on Ochiai (2304.04498). Each Entity Descriptor has an identifier,
   canonical name, typed properties, sub-objects, and a manager describing available
   skills and interaction rules.
 
@@ -37,7 +37,7 @@ in each chapter.
 **Conformance Level**
 : A tier of CAP specification compliance. Level 1 (Core) covers basic connectivity and
   task lifecycle; Level 2 (Coordination) adds reservations and handovers; Level 3
-  (Intelligence) adds ALO and agent dialogue.
+  (Intelligence) adds Entity Descriptor and agent dialogue.
 
 **Dialogue Provenance**
 : Metadata attached to each *DialogueMessage* recording the generating agent, model
@@ -60,7 +60,7 @@ in each chapter.
 
 **Heartbeat**
 : A periodic message sent by a *Machine Agent* to indicate aliveness and report current
-  state (mode, health, position, active task, fuel, ALO state summary).
+  state (mode, health, position, active task, fuel, Entity Descriptor state summary).
 
 **Layer [A] (Strategic)**
 : The *Site Agent* layer responsible for task planning, decomposition, and multi-machine

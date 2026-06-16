@@ -220,7 +220,7 @@ cap/v0/{site_id}/control                        # Site-wide commands (emergency 
 | ReservationStatus | QoS 1 | Must reach requester |
 | CapError | QoS 1 | Error must be reliably delivered |
 | AgentDialogue | QoS 1 | Dialogue integrity required |
-| ALOStateUpdate | QoS 0 | Periodic state sync, next update corrects any loss |
+| EntityStateUpdate | QoS 0 | Periodic state sync, next update corrects any loss |
 | CapabilityManifest | QoS 1 | Registration must succeed |
 
 ### 4.4.4 Last Will and Testament (LWT)
@@ -323,7 +323,7 @@ It is NOT recommended for:
 
 | Limit | Value | Rationale |
 |-------|-------|-----------|
-| Maximum CapFrame size | 4 MB | Covers large ALO descriptors with embedded properties |
+| Maximum CapFrame size | 4 MB | Covers large entity descriptors with embedded properties |
 | Maximum Heartbeat size | 64 KB | Heartbeats should be lightweight |
 | Maximum AgentDialogue size | 1 MB | Dialogue may contain detailed reasoning |
 | Recommended CapFrame size | < 64 KB | For bandwidth-constrained environments |

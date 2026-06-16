@@ -8,7 +8,7 @@ Copyright 2026 CAP Authors
 > 新しい Domain Pack を CAP に追加する際の必須記述事項。通常 RFC の構成に加えて、本 template
 > の項目をすべて埋めること。
 
-CAP は domain-agnostic な Core 仕様 (Manifest / WorkOrder / Heartbeat / Dialogue / ALO /
+CAP は domain-agnostic な Core 仕様 (Manifest / WorkOrder / Heartbeat / Dialogue / EntityDescriptor /
 Safety Supervisor) + ドメイン固有の **Domain Pack** (skills / intents / zones / equipment) で構成
 される。v0.x のリファレンス Domain Pack は Construction。Agriculture / Mining /
 Forestry / Intralogistics 等は本テンプレートに沿って提案する。

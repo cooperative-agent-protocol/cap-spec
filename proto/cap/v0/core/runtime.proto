@@ -10,7 +10,7 @@ import "cap/v0/core/site_agent.proto";
 import "cap/v0/core/machine_agent.proto";
 import "cap/v0/core/events.proto";
 import "cap/v0/core/error.proto";
-import "cap/v0/core/alo.proto";
+import "cap/v0/core/entity.proto";
 import "cap/v0/core/dialogue.proto";
 import "cap/v0/core/mean_field.proto";
 
@@ -45,9 +45,9 @@ message CapFrame {
     SafetyEvent        safety_event        = 34;
     AuditEvent         audit_event         = 35;
 
-    // ALO (Abstract Language Objects)
-    ALOStateUpdate     alo_state_update    = 40;
-    ALOInteraction     alo_interaction     = 41;
+    // Entity descriptors (language-grounded site objects)
+    EntityStateUpdate  entity_state_update = 40;
+    EntityInteraction  entity_interaction  = 41;
 
     // Agent Dialogue
     AgentDialogue      agent_dialogue      = 42;

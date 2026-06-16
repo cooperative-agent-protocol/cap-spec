@@ -28,6 +28,6 @@
       { "key": "coolant_temp_c", "value": "85" },
       { "key": "engine_rpm", "value": "1800" }
     ],
-    "aloStateSummary": "バックホウ1号機はB3区画で掘削作業中。4サイクル完了、掘削量4.8m³。油圧系統正常、燃料残量72%。"
+    "entityStateSummary": "バックホウ1号機はB3区画で掘削作業中。4サイクル完了、掘削量4.8m³。油圧系統正常、燃料残量72%。"
   }
 }

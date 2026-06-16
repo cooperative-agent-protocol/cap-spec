@@ -6,7 +6,7 @@ syntax = "proto3";
 package cap.v0.core;
 
 import "cap/v0/core/common.proto";
-import "cap/v0/core/alo.proto";
+import "cap/v0/core/entity.proto";
 import "cap/v0/core/events.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -64,7 +64,7 @@ message SituationReport {
   string machine_id                    = 1;
   string task_id                       = 2;
   string situation_summary             = 3;  // Natural language description
-  repeated ALOProperty observed_facts  = 4;  // Structured observations
+  repeated EntityProperty observed_facts  = 4;  // Structured observations
   string recommended_action            = 5;
   DialogueProvenance provenance        = 6;
 }
@@ -112,7 +112,7 @@ message RiskNotice {
   string task_id               = 2;
   string risk_summary          = 3;  // Natural language risk description
   FaultSeverity severity       = 4;  // INFO, WARNING, ERROR, CRITICAL
-  repeated ALOProperty factors = 5;  // Structured risk factors
+  repeated EntityProperty factors = 5;  // Structured risk factors
   string mitigation_suggestion = 6;  // Suggested countermeasure
   DialogueProvenance provenance = 7;
 }

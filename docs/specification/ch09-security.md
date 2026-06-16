@@ -94,8 +94,8 @@ Human operators authenticate via JWT tokens:
 | HandoverEvent (send) | DENY | DENY | ALLOW | DENY |
 | SafetyEvent (send) | DENY | DENY | ALLOW | DENY |
 | AuditEvent (send) | ALLOW | ALLOW | ALLOW | DENY |
-| ALOStateUpdate (send) | DENY | DENY | ALLOW | DENY |
-| ALOInteraction (send) | DENY | DENY | ALLOW | DENY |
+| EntityStateUpdate (send) | DENY | DENY | ALLOW | DENY |
+| EntityInteraction (send) | DENY | DENY | ALLOW | DENY |
 | AgentDialogue (send) | ALLOW | ALLOW | ALLOW | DENY |
 | CapError (send) | ALLOW | ALLOW | ALLOW | DENY |
 | ReservationStatus (send) | ALLOW | DENY | DENY | DENY |

@@ -103,9 +103,9 @@ CAP's semantics are defined by protobuf, not transport. The same protocol works
 over gRPC (low-latency), MQTT (IoT/constrained), and WebSocket (browser).
 MCP is tied to stdio and Streamable HTTP.
 
-### 6. Language-Grounded Object Representation (ALO)
+### 6. Language-Grounded Object Representation (Entity Descriptor)
 
-CAP integrates Abstract Language Objects (Ochiai et al., 2304.04498) to give
+CAP integrates Entity Descriptors (Ochiai et al., 2304.04498) to give
 every entity (zone, machine, material) a language-grounded description. This
 enables LLM-based reasoning about the construction site state.
 

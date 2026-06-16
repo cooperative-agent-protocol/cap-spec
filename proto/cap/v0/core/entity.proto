@@ -1,0 +1,93 @@
+// Copyright 2026 CAP Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package cap.v0.core;
+
+import "cap/v0/core/common.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "io.cap.v0";
+
+// ─── Entity Descriptor ───────────────────────────────────────────────
+// A language-grounded, typed descriptor of a site entity (machine, zone,
+// material). Follows the abstract-language-object model of Ochiai et al.
+// (2304.04498), bridging linguistic objects and machine-queryable objects.
+
+// EntityDescriptor represents a site entity as both a human-readable
+// linguistic object and a machine-queryable typed object.
+message EntityDescriptor {
+  string entity_id       = 1;  // Globally unique, e.g. "zone_B3", "excavator-01"
+  string entity_type     = 2;  // "zone", "machine", "material", "load_point", "route"
+  string canonical_name  = 3;  // Human-readable name, e.g. "B3区画", "バックホウ1号機"
+
+  // Typed properties (machine-queryable)
+  repeated EntityProperty properties = 4;
+
+  // Sub-objects (components of this entity)
+  repeated EntitySubObject sub_objects = 5;
+
+  // Natural language state description (LLM-generated or template-based)
+  string state_description = 6;
+
+  // Manager: what this entity can do and how it relates to others
+  EntityManager manager = 7;
+
+  google.protobuf.Timestamp updated_at = 8;
+  string owner_agent_id = 9;  // Which agent maintains this entity
+}
+
+// EntityProperty is a typed key-value pair with units.
+message EntityProperty {
+  string key   = 1;  // e.g. "area_m2", "volume_m3", "material_type"
+  string value = 2;  // e.g. "450", "clay"
+  string unit  = 3;  // e.g. "m2", "m3", ""
+  string dtype = 4;  // e.g. "float", "string", "enum"
+}
+
+// EntitySubObject represents a component of an entity.
+message EntitySubObject {
+  string sub_obj_id   = 1;  // e.g. "B3_north_section", "bucket"
+  string sub_obj_type = 2;  // e.g. "zone_section", "attachment"
+  string description  = 3;  // Natural language description
+  repeated EntityProperty properties = 4;
+}
+
+// EntityManager describes capabilities, knowledge, and relations of an entity.
+// Corresponds to the managerObj concept of Ochiai et al. (2304.04498).
+message EntityManager {
+  repeated string available_skills        = 1;  // e.g. ["excavate_batch", "load_truck"]
+  repeated string interaction_rules       = 2;  // Natural language rules
+  repeated EntityRelation relations       = 3;
+  repeated string state_transition_rules  = 4;  // LLM-generated state transition rules (Step 5-6)
+  repeated string current_knowledge       = 5;  // Domain knowledge (Step 2: knowledge list)
+}
+
+// EntityRelation describes a relationship between two entities.
+message EntityRelation {
+  string relation_type    = 1;  // e.g. "loading_to", "waiting_for", "blocked_by"
+  string target_entity_id = 2;  // The other entity in the relation
+  string description       = 3;  // Natural language description
+}
+
+// ─── Entity Messages ─────────────────────────────────────────────────
+
+// EntityStateUpdate synchronizes entity state between agents.
+message EntityStateUpdate {
+  string machine_id          = 1;  // Sender machine
+  EntityDescriptor descriptor = 2;  // Updated entity descriptor
+  string update_reason       = 3;  // "periodic", "state_change", "anomaly_detected"
+}
+
+// EntityInteraction records when two entities interact.
+message EntityInteraction {
+  string interaction_id       = 1;
+  string initiator_entity_id  = 2;  // e.g. "excavator-01"
+  string target_entity_id     = 3;  // e.g. "zone_B3"
+  string interaction_type     = 4;  // e.g. "excavate", "load", "dump"
+  string description          = 5;  // Natural language description
+  repeated KeyValue parameters = 6;
+  google.protobuf.Timestamp timestamp = 7;
+}
