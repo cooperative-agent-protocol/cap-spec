@@ -257,12 +257,35 @@ MQTT broker MUST enforce per-topic ACL:
 | site_agent | `cap/v0/+/machines/+/down`, `cap/v0/+/events`, `cap/v0/+/control` | `cap/v0/+/machines/+/up` |
 | observer | (none) | `cap/v0/+/events` |
 
-### 4.4.7 Idempotency
+### 4.4.7 Delivery Semantics and Idempotency
 
-MQTT QoS 1 guarantees **at least once** delivery, meaning duplicates are possible.
-Receivers MUST use `MessageHeader.message_id` for deduplication. A message with a
-previously seen `message_id` SHOULD be silently discarded (with optional
-`CapError(2005, DUPLICATE_MESSAGE_ID)` response).
+**Delivery model.** CAP assumes **at-least-once** delivery for reliable message
+types (QoS 1 above; gRPC stream redelivery on reconnect). Messages may
+therefore be duplicated, and — across a reconnect or transport switch —
+reordered. CAP does **not** assume exactly-once delivery; instead, handlers are
+required to be idempotent at two levels.
+
+**Transport-level dedup.** Receivers MUST deduplicate by
+`MessageHeader.message_id`. A message with a previously seen `message_id` SHOULD
+be silently discarded (with optional `CapError(2005, DUPLICATE_MESSAGE_ID)`).
+Because a *retried* application action carries a **new** `message_id`, this
+catches only verbatim retransmissions, not application-level retries.
+
+**Application-level idempotency keys.** Each coordination action has a
+**stable idempotency key** distinct from `message_id`:
+
+| Action | Idempotency key | Required handler behaviour |
+|--------|-----------------|----------------------------|
+| `WorkOrder` | `task_id` | A `WorkOrder` whose `task_id` is already in a non-terminal state is an idempotent no-op: re-emit the last `WorkOrderAck`, never start a second execution. `assignment_epoch` distinguishes a genuine re-assignment from a duplicate. |
+| `ReservationRequest` | `reservation_id` | A repeat with the same `reservation_id` returns the current `ReservationStatus` (same `grant_epoch`), not a second reservation. |
+| `ModeCommand` | `machine_id` + `mode_epoch` | A `ModeCommand` whose `mode_epoch` is ≤ the last applied is ignored (stale/replayed). |
+
+These keys make redelivery safe on the lossy site links that motivate QoS 1:
+two conformant implementations converge on the same outcome instead of one
+double-executing and the other rejecting-busy. The fencing epochs
+(`grant_epoch`, `mode_epoch`, `assignment_epoch`) additionally protect against a
+*stale* actor acting after its grant/assignment was superseded — see Chapter 6,
+§6.3.6, formally verified in `cap-spec/formal/tla/ReservationFencing`.
 
 ---
 

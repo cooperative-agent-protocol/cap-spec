@@ -106,6 +106,13 @@ message ReservationStatus {
     RESERVATION_STATE_RELEASED    = 3;
     RESERVATION_STATE_EXPIRED     = 4;
     RESERVATION_STATE_REQUESTED   = 5;  // Initial state when reservation is first requested
+    // Busy resource; the requester waits in FIFO-with-priority order instead of
+    // being bounced. This is the starvation-free reservation discipline:
+    // CAPCoordination verifies NoStarvation under the queued regime
+    // (QueuedGrants = TRUE) and exhibits a starvation counterexample under
+    // deny-on-busy. QUEUED is the normative default; deny-on-busy is an
+    // OPTIONAL degraded profile with a documented starvation caveat.
+    RESERVATION_STATE_QUEUED      = 6;
   }
 
   string reservation_id       = 1;
@@ -114,6 +121,18 @@ message ReservationStatus {
   ReservationState state      = 4;
   string reason               = 5;
   TimeWindow granted_window   = 6;
+
+  // Fencing token: a monotonically increasing per-resource grant epoch. The
+  // holder MUST echo it on any action gated by this reservation, and the
+  // resource owner / Safety Supervisor MUST reject an action bearing a stale
+  // epoch. This makes exclusive access safe under lost/delayed/replayed
+  // ReservationStatus delivery (verified in formal/tla/ReservationFencing.tla:
+  // ExclusiveActuation holds with the token, is violated without it).
+  uint64 grant_epoch          = 7;
+
+  // Queue position when state == RESERVATION_STATE_QUEUED (1 = next to grant);
+  // 0 otherwise.
+  uint32 queue_position       = 8;
 }
 
 // AuditEvent records an auditable action for compliance and traceability.

@@ -40,11 +40,43 @@ message EntityDescriptor {
 }
 
 // EntityProperty is a typed key-value pair with units.
+//
+// A property carries BOTH a machine-checkable typed value (`typed_value` +
+// `dtype_enum`) and the original human-readable surface (`value` string). The
+// typed value is the normative form for machine queries and for verifying
+// success criteria (e.g. "moved_volume_m3 >= 10.0"); the string `value` is
+// retained for the linguistic/LLM surface and for forward compatibility with
+// readers that predate the typed fields. `unit` SHOULD be a canonical UCUM
+// code (e.g. "m2", "m3", "kg", "%") so units are comparable across vendors.
 message EntityProperty {
+  // Closed set of value types (replaces the free-form `dtype` string).
+  enum ValueType {
+    VALUE_TYPE_UNSPECIFIED = 0;
+    VALUE_TYPE_DOUBLE      = 1;
+    VALUE_TYPE_INT         = 2;
+    VALUE_TYPE_BOOL        = 3;
+    VALUE_TYPE_STRING      = 4;
+    VALUE_TYPE_ENUM        = 5;
+  }
+
   string key   = 1;  // e.g. "area_m2", "volume_m3", "material_type"
-  string value = 2;  // e.g. "450", "clay"
-  string unit  = 3;  // e.g. "m2", "m3", ""
-  string dtype = 4;  // e.g. "float", "string", "enum"
+  string value = 2;  // Human-readable surface, e.g. "450", "clay". MUST agree with typed_value.
+  string unit  = 3;  // Canonical UCUM code, e.g. "m2", "m3", "kg", "%", ""
+
+  // DEPRECATED: free-form type string; use value_type. Retained for back-compat.
+  string dtype = 4 [deprecated = true];
+
+  // Normative typed value. A conformant producer MUST set the arm of
+  // `typed_value` that matches `value_type`, and `value` MUST be its canonical
+  // string rendering. A conformant consumer validates `value` against
+  // `value_type` and reads the typed arm for machine queries.
+  ValueType value_type = 5;
+  oneof typed_value {
+    double num_value  = 6;
+    int64  int_value  = 7;
+    bool   bool_value = 8;
+    string str_value  = 9;
+  }
 }
 
 // EntitySubObject represents a component of an entity.
