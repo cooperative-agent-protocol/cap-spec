@@ -72,6 +72,35 @@ acknowledge → mode-command → complete path
 depend on the timeout/`SafeStop` escape — it answers the objection that
 "progress is trivial because a timeout always fires."
 
+### ReservationFencing (adversarial delivery + fencing token)
+
+The composite assumes reliable, ordered delivery. This component drops that
+assumption: the arbiter can reclaim a resource (grant window elapsed /
+preemption) while the expiry/release notification to the holder is **lost**, so
+the holder keeps believing it holds the resource. `Fenced` selects whether a
+monotonic per-resource grant epoch (a Chubby/ZooKeeper-style fencing token) is
+enforced on actuation.
+
+| Config | Fenced | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|
+| `ReservationFencing_fenced.cfg` | TRUE | TypeOK, ExclusiveActuation | **holds** | 95 / 55 |
+| `ReservationFencing_unfenced.cfg` | FALSE | ExclusiveActuation | **violated** | 4-state counterexample |
+
+**Finding (fencing is load-bearing under lost delivery).** Without the token,
+`ExclusiveActuation` is violated by a 4-state behavior:
+```
+Grant(m1, LP-1)          ; m1 believes LP-1, token 1, arbEpoch 1
+ExpireLostNotify(LP-1)   ; arbiter reclaims LP-1; m1's notification is LOST (still believes)
+Grant(m2, LP-1)          ; m2 believes LP-1, token 2, arbEpoch 2
+→ both m1 (stale, token 1) and m2 (fresh, token 2) act as holder of LP-1.
+```
+With `Fenced = TRUE` a machine may act only while `token[m] = arbEpoch[r]`, so
+the stale holder (token 1 ≠ epoch 2) cannot act and `ExclusiveActuation`
+holds. This is the model-checked counterpart of the fault-injection campaign's
+empirical result that a dropped `ReservationStatus` causes exclusivity
+violations without arbitration: the *protocol-level* fix is a fencing token on
+the grant, which the composite's reliable-delivery abstraction cannot see.
+
 ---
 
 ## Composite: CAPCoordination
@@ -187,6 +216,13 @@ defect is specifically a *receiver-ownership* violation, not a double-grant.
 
 ## Changelog (this revision)
 
+- **Added `ReservationFencing`**, a component model of adversarial delivery
+  (lost expiry/release notification → stale holder) showing that a monotonic
+  grant epoch (fencing token) restores `ExclusiveActuation`: holds with the
+  token, violated without it (4-state counterexample). This lifts the
+  fault-injection campaign's empirical "dropped ReservationStatus →
+  exclusivity violation" to a model-checked statement and names the
+  protocol-level fix.
 - **Composed a machine-to-machine handover into `CAPCoordination`** and added
   the P4 invariant `HandoverReceiverOwnership`, verified across atomic
   (holds, incl. with a third contender) and naive (violated) regimes. The
