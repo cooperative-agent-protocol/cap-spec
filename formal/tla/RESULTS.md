@@ -267,10 +267,26 @@ IN_PROGRESS") failing its step as expected (EXITCODE ERROR 12). The naive
 release-then-reacquire discipline, which the TLC sweep shows VIOLATES P4, is
 correctly NOT inductive and is excluded from this model.
 
-Three of the core safety invariants --- no-double-grant, fencing exclusivity,
-and handover receiver-ownership --- are thus established by induction,
-independent of fleet size; extending inductive proofs to deadlock-freedom is
-future work.
+**Deadlock-freedom, inductively (`MultiResourceInductive`).** Deadlock-freedom
+is a *progress* property (the explicit-state `MultiResource` result checks it via
+TLC `CHECK_DEADLOCK`); its unbounded part is the underlying STATE invariant that
+powers the classic ordered-acquisition argument. `OrderedPrefix`: every machine
+holds a downward-closed prefix of the resource order, so it only ever waits for a
+resource LARGER than everything it holds --- a wait-for cycle would force
+`r1 < r2 < ... < r1`, a contradiction, hence no circular wait. `IndInv ==
+TypeOK /\ NoDoubleOwner /\ OrderedPrefix`; base
+(`check --cinit=ConstInit --init=Init --inv=IndInv --length=0`) and inductive step
+(`check --cinit=ConstInit --init=IndInv --inv=IndInv --length=1`) both discharge
+(EXITCODE OK) under Apalache over symbolic machine/resource sets, with the
+non-vacuity sanity predicate failing its step (EXITCODE ERROR 12). So the
+no-circular-wait condition that yields deadlock-freedom holds for any number of
+machines and resources.
+
+Four of the core structural invariants --- no-double-grant, fencing exclusivity,
+handover receiver-ownership, and the acquisition-order (no-circular-wait)
+invariant --- are thus established by induction, independent of fleet size,
+complementing the bounded TLC sweep. A full machine-checked refinement proof
+(TLAPS) linking the specifications to the implementation remains future work.
 
 ---
 
