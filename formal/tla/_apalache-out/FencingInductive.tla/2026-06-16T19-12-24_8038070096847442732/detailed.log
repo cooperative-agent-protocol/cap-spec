@@ -1,0 +1,13 @@
+2026-06-16T19:12:24,404 [main] INFO  a.f.a.t.Tool$ - # APALACHE version: 0.58.0 | build: 711dce6
+2026-06-16T19:12:24,430 [main] INFO  a.f.a.t.t.o.CheckCmd - Tuning: search.outputTraces=false
+2026-06-16T19:12:24,741 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #0: SanyParser
+2026-06-16T19:12:25,025 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #0: SanyParser [OK]
+2026-06-16T19:12:25,026 [main] INFO  a.f.a.i.p.PassChainExecutor - PASS #1: TypeCheckerSnowcat
+2026-06-16T19:12:25,026 [main] INFO  a.f.a.t.p.t.EtcTypeCheckerPassImpl -  > Running Snowcat .::.
+2026-06-16T19:12:25,192 [main] ERROR a.f.a.t.p.t.LoggingTypeCheckerListener - [FencingInductive.tla:46:33-46:57]: An operator with the signature ((Set(a108), Set(a108)) => Set(a108)) cannot be applied to the provided arguments of type Set(MACHINE) and Set(Str)
+2026-06-16T19:12:25,198 [main] ERROR a.f.a.t.p.t.LoggingTypeCheckerListener - [FencingInductive.tla:44:1-48:42]: Error when computing the type of TypeOK
+2026-06-16T19:12:25,200 [main] INFO  a.f.a.t.p.t.EtcTypeCheckerPassImpl -  > Snowcat asks you to fix the types. Meow.
+2026-06-16T19:12:25,234 [main] DEBUG a.f.a.i.p.PassChainExecutor - PASS #1: TypeCheckerSnowcat [FAIL]
+2026-06-16T19:12:25,235 [main] INFO  a.f.a.t.Tool$ - Checker has found an error
+2026-06-16T19:12:25,235 [main] INFO  a.f.a.t.Tool$ - It took me 0 days  0 hours  0 min  0 sec
+2026-06-16T19:12:25,235 [main] INFO  a.f.a.t.Tool$ - Total time: 0.828 sec

@@ -239,6 +239,18 @@ This complements the TLC sweep with a proof-by-induction of exclusivity that
 does not depend on enumerating a fixed fleet size. (Apalache is a separate
 toolchain from the TLC `run_sweep.sh`; the three invocations above reproduce it.)
 
+**Fencing, inductively (`FencingInductive`).** The fencing property is also
+proved as an inductive invariant: with a monotonic per-resource grant epoch, at
+most one machine *actuates* a resource (believes it holds it AND its token
+equals the resource's current epoch), even when a holder's release/expiry notice
+is lost. `IndInv == TypeOK /\ Singletons /\ EpochDominates /\
+ExclusiveActuation`; the base (`--init=Init --inv=IndInv --length=0`) and
+inductive step (`--init=IndInv --inv=IndInv --length=1`) both discharge under
+Apalache over symbolic sets, so a stale (older-token) holder can never
+co-actuate with the current grantee, for any fleet size. `Singletons` and
+`EpochDominates` are the supporting invariants that make `ExclusiveActuation`
+inductive. Extending inductive proofs to the remaining invariants is future work.
+
 ---
 
 ## Composite: CAPCoordination

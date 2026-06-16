@@ -1,0 +1,1 @@
+ check --cinit=ConstInit --init=IndInv --inv=IndInv --length=1 FencingInductive.tla
