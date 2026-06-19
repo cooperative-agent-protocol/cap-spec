@@ -28,7 +28,7 @@ CAP は「多分野・多者で使われる汎用協調プロトコル」を標�
 1. **core への分野漏れ**: `core/intent.proto` の `Intent.payload` oneof が `drive/stop`(汎用)に加えて **`dig`(`DigIntent`)/`swing`/`load_truck`(`LoadTruckIntent`)/`stabilize_arm`/`dump`(`DumpIntent`)/`wait_for_load`** という**掘削機固有**の型を持つ。これは domain-agnostic であるべき core の層違反で、Agriculture や Intralogistics から見れば無関係なノイズ。新分野ごとに core の oneof を膨張させるのは破綻する。
 2. **宙吊りの拡張機構**: `domains/construction/skills.proto:54` のコメントは「各 skill は強く型付けされた param message を持ち、**CAP-Core の `SkillInvocation` が `Any` で運ぶ**(string blob を避ける)」と設計意図を明記しているが、**`SkillInvocation` はどの proto にも定義されていない**(dangling reference)。
 3. **`google.protobuf.Any` が CAP 全体で未使用**: 分野が型付き payload を core を触らず差し込む拡張機構が**実装されていない**。
-4. **型なし blob の残存**: `WorkOrder.parameters` と `SkillExecution.parameters` は `map<string,string>`。実装(例: cap-pangaea)は `dig_reach`/`swing_to_rad`/経路 JSON 等を文字列で密輸しており、型安全・検証・相互運用を失っている — これはまさに上記コメントが避けたかった "blob"。
+4. **型なし blob の残存**: `WorkOrder.parameters` と `SkillExecution.parameters` は `map<string,string>`。実装(例: 参照建設実装)は `dig_reach`/`swing_to_rad`/経路 JSON 等を文字列で密輸しており、型安全・検証・相互運用を失っている — これはまさに上記コメントが避けたかった "blob"。
 
 この RFC が無いと: **新 Domain Pack を足すたびに core を改変する**圧力がかかり(層違反の拡大)、実装は string-map に頼り続け(相互運用の喪失)、`SkillInvocation` の設計意図は宙吊りのまま残る。
 
@@ -165,7 +165,7 @@ breaking ではない(additive + deprecation)。ADR-008 により、v0 中の削
 
 ## Rollout Plan
 
-- Reference 実装: `cap-reference` に `SkillInvocation`/`Any` round-trip を、`cap-pangaea`(construction 実装)に `parameters["dig_reach"]` 等 → `construction.ExcavateBatchParams`(Any) への移行を進める。
+- Reference 実装: `cap-reference` に `SkillInvocation`/`Any` round-trip を、参照建設実装(construction)に `parameters["dig_reach"]` 等 → `construction.ExcavateBatchParams`(Any) への移行を進める。
 - Conformance: Core に `SkillInvocation.typed_params` と `Intent.domain_intent` の Any round-trip テスト、Construction Domain Pack に typed param/intent テストを追加。
 - Docs: `domain-pack-template.md` に「typed params を `SkillInvocation.typed_params`(Any) で運び、domain intent を `Intent.domain_intent`(Any) で運ぶ」節を追記。
 
