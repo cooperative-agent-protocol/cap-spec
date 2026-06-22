@@ -86,6 +86,28 @@ enforced on actuation.
 | `ReservationFencing_fenced.cfg` | TRUE | TypeOK, ExclusiveActuation | **holds** | 95 / 55 |
 | `ReservationFencing_unfenced.cfg` | FALSE | ExclusiveActuation | **violated** | 4-state counterexample |
 
+### ReservationRecovery (arbiter crash/restart + partition)
+
+Extends the fencing model with arbiter **crash + restart** (the arbiter loses its
+volatile holder map; machines keep their pre-crash belief and token) and reuses
+`ExpireLostNotify` as the **partition** case (the arbiter reclaims after a lease
+timeout while a partitioned holder keeps believing). Fencing is always on; the free
+variable `PersistEpoch` selects whether the monotonic grant epoch survives the restart
+on stable storage. This keeps the honest scope: arbiter **availability** across failure
+is *not* modelled (a replicated/consensus arbiter is future work); the question decided
+here is whether recovery can ever cause a double-actuation.
+
+| Config | PersistEpoch | Property | Verdict | States (gen/dist) |
+|---|---|---|---|---|
+| `ReservationRecovery_persisted.cfg` | TRUE | TypeOK, ExclusiveActuation | **holds** | 209 / 97 |
+| `ReservationRecovery_volatile.cfg` | FALSE | ExclusiveActuation | **violated** | counterexample (174 dist) |
+
+A persisted epoch fences every pre-crash holder after restart (a re-grant carries an
+epoch above every pre-crash token), so exclusivity holds; a volatile epoch that resets
+to 0 lets a re-grant re-issue an epoch that collides with a stale token, so two machines
+actuate the same resource. The model-checked recovery requirement is therefore: persist
+the grant epoch monotonically across restart.
+
 **Finding (fencing is load-bearing under lost delivery).** Without the token,
 `ExclusiveActuation` is violated by a 4-state behavior:
 ```
