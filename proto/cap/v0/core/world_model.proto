@@ -150,6 +150,21 @@ message GridCellRef {
 
 // ─── Fleet pose (replaces /api/.../fleet polling) ────────────────────
 
+// Which body the yaw of a fleet member's pose is the heading of (RFC-0002).
+// A machine whose upper structure slews (an excavator, a rotating carrier,
+// a turret) may know its pose only as that upper structure's: its travel
+// direction is then not the pose's yaw.
+enum HeadingReference {
+  // Not reported: the travel direction is not known from `pose.yaw`
+  // (consumers treat the travelling body as of unknown heading).
+  HEADING_REFERENCE_UNSPECIFIED = 0;
+  // The travelling body's heading (its tracks or wheels).
+  HEADING_REFERENCE_BASE = 1;
+  // An upper structure's heading, which slews independently of the
+  // travelling body.
+  HEADING_REFERENCE_UPPER = 2;
+}
+
 message FleetMemberState {
   string machine_id = 1;
   MachineType machine_type = 2;
@@ -160,6 +175,13 @@ message FleetMemberState {
   string active_command_id = 6;
   MachinePhase phase = 7;
   google.protobuf.Timestamp pose_at = 8;
+  // 1-sigma horizontal position uncertainty of `pose` [m] as the reporting
+  // machine's own estimate states it: sqrt(var_x + var_y) (RFC-0002).
+  // Unset: not reported - consumers assume their own conservative bound.
+  // A consumer may floor it; it must not treat an unset value as zero.
+  optional double position_sigma_xy_m = 9;
+  // Which body `pose.yaw` is the heading of (RFC-0002).
+  HeadingReference heading_reference = 10;
 }
 
 // ─── Cost adaptation ─────────────────────────────────────────────────
