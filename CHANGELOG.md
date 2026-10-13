@@ -13,6 +13,9 @@ per [ADR-008](docs/adr/008-versioning.md).
 ## [Unreleased]
 
 ### Added
+- RFC-0002: `FleetMemberState.position_sigma_xy_m` (optional, the reporting machine's horizontal 1-sigma) and
+  `FleetMemberState.heading_reference` (`enum HeadingReference`: whether `pose.yaw` is the travelling body's or a
+  slewing upper structure's) - additive; unset means not reported.
 - ADR-012: Rationale for keeping `mean_field.proto` in CAP-Core rather than
   the Construction Domain Pack.
 - ADR-011: Domain Pack Architecture — formal Core / Domain Pack boundary.
