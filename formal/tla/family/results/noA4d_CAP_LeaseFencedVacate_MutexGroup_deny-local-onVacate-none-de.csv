@@ -1,0 +1,13 @@
+scheme,Arb,Gate,Release,Expiry,Succession,S1,S2,S3,states,seconds
+deny-local-onVacate-none-designated,deny,local,onVacate,none,designated,holds,holds,holds,46080,1.2
+MutexGroup,deny,local,onVacate,none,free,holds,holds,holds,60160,1.4
+deny-permit-onVacate-none-designated,deny,permit,onVacate,none,designated,holds,holds,holds,5668448,108.7
+deny-permit-onVacate-none-free,deny,permit,onVacate,none,free,holds,holds,holds,9657184,184.5
+deny-permit-onVacate-ttlVacate-designated,deny,permit,onVacate,ttlVacate,designated,fails,fails,fails,71957,2.8
+LeaseFencedVacate,deny,permit,onVacate,ttlVacate,free,fails,fails,fails,57199,2.8
+queue-local-onVacate-none-designated,queue,local,onVacate,none,designated,holds,holds,holds,51288,1.2
+queue-local-onVacate-none-free,queue,local,onVacate,none,free,holds,holds,holds,43336,1.1
+queue-permit-onVacate-none-designated,queue,permit,onVacate,none,designated,holds,holds,holds,5731864,104.5
+queue-permit-onVacate-none-free,queue,permit,onVacate,none,free,holds,holds,holds,5876056,111.3
+CAP,queue,permit,onVacate,ttlVacate,designated,fails,fails,fails,60872,2.8
+queue-permit-onVacate-ttlVacate-free,queue,permit,onVacate,ttlVacate,free,fails,fails,fails,56697,2.9

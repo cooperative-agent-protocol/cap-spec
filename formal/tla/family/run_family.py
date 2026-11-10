@@ -59,7 +59,7 @@ NAMED = {
 }
 
 BASE_ENV = dict(SensorSound=True, TimingSound=True, AuthOK=True, Faults=True,
-                Restart="durable", BootScoped=True, MaxGen=3, MaxBoot=1)
+                Restart="durable", BootScoped=True, GraceWait=True, MaxGen=3, MaxBoot=1)
 
 SETTINGS = {
     # main comparison: all assumptions hold, machine faults, arbiter restarts keep state
@@ -71,6 +71,10 @@ SETTINGS = {
     "noA4": dict(env=dict(TimingSound=False, Restart="lossy"), props=["S1", "S2", "S3"]),
     "noA5": dict(env=dict(AuthOK=False), props=["S1", "S2", "S3"]),
     "noBoot": dict(env=dict(BootScoped=False, Restart="lossy"), props=["S1", "S2", "S3"]),
+    # the timing assumption alone (restarts keep the journal)
+    "noA4d": dict(env=dict(TimingSound=False), props=["S1", "S2", "S3"]),
+    # no grace period after a lossy restart, permits still boot-scoped
+    "noGrace": dict(env=dict(GraceWait=False, Restart="lossy"), props=["S1", "S2", "S3"]),
     # non-triviality: a second machine can follow the first (NotCycle is expected VIOLATED)
     "trivial": dict(env=dict(Faults=False, Restart="none"), props=["NotCycle"]),
     # liveness G4 (a crashed holder eventually recovers or loses the zone) under LiveSpec's fairness

@@ -1,0 +1,13 @@
+12 combinations, setting=noA2, machines=['c1', 'c2']
+deny-local-onVacate-none-designated      holds=S3                   fails=S2,S1          states=71608 t=3.1s
+MutexGroup                               holds=S3                   fails=S2,S1          states=97856 t=3.5s
+deny-permit-onVacate-none-designated     holds=S3                   fails=S2,S1          states=1598288 t=29.8s
+deny-permit-onVacate-none-free           holds=S3                   fails=S2,S1          states=2570240 t=47.1s
+deny-permit-onVacate-ttlVacate-designated holds=S3                   fails=S2,S1          states=4543240 t=81.8s
+queue-local-onVacate-none-free           holds=S3                   fails=S2,S1          states=73680 t=2.4s
+queue-local-onVacate-none-designated     holds=S3                   fails=S2,S1          states=79952 t=2.6s
+LeaseFencedVacate                        holds=S3                   fails=S2,S1          states=7292336 t=126.9s
+queue-permit-onVacate-none-free          holds=S3                   fails=S2,S1          states=1585096 t=28.3s
+queue-permit-onVacate-none-designated    holds=S3                   fails=S2,S1          states=1656808 t=29.1s
+queue-permit-onVacate-ttlVacate-free     holds=S3                   fails=S2,S1          states=4757448 t=81.8s
+CAP                                      holds=S3                   fails=S2,S1          states=4853600 t=82.8s

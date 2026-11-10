@@ -58,8 +58,9 @@
  * and restart with its state kept (Restart = "durable") or lost ("lossy");
  * BootScoped decides whether permits carry the arbiter's boot id. After a lossy
  * restart a scheme that times its authority waits until every earlier permit
- * has lapsed (the usual lease grace period), and a scheme that tracks
- * occupancy also waits until every machine is confirmed out.
+ * has lapsed (the usual lease grace period; GraceWait = FALSE removes the wait),
+ * and a scheme that tracks occupancy also waits until every machine is
+ * confirmed out.
  *)
 EXTENDS Naturals, FiniteSets, Sequences, TLC
 
@@ -71,6 +72,7 @@ CONSTANTS
     Faults,         \* BOOLEAN: machine crash/recovery, link loss, message loss
     Restart,        \* "none" | "durable" | "lossy"
     BootScoped,     \* BOOLEAN: permits carry the arbiter's boot id
+    GraceWait,      \* BOOLEAN: after a lossy restart, wait until every earlier permit has lapsed
     MaxGen,         \* bound on grant generations (finiteness)
     MaxBoot         \* bound on arbiter restarts (finiteness)
 
@@ -433,7 +435,7 @@ ArbRestart ==
           ELSE /\ holder' = None /\ custody' = {} /\ queue' = <<>> /\ planned' = None
                /\ live' = {} /\ gen' = 0
                /\ wants' = [m \in Machines |-> FALSE]
-               /\ guard' = IF Leased THEN "waitTime"
+               /\ guard' = IF Leased /\ GraceWait THEN "waitTime"
                            ELSE IF OccAware THEN "waitVacancy" ELSE "open"
     /\ UNCHANGED <<pos, alive, conn, knownBoot, auth, authLive, xvars, hvars>>
 

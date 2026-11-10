@@ -1,0 +1,13 @@
+12 combinations, setting=noA5, machines=['c1', 'c2']
+MutexGroup                               holds=-                    fails=S2,S3,S1       states=9422 t=1.9s
+deny-local-onVacate-none-designated      holds=-                    fails=S2,S3,S1       states=10047 t=1.9s
+deny-permit-onVacate-none-free           holds=-                    fails=S2,S3,S1       states=63923 t=2.7s
+deny-permit-onVacate-none-designated     holds=-                    fails=S2,S3,S1       states=68933 t=2.7s
+deny-permit-onVacate-ttlVacate-designated holds=-                    fails=S2,S3,S1       states=69493 t=2.7s
+LeaseFencedVacate                        holds=-                    fails=S2,S3,S1       states=66885 t=2.8s
+queue-local-onVacate-none-free           holds=-                    fails=S2,S3,S1       states=9725 t=1.8s
+queue-local-onVacate-none-designated     holds=-                    fails=S2,S3,S1       states=10945 t=1.8s
+queue-permit-onVacate-none-designated    holds=-                    fails=S2,S3,S1       states=76431 t=2.7s
+queue-permit-onVacate-none-free          holds=-                    fails=S2,S3,S1       states=64196 t=2.7s
+queue-permit-onVacate-ttlVacate-free     holds=-                    fails=S2,S3,S1       states=62991 t=2.8s
+CAP                                      holds=-                    fails=S2,S3,S1       states=78929 t=3.0s
