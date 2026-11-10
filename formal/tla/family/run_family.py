@@ -73,6 +73,8 @@ SETTINGS = {
     "noBoot": dict(env=dict(BootScoped=False, Restart="lossy"), props=["S1", "S2", "S3"]),
     # non-triviality: a second machine can follow the first (NotCycle is expected VIOLATED)
     "trivial": dict(env=dict(Faults=False, Restart="none"), props=["NotCycle"]),
+    # liveness G4 (a crashed holder eventually recovers or loses the zone) under LiveSpec's fairness
+    "liveG4": dict(env=dict(Restart="none"), props=["G4"], temporal=True),
 }
 
 
@@ -101,20 +103,25 @@ def tla_value(v) -> str:
     return f'"{v}"'
 
 
-def write_cfg(path: Path, combo: dict, env: dict, props: list[str], machines: list[str]) -> None:
-    lines = ["SPECIFICATION Spec", "CONSTANTS",
+def write_cfg(path: Path, combo: dict, env: dict, props: list[str], machines: list[str],
+              temporal: bool = False) -> None:
+    lines = ["SPECIFICATION LiveSpec" if temporal else "SPECIFICATION Spec", "CONSTANTS",
              "    Machines = {" + ", ".join(f'"{m}"' for m in machines) + "}",
              "    Incompatible <- AllCarrierPairs"]
     for k, v in {**combo, **env}.items():
         lines.append(f"    {k} = {tla_value(v)}")
-    lines.append("INVARIANTS")
-    lines.append("    TypeOK")
+    if temporal:
+        lines.append("PROPERTIES")
+    else:
+        lines.append("INVARIANTS")
+        lines.append("    TypeOK")
     lines += [f"    {p}" for p in props]
     lines.append("CHECK_DEADLOCK FALSE")
     path.write_text("\n".join(lines) + "\n")
 
 
-VIOL_RE = re.compile(r"Invariant (\w+) is violated")
+VIOL_RE = re.compile(r"(?:Invariant|Temporal property) (\w+) (?:is|was) violated")
+TEMP_RE = re.compile(r"Temporal properties were violated")
 STATES_RE = re.compile(r"([\d,]+) distinct states found")
 ACT_RE = re.compile(r"^State \d+: <([A-Za-z]+)(\([^)]*\))?")
 
@@ -127,6 +134,8 @@ def run_tlc(cfg: Path, workers: int, java: str, metadir: Path) -> tuple[str | No
     for f in TLA_DIR.glob("OccupancyHandover_TTrace_*.tla"):
         f.unlink(missing_ok=True)
     m = VIOL_RE.search(out)
+    if m is None and TEMP_RE.search(out):
+        m = re.search(r"(Temporal)", out)
     st = STATES_RE.findall(out)
     states = int(st[-1].replace(",", "")) if st else -1
     if m is None and "No error has been found" not in out:
@@ -137,7 +146,8 @@ def run_tlc(cfg: Path, workers: int, java: str, metadir: Path) -> tuple[str | No
             a = ACT_RE.match(line)
             if a:
                 trace.append(a.group(1) + (a.group(2) or ""))
-    return (m.group(1) if m else None), states, trace, out
+    name = (m.group(1) if m else None)
+    return name, states, trace, out
 
 
 def check_combo(combo: dict, setting: str, workers: int, java: str, machines: list[str],
@@ -153,11 +163,17 @@ def check_combo(combo: dict, setting: str, workers: int, java: str, machines: li
         i = 0
         while remaining:
             cfg = td / f"run{i}.cfg"
-            write_cfg(cfg, combo, env, remaining, machines)
+            write_cfg(cfg, combo, env, remaining, machines, temporal=bool(cfg_spec.get("temporal")))
             viol, states, trace, out = run_tlc(cfg, workers, java, td / f"meta{i}")
             result["states"] = max(result["states"], states)
             if viol is None:
                 result["holds"] += remaining
+                remaining = []
+            elif cfg_spec.get("temporal"):
+                for prop in remaining:          # a temporal violation: TLC names no property; one is checked per run
+                    result["fails"][prop] = trace
+                (tracedir / f"{result['scheme']}__{remaining[0]}.txt").write_text(
+                    "\n".join(trace) + "\n\n" + out[out.find("Error:"):][:20000])
                 remaining = []
             else:
                 result["fails"][viol] = trace

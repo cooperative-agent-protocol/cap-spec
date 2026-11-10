@@ -487,4 +487,21 @@ G2 == ~violG2
 NotCycle == nDistinct < 2
 
 Safety == S1 /\ S2 /\ S3
+
+\* ---------------------------------------------------------------- liveness (G4)
+\* G4: a holder that has crashed eventually recovers or loses the zone, so the zone can come back to the others.
+\* Checked under LiveSpec: the arbiter's own steps and the passage of time are weakly fair, and a crashed machine is
+\* eventually towed out (E1); its recovery is NOT fair (it may never come back).
+\* (Below the generation bound only: at the bound a hand-over is disabled by the model's finiteness, not by the scheme.)
+G4 == \A m \in Machines : (holder = m /\ ~alive[m] /\ gen < MaxGen) ~> (holder /= m \/ alive[m])
+
+LiveSpec ==
+    /\ Spec
+    /\ WF_vars(\E m \in Machines : LeaseExpire(m))
+    /\ WF_vars(\E m \in Machines : ConfirmVacant(m))
+    /\ WF_vars(\E m \in Machines : Remove(m))
+    /\ WF_vars(\E m \in Machines : LocalLapse(m))
+    /\ WF_vars(\E p \in valid : RealLapse(p))
+    /\ WF_vars(\E p \in live : ArbLapse(p))
+    /\ WF_vars(GraceOver \/ ConfirmAllVacant)
 ================================================================================
