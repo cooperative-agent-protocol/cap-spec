@@ -13,6 +13,10 @@ per [ADR-008](docs/adr/008-versioning.md).
 ## [Unreleased]
 
 ### Added
+- RFC-0003 (proposed): occupancy-gated reservation - entry permits timed from the request's send, custody of a
+  former holder until its vacancy is confirmed, expiry only when no permit is counted, the restart rule for a lost
+  journal, the notice of a grant ended by another's act, and the requirements on a machine's entry gate. No proto
+  change (the encoding on existing fields is given in the RFC); formal model `formal/tla/OccupancyHandover.tla`.
 - RFC-0002: `FleetMemberState.position_sigma_xy_m` (optional, the reporting machine's horizontal 1-sigma) and
   `FleetMemberState.heading_reference` (`enum HeadingReference`: whether `pose.yaw` is the travelling body's or a
   slewing upper structure's) - additive; unset means not reported.
