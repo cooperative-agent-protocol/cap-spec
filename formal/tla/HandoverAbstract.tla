@@ -1,0 +1,168 @@
+---------------------------- MODULE HandoverAbstract ----------------------------
+(* The abstract handover model CAPCoordination refines (reviewer R2-1): HandoverInductive's transition system
+ * without its Apalache constant initialisation, with the Deny transition the refinement check found missing, and a
+ * Spec. CAPCoordinationRefinement.tla maps CAPCoordination onto it (granted / requested from the reservation states,
+ * hoState as is, receiverOf from hoReceiver) and TLC checks the refinement over the atomic hand-over sweep.
+ *)
+EXTENDS Integers, FiniteSets
+
+CONSTANTS
+    \* @type: Set(MACHINE);
+    Machines,
+    \* @type: Set(RESOURCE);
+    Resources,
+    AllowDeny     \* BOOLEAN: FALSE = HandoverInductive's original transitions (the gap)
+
+VARIABLES
+    \* @type: MACHINE -> Set(RESOURCE);
+    granted,      \* resource a machine currently holds GRANTED (<= 1); empty = none
+    \* @type: MACHINE -> Set(RESOURCE);
+    requested,    \* resource a machine has REQUESTED and is waiting for (<= 1)
+    \* @type: RESOURCE -> Str;
+    hoState,      \* handover flow state per resource
+    \* @type: RESOURCE -> Set(MACHINE);
+    receiverOf    \* the handover receiver for a resource (<= 1); empty = none
+
+
+HandoverStates == { "NONE", "REQUESTED", "ACKNOWLEDGED", "IN_PROGRESS", "COMPLETED" }
+
+\* The (derived) set of machines that hold r GRANTED -- the holder of r.
+\* @type: (RESOURCE) => Set(MACHINE);
+HolderSet(r) == { m \in Machines : r \in granted[m] }
+
+TypeOK ==
+    /\ granted    \in [Machines -> SUBSET Resources]
+    /\ requested  \in [Machines -> SUBSET Resources]
+    /\ hoState    \in [Resources -> HandoverStates]
+    /\ receiverOf \in [Resources -> SUBSET Machines]
+
+Init ==
+    /\ granted    = [m \in Machines |-> {}]
+    /\ requested  = [m \in Machines |-> {}]
+    /\ hoState    = [r \in Resources |-> "NONE"]
+    /\ receiverOf = [r \in Resources |-> {}]
+
+\* ─── Supporting (singleton) invariants ──────────────────────────────────────
+Singletons ==
+    /\ \A m \in Machines  : Cardinality(granted[m])    <= 1
+    /\ \A m \in Machines  : Cardinality(requested[m])  <= 1
+    /\ \A r \in Resources : Cardinality(receiverOf[r]) <= 1
+
+\* No resource is held GRANTED by two machines (no-double-grant over the
+\* derived holder relation).
+NoDoubleGrant ==
+    \A r \in Resources : Cardinality(HolderSet(r)) <= 1
+
+\* ─── The target safety property: P4 receiver ownership ───────────────────────
+\* While a handover on r is IN_PROGRESS, r is held by the receiver (and, with
+\* NoDoubleGrant, by the receiver ALONE), so r is never momentarily unheld.
+ReceiverOwnership ==
+    \A r \in Resources :
+        (hoState[r] = "IN_PROGRESS") =>
+            \E rcv \in Machines :
+                /\ receiverOf[r] = {rcv}
+                /\ r \in granted[rcv]
+
+\* ─── Transitions ─────────────────────────────────────────────────────────────
+
+\* A machine requests a (possibly held) resource and queues for it.
+Request(m, r) ==
+    /\ granted[m] = {}
+    /\ requested[m] = {}
+    /\ requested' = [requested EXCEPT ![m] = {r}]
+    /\ UNCHANGED <<granted, hoState, receiverOf>>
+
+\* Ordinary grant of a FREE resource (no handover active on it).
+\* A waiting request refused (CAPCoordination's DenyResource): the refinement check found the inductive model
+\* lacked it. It only shrinks ``requested``, so the invariants stay inductive.
+Deny(m, r) ==
+    /\ r \in requested[m]
+    /\ requested' = [requested EXCEPT ![m] = {}]
+    /\ UNCHANGED <<granted, hoState, receiverOf>>
+
+Acquire(m, r) ==
+    /\ r \in requested[m]
+    /\ HolderSet(r) = {}
+    /\ granted[m] = {}
+    /\ hoState[r] = "NONE"
+    /\ granted'   = [granted   EXCEPT ![m] = {r}]
+    /\ requested' = [requested EXCEPT ![m] = {}]
+    /\ UNCHANGED <<hoState, receiverOf>>
+
+\* Plain release -- DISABLED while a handover on r is active (hoState # NONE),
+\* so the holder cannot unilaterally vacate mid-handover.
+ReleasePlain(m, r) ==
+    /\ r \in granted[m]
+    /\ hoState[r] = "NONE"
+    /\ granted' = [granted EXCEPT ![m] = {}]
+    /\ UNCHANGED <<requested, hoState, receiverOf>>
+
+\* Holder s of r offers a handover to a machine rcv waiting (REQUESTED) for r.
+InitiateHandover(s, r, rcv) ==
+    /\ hoState[r] = "NONE"
+    /\ r \in granted[s]
+    /\ rcv /= s
+    /\ r \in requested[rcv]
+    /\ hoState'    = [hoState    EXCEPT ![r] = "REQUESTED"]
+    /\ receiverOf' = [receiverOf EXCEPT ![r] = {rcv}]
+    /\ UNCHANGED <<granted, requested>>
+
+AckHandover(r) ==
+    /\ hoState[r] = "REQUESTED"
+    /\ hoState' = [hoState EXCEPT ![r] = "ACKNOWLEDGED"]
+    /\ UNCHANGED <<granted, requested, receiverOf>>
+
+\* ATOMIC ownership transfer: sender releases r and receiver is granted r in ONE
+\* step; holder(r) passes sender -> receiver with no free window. This single-
+\* step transfer is what makes ReceiverOwnership inductive.
+BeginHandoverAtomic(s, r, rcv) ==
+    /\ hoState[r] = "ACKNOWLEDGED"
+    /\ receiverOf[r] = {rcv}
+    /\ r \in granted[s]
+    /\ s /= rcv
+    /\ granted[rcv] = {}
+    /\ granted'   = [granted EXCEPT ![s] = {}, ![rcv] = {r}]
+    /\ requested' = [requested EXCEPT ![rcv] = {}]
+    /\ hoState'   = [hoState EXCEPT ![r] = "IN_PROGRESS"]
+    /\ UNCHANGED <<receiverOf>>
+
+CompleteHandover(r, rcv) ==
+    /\ hoState[r] = "IN_PROGRESS"
+    /\ receiverOf[r] = {rcv}
+    /\ r \in granted[rcv]
+    /\ hoState' = [hoState EXCEPT ![r] = "COMPLETED"]
+    /\ UNCHANGED <<granted, requested, receiverOf>>
+
+CleanupHandover(r) ==
+    /\ hoState[r] = "COMPLETED"
+    /\ hoState'    = [hoState    EXCEPT ![r] = "NONE"]
+    /\ receiverOf' = [receiverOf EXCEPT ![r] = {}]
+    /\ UNCHANGED <<granted, requested>>
+
+Next ==
+    \/ \E m \in Machines : \E r \in Resources : Request(m, r)
+    \/ (AllowDeny /\ \E m \in Machines : \E r \in Resources : Deny(m, r))
+    \/ \E m \in Machines : \E r \in Resources : Acquire(m, r)
+    \/ \E m \in Machines : \E r \in Resources : ReleasePlain(m, r)
+    \/ \E s \in Machines : \E r \in Resources : \E rcv \in Machines : InitiateHandover(s, r, rcv)
+    \/ \E r \in Resources : AckHandover(r)
+    \/ \E s \in Machines : \E r \in Resources : \E rcv \in Machines : BeginHandoverAtomic(s, r, rcv)
+    \/ \E r \in Resources : \E rcv \in Machines : CompleteHandover(r, rcv)
+    \/ \E r \in Resources : CleanupHandover(r)
+
+\* ─── Inductive invariant ─────────────────────────────────────────────────────
+IndInv ==
+    /\ TypeOK
+    /\ Singletons
+    /\ NoDoubleGrant
+    /\ ReceiverOwnership
+
+\* Non-vacuity sanity: "no handover is ever IN_PROGRESS" is true at Init but is
+\* NOT preserved by BeginHandoverAtomic, so its inductive STEP must FAIL --
+\* confirming the SMT check discriminates (the positive result is not vacuous).
+NotInductive ==
+    /\ TypeOK
+    /\ \A r \in Resources : hoState[r] /= "IN_PROGRESS"
+
+Spec == Init /\ [][Next]_<<granted, requested, hoState, receiverOf>>
+================================================================================

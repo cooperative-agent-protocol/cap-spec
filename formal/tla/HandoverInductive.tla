@@ -49,6 +49,14 @@ ConstInit ==
     /\ Machines = Gen(4)
     /\ Resources = Gen(4)
 
+\* The cutoff for any fleet size: a step involves at most three machines (sender, receiver, requester), a violated
+\* invariant at most two holders of one resource plus one receiver witness per resource, and at most two resources;
+\* the guards are universally quantified over machines, so they survive projection onto those machines. A
+\* counterexample to inductiveness at any size therefore projects to one with at most 7 machines and 2 resources.
+ConstInitCutoff ==
+    /\ Machines = Gen(7)
+    /\ Resources = Gen(2)
+
 HandoverStates == { "NONE", "REQUESTED", "ACKNOWLEDGED", "IN_PROGRESS", "COMPLETED" }
 
 \* The (derived) set of machines that hold r GRANTED -- the holder of r.
@@ -98,6 +106,13 @@ Request(m, r) ==
     /\ UNCHANGED <<granted, hoState, receiverOf>>
 
 \* Ordinary grant of a FREE resource (no handover active on it).
+\* A waiting request refused (CAPCoordination's DenyResource); found missing by the refinement check
+\* (CAPCoordinationRefinement.tla). It only shrinks ``requested``.
+Deny(m, r) ==
+    /\ r \in requested[m]
+    /\ requested' = [requested EXCEPT ![m] = {}]
+    /\ UNCHANGED <<granted, hoState, receiverOf>>
+
 Acquire(m, r) ==
     /\ r \in requested[m]
     /\ HolderSet(r) = {}
@@ -159,6 +174,7 @@ CleanupHandover(r) ==
 
 Next ==
     \/ \E m \in Machines : \E r \in Resources : Request(m, r)
+    \/ \E m \in Machines : \E r \in Resources : Deny(m, r)
     \/ \E m \in Machines : \E r \in Resources : Acquire(m, r)
     \/ \E m \in Machines : \E r \in Resources : ReleasePlain(m, r)
     \/ \E s \in Machines : \E r \in Resources : \E rcv \in Machines : InitiateHandover(s, r, rcv)

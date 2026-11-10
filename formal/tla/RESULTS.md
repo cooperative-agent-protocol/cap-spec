@@ -487,3 +487,31 @@ defect is specifically a *receiver-ownership* violation, not a double-grant.
   exceeded its bound (the counter was unbounded). It never ran in CI
   (only `CAPCoordination_safety.cfg` did) and is superseded by the
   liveness configs above.
+
+## Refinement from CAPCoordination to the inductive models, and the cutoff (2026-11, reviewer R2-1)
+
+The inductive results (`ReservationInductive`, `HandoverInductive`) are proved on structurally simplified models.
+`CAPCoordinationRefinement.tla` maps CAPCoordination onto them and TLC checks the refinement (every CAPCoordination
+step maps to an abstract step or a stutter): `held`/`granted` <- the GRANTED reservations, `requested` <- the
+REQUESTED ones, `hoState` as is, `receiverOf` <- `hoReceiver`. The abstractions as they were did NOT preserve two
+transitions, and the check finds each:
+
+| Configuration | Abstraction | Verdict |
+|---|---|---|
+| `refinement_ho_N3R1_atomic_without.cfg` | original (no Transfer, no Deny) | **violated at `BeginHandoverAtomic`** (an atomic hand-over is neither an Acquire nor a Release) |
+| `refinement_N3R2_without_deny.cfg` | original Deny-less handover model | **violated at `DenyResource`** |
+| `refinement_ho_N2R1_atomic.cfg` | extended (`Transfer`, `Deny`) | refinement holds (204 states) |
+| `refinement_ho_N3R1_atomic.cfg` | extended | refinement holds (3,088 states) |
+| `refinement_N3R2.cfg` | extended | refinement holds (119,601 states) |
+
+`ReservationInductive` gained `Transfer` and `HandoverInductive` gained `Deny`; both stay inductive (Apalache 0.58.0,
+`check --cinit=ConstInit --init=Init --inv=IndInv --length=0` and `--init=IndInv --length=1`: EXITCODE OK).
+
+**Cutoff.** Each invariant is a conjunction of per-resource and pairwise conditions, every action involves at most
+three machines and one resource, and every guard quantifies universally over machines, so it survives projection.
+A counterexample to inductiveness at any fleet size therefore projects onto one with at most 7 machines and 2
+resources for `HandoverInductive`, and 4 machines and 2 resources for `ReservationInductive`.
+`HandoverInductive` checked with `ConstInitCutoff` (`Gen(7)` machines, `Gen(2)` resources): base OK, step OK,
+`NotInductive` step violated (as it must). `ReservationInductive`'s `Gen(4)` already covers its cutoff. Together
+with the refinement above, NoDoubleGrant and receiver ownership hold for CAPCoordination's reservation and
+hand-over transitions at any number of machines. The CAPCoordination model itself was checked at the swept sizes.

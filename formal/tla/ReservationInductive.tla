@@ -55,9 +55,17 @@ Release(m, r) ==
     /\ r \in held[m]
     /\ held' = [held EXCEPT ![m] = @ \ {r}]
 
+\* The atomic hand-over (CAPCoordination's BeginHandoverAtomic) moves r from its sole holder m to m2 in one step;
+\* the refinement check (CAPCoordinationRefinement.tla) found this transition missing from the original model.
+Transfer(m, m2, r) ==
+    /\ m /= m2
+    /\ r \in held[m]
+    /\ \A m3 \in Machines \ {m} : r \notin held[m3]
+    /\ held' = [held EXCEPT ![m] = @ \ {r}, ![m2] = @ \union {r}]
+
 Next ==
     \E m \in Machines : \E r \in Resources :
-        Acquire(m, r) \/ Release(m, r)
+        Acquire(m, r) \/ Release(m, r) \/ \E m2 \in Machines : Transfer(m, m2, r)
 
 \* Safety: no resource is held by two distinct machines (NoDoubleGrant).
 Disjoint ==
