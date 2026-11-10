@@ -515,3 +515,17 @@ resources for `HandoverInductive`, and 4 machines and 2 resources for `Reservati
 `NotInductive` step violated (as it must). `ReservationInductive`'s `Gen(4)` already covers its cutoff. Together
 with the refinement above, NoDoubleGrant and receiver ownership hold for CAPCoordination's reservation and
 hand-over transitions at any number of machines. The CAPCoordination model itself was checked at the swept sizes.
+
+## PermitTiming: the lease lemma for entry permits (2026-11)
+
+`PermitTiming.tla` models one permit with drifting monotonic clocks (each advances K-D..K+D per tick of K real units,
+rho = D/K) and delayed messages. K=10, D=1 (rho = 0.1), T=40, Delta=10, 8 ticks.
+
+| Config | Rule | Contained (usable => counted) | CrossingCovered |
+|---|---|---|---|
+| `PermitTiming_send.cfg` | machine times from the request's SEND for T(1-rho); arbiter counts T(1+rho) from the grant | **holds** (2,467,981 states) | **holds** |
+| `PermitTiming_receive.cfg` | machine times from the grant's receipt | **violated** | -- |
+| `PermitTiming_nodrift.cfg` | both use T without the rho factors | **violated** | -- |
+
+The bounded check is a sanity check of the algebraic proof in the paper's appendix (which holds for any T, rho < 1 and
+any delays); it also confirms the two broken rules are distinguishable.
