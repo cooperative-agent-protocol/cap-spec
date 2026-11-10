@@ -1,0 +1,6 @@
+scheme,Arb,Gate,Release,Expiry,Succession,S1,S2,S3,G1,G2,states,seconds
+MutexOnDone,deny,local,onDone,none,free,fails,fails,holds,fails,fails,73664,3.6
+MutexGroup,deny,local,onVacate,none,free,holds,holds,holds,fails,fails,60160,2.3
+LeaseFenced,deny,permit,onDone,ttl,free,fails,fails,holds,fails,fails,5343656,60.2
+LeaseFencedVacate,deny,permit,onVacate,ttlVacate,free,holds,holds,holds,fails,fails,4726304,51.6
+CAP,queue,permit,onVacate,ttlVacate,designated,holds,holds,holds,holds,holds,3102688,36.5

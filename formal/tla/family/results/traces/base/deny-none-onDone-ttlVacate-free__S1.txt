@@ -1,0 +1,87 @@
+Initial
+Enter("c1")
+Enter("c2")
+
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ valid = {}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "out", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 0
+/\ arbUp = TRUE
+/\ curTok = [m |-> "none", k |-> 0]
+/\ lastIn = "none"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 0
+
+State 2: <Enter("c1") line 328, col 5 to line 337, col 89 of module OccupancyHandover>
+/\ valid = {}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "none", k |-> 0]
+/\ lastIn = "c1"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = TRUE
+/\ nGrants = 0
+
+State 3: <Enter("c2") line 328, col 5 to line 337, col 89 of module OccupancyHandover>
+/\ valid = {}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "in"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 2
+/\ arbUp = TRUE
+/\ curTok = [m |-> "none", k |-> 0]
+/\ lastIn = "c2"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = TRUE
+/\ nGrants = 0
+
+50 states generated, 40 distinct states found, 29 states left on queue.
+The depth of the complete state graph search is 5.
+Finished in 00s at (2026-11-10 17:24:57)
+Trace exploration spec path: ./OccupancyHandover_TTrace_1794299097.tla
