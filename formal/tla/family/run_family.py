@@ -197,6 +197,7 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=5)
     ap.add_argument("--machines", default="c1,c2")
     ap.add_argument("--java", default=os.environ.get("TLA_JAVA", "java"))
+    ap.add_argument("--tag", default="", help="name of the result files for an --only subset (e.g. safe12)")
     args = ap.parse_args()
 
     combos = family()
@@ -220,7 +221,7 @@ def main() -> int:
                   f"fails={','.join(r['fails']) or '-':<14} states={r['states']} t={r['seconds']}s", flush=True)
 
     rows.sort(key=lambda r: [r[k] for k in DIMS])
-    suffix = "" if not args.only else "_" + "_".join(sorted(args.only.split(",")))[:60]
+    suffix = "" if not args.only else "_" + (args.tag or "_".join(sorted(args.only.split(",")))[:60])
     with open(resdir / f"{args.setting}{suffix}.csv", "w", newline="") as fh:
         w = csv.writer(fh)
         props = SETTINGS[args.setting]["props"]
