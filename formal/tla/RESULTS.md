@@ -530,6 +530,29 @@ rho = D/K) and delayed messages. K=10, D=1 (rho = 0.1), T=40, Delta=10, 8 ticks.
 The bounded check is a sanity check of the algebraic proof in the paper's appendix (which holds for any T, rho < 1 and
 any delays); it also confirms the two broken rules are distinguishable.
 
+## ZoneTable: how a gate comes to know a zone (2026-11)
+
+`OccupancyHandover` takes for granted that every gate knows the zone. `ZoneTable.tla` models how it comes to: the
+arbiter's versioned table of zones, sent over ordered streams; the machines' heartbeats that report the table each
+gate enforces; restarts of a machine (an empty gate, a new stream) and of the arbiter (with its journal: the zones
+taken up again; without it: an empty table). Two machines, two starts of the arbiter, two versions per start, two
+geometries of the zone, two messages per stream.
+
+| Config | Rule | Safe (while a machine is authorised, no other gate lets its machine in unchecked) |
+|---|---|---|
+| `ZoneTable_ack.cfg` | a gate without a table lets nothing move; no authorisation before every other gate has reported a table of this start with the zone as it stands; no table sent after a restart without the journal until the earlier start's authorisations have lapsed | **holds** (50,712,315 states, depth 44) |
+| `ZoneTable_noack.cfg` | authorise without waiting for the reports | **violated** (7 steps) |
+| `ZoneTable_failopen.cfg` | a gate without a table lets its machine move | **violated** (9 steps) |
+| `ZoneTable_nohold.cfg` | a restarted arbiter sends its still empty table at once | **violated** (11 steps) |
+| `ZoneTable_ack_reach.cfg` | (reachability) an authorisation is reachable under the protocol's rule | `NeverAuthorised` **violated**, as it must be |
+
+The rule came from a defect of the reference implementation that a trial on a second site layout exposed (a gate
+learned the zones only from its machine's work orders). The first version of the repair kept a zone across a restart
+of the arbiter on the gate's side; the model found the execution it missed (a machine restarts, then the arbiter
+restarts and sends its empty table, which opens the machine's gate while an authorisation of the earlier start is
+still usable), and the rule above replaced it. Assumed: a zone is not moved while an authorisation for it is out; a
+stream delivers in order; no machine the zone is closed to is inside it when it is registered.
+
 ## OccupancyHandover with three carriers (2026-11)
 
 The schemes that satisfy S1-S3 with two carriers, checked again with three (`family/gen_m3_cfgs.py`: the carriers
