@@ -529,3 +529,34 @@ rho = D/K) and delayed messages. K=10, D=1 (rho = 0.1), T=40, Delta=10, 8 ticks.
 
 The bounded check is a sanity check of the algebraic proof in the paper's appendix (which holds for any T, rho < 1 and
 any delays); it also confirms the two broken rules are distinguishable.
+
+## OccupancyHandover with three carriers (2026-11)
+
+The schemes that satisfy S1-S3 with two carriers, checked again with three (`family/gen_m3_cfgs.py`: the carriers
+are model values and the configurations use `SYMMETRY Symm`; three grant generations, one arbiter restart; S1-S3,
+and G1-G2 for the schemes with designated succession). The twelve schemes with the journal kept and the eight that
+stay safe with it lost: 20 of 20 configurations hold. Raw verdicts:
+`family/results/m3_verdicts.txt`.
+
+| Scheme | Journal | TLC | Distinct states |
+|---|---|---|---|
+| deny-local-onVacate-none-designated | kept | no error | 228,148 |
+| MutexGroup | kept | no error | 308,286 |
+| deny-permit-onVacate-none-designated | kept | no error | 5,431,544 |
+| deny-permit-onVacate-none-free | kept | no error | 9,439,772 |
+| deny-permit-onVacate-ttlVacate-designated | kept | no error | 23,180,264 |
+| LeaseFencedVacate | kept | no error | 47,385,690 |
+| queue-local-onVacate-none-designated | kept | no error | 339,110 |
+| queue-local-onVacate-none-free | kept | no error | 231,690 |
+| queue-permit-onVacate-none-designated | kept | no error | 6,681,268 |
+| queue-permit-onVacate-none-free | kept | no error | 5,644,280 |
+| CAP | kept | no error | 30,741,428 |
+| queue-permit-onVacate-ttlVacate-free | kept | no error | 30,843,358 |
+| deny-permit-onVacate-none-designated | lost | no error | 13,987,348 |
+| deny-permit-onVacate-none-free | lost | no error | 24,346,612 |
+| deny-permit-onVacate-ttlVacate-designated | lost | no error | 142,816,586 |
+| LeaseFencedVacate | lost | no error | 223,746,654 |
+| queue-permit-onVacate-none-designated | lost | no error | 19,346,688 |
+| queue-permit-onVacate-none-free | lost | no error | 16,386,946 |
+| CAP | lost | no error | 212,304,563 |
+| queue-permit-onVacate-ttlVacate-free | lost | no error | 151,463,364 |
