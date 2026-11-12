@@ -1,0 +1,11 @@
+m3_base_deny-permit-onVacate-none-designated | Model checking completed. No error has been found. | distinct=43169540 | 289 s
+m3_base_deny-permit-onVacate-none-free | Model checking completed. No error has been found. | distinct=91635516 | 618 s
+m3_base_deny-permit-onVacate-ttlVacate-designated | Model checking completed. No error has been found. | distinct=43169540 | 289 s
+m3_base_LeaseFencedVacate | Model checking completed. No error has been found. | distinct=91635516 | 619 s
+m3_base_queue-permit-onVacate-none-designated | Model checking completed. No error has been found. | distinct=58939496 | 394 s
+m3_base_queue-permit-onVacate-none-free | Model checking completed. No error has been found. | distinct=60211196 | 405 s
+m3_base_CAP | Model checking completed. No error has been found. | distinct=58939496 | 394 s
+m3_base_queue-permit-onVacate-ttlVacate-free | Model checking completed. No error has been found. | distinct=60211196 | 404 s
+m3_lossy_deny-permit-onVacate-none-designated | Model checking completed. No error has been found. | distinct=272351648 | 2044 s
+m3_lossy_deny-permit-onVacate-none-free | Model checking completed. No error has been found. | distinct=448143548 | 3433 s
+m3_lossy_deny-permit-onVacate-ttlVacate-designated | Model checking completed. No error has been found. | distinct=272351648 | 1994 s

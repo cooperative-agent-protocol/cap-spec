@@ -647,3 +647,25 @@ that no incompatible machine is in custody when a zone is granted. Run: `python3
 
 The three-carrier checks of the section above were made before `SiteRelease`; they are superseded by the next
 section, and their verdicts are kept in `family/results/m3_verdicts_before_site_release.txt`.
+
+## OccupancyHandover with three carriers, Site-side releases and the custody rule (2026-11-12)
+
+The eight schemes that satisfy S1-S3 with two carriers when the Site may give a zone up (above), checked again with
+three carriers (`family/gen_m3_cfgs.py`: carriers as model values, `SYMMETRY Symm`; three grant generations, one
+arbiter restart; S1-S3, G1-G2 for the schemes with designated succession, and the unbounded proof's invariant
+`AbsInv`). Raw verdicts: `family/results/m3_verdicts.txt`. The configurations with a lost journal are large (the
+first has 272 M distinct states) and are still running; this table is extended as they finish.
+
+| Scheme | Journal | TLC | Distinct states | Seconds |
+|---|---|---|---|---|
+| deny-permit-onVacate-none-designated | kept | no error | 43169540 | 289 |
+| deny-permit-onVacate-none-free | kept | no error | 91635516 | 618 |
+| deny-permit-onVacate-ttlVacate-designated | kept | no error | 43169540 | 289 |
+| LeaseFencedVacate | kept | no error | 91635516 | 619 |
+| queue-permit-onVacate-none-designated | kept | no error | 58939496 | 394 |
+| queue-permit-onVacate-none-free | kept | no error | 60211196 | 405 |
+| CAP | kept | no error | 58939496 | 394 |
+| queue-permit-onVacate-ttlVacate-free | kept | no error | 60211196 | 404 |
+| deny-permit-onVacate-none-designated | lost | no error | 272351648 | 2044 |
+| deny-permit-onVacate-none-free | lost | no error | 448143548 | 3433 |
+| deny-permit-onVacate-ttlVacate-designated | lost | no error | 272351648 | 1994 |
