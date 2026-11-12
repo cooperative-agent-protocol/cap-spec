@@ -1,0 +1,330 @@
+[
+ {
+  "scheme": "deny-permit-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 11766536,
+  "seconds": 57.3
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 20447996,
+  "seconds": 96.6
+ },
+ {
+  "scheme": "deny-permit-onVacate-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 11766536,
+  "seconds": 57.4
+ },
+ {
+  "scheme": "LeaseFencedVacate",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "ConfirmVacant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 20447996,
+  "seconds": 97.1
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "ConfirmVacant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 12833780,
+  "seconds": 61.7
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "ConfirmVacant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 13165036,
+  "seconds": 62.6
+ },
+ {
+  "scheme": "CAP",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 12833780,
+  "seconds": 62.8
+ },
+ {
+  "scheme": "queue-permit-onVacate-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "noCustodyLapse",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 13165036,
+  "seconds": 62.6
+ }
+]

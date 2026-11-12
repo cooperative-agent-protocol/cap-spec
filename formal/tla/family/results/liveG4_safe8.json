@@ -1,0 +1,181 @@
+[
+ {
+  "scheme": "deny-permit-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "liveG4",
+  "holds": [],
+  "fails": {
+   "G4": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Req(\"c1\",\"c1\")",
+    "Crash(\"c1\")",
+    "Next",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Crash(\"c2\")",
+    "Plan(\"c2\")",
+    "ConfirmVacant(\"c2\")",
+    "Recover(\"c2\")"
+   ]
+  },
+  "states": 144080,
+  "seconds": 3.5
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "liveG4",
+  "holds": [],
+  "fails": {
+   "G4": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "SiteRel(\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Enter(\"c2\")",
+    "Next",
+    "Req(\"c1\",\"c1\")",
+    "Exit(\"c2\")",
+    "Next",
+    "ConfirmVacant(\"c2\")",
+    "Grant(\"c1\")",
+    "Crash(\"c1\")",
+    "Next",
+    "Next"
+   ]
+  },
+  "states": 144123,
+  "seconds": 3.6
+ },
+ {
+  "scheme": "deny-permit-onVacate-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "liveG4",
+  "holds": [
+   "G4"
+  ],
+  "fails": {},
+  "states": 506048,
+  "seconds": 14.2
+ },
+ {
+  "scheme": "LeaseFencedVacate",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "liveG4",
+  "holds": [
+   "G4"
+  ],
+  "fails": {},
+  "states": 802176,
+  "seconds": 21.5
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "liveG4",
+  "holds": [],
+  "fails": {
+   "G4": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Crash(\"c2\")",
+    "Next",
+    "Plan(\"c1\")",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "ConfirmVacant(\"c1\")"
+   ]
+  },
+  "states": 163721,
+  "seconds": 3.6
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "liveG4",
+  "holds": [],
+  "fails": {
+   "G4": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Req(\"c1\",\"c1\")",
+    "Crash(\"c2\")",
+    "Plan(\"c1\")",
+    "Next",
+    "Next",
+    "Crash(\"c1\")"
+   ]
+  },
+  "states": 128193,
+  "seconds": 3.5
+ },
+ {
+  "scheme": "CAP",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "liveG4",
+  "holds": [
+   "G4"
+  ],
+  "fails": {},
+  "states": 584752,
+  "seconds": 16.2
+ },
+ {
+  "scheme": "queue-permit-onVacate-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "liveG4",
+  "holds": [
+   "G4"
+  ],
+  "fails": {},
+  "states": 554352,
+  "seconds": 15.4
+ }
+]

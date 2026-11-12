@@ -1,0 +1,9 @@
+8 combinations, setting=liveG4, machines=['c1', 'c2']
+deny-permit-onVacate-none-designated     holds=-                    fails=G4             states=144080 t=3.5s
+deny-permit-onVacate-none-free           holds=-                    fails=G4             states=144123 t=3.6s
+deny-permit-onVacate-ttlVacate-designated holds=G4                   fails=-              states=506048 t=14.2s
+queue-permit-onVacate-none-free          holds=-                    fails=G4             states=128193 t=3.5s
+queue-permit-onVacate-none-designated    holds=-                    fails=G4             states=163721 t=3.6s
+LeaseFencedVacate                        holds=G4                   fails=-              states=802176 t=21.5s
+queue-permit-onVacate-ttlVacate-free     holds=G4                   fails=-              states=554352 t=15.4s
+CAP                                      holds=G4                   fails=-              states=584752 t=16.2s

@@ -1,0 +1,9 @@
+8 combinations, setting=noCustodyLapse, machines=['c1', 'c2']
+deny-permit-onVacate-none-designated     holds=S3                   fails=S2,S1          states=11766536 t=57.3s
+deny-permit-onVacate-none-free           holds=S3                   fails=S2,S1          states=20447996 t=96.6s
+deny-permit-onVacate-ttlVacate-designated holds=S3                   fails=S2,S1          states=11766536 t=57.4s
+LeaseFencedVacate                        holds=S3                   fails=S2,S1          states=20447996 t=97.1s
+queue-permit-onVacate-none-designated    holds=S3                   fails=S2,S1          states=12833780 t=61.7s
+queue-permit-onVacate-none-free          holds=S3                   fails=S2,S1          states=13165036 t=62.6s
+queue-permit-onVacate-ttlVacate-free     holds=S3                   fails=S2,S1          states=13165036 t=62.6s
+CAP                                      holds=S3                   fails=S2,S1          states=12833780 t=62.8s

@@ -1,0 +1,4135 @@
+[
+ {
+  "scheme": "deny-local-onDone-none-designated",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 380804,
+  "seconds": 3.3
+ },
+ {
+  "scheme": "MutexOnDone",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 3066,
+  "seconds": 2.3
+ },
+ {
+  "scheme": "deny-local-onDone-ttl-designated",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 4325440,
+  "seconds": 19.9
+ },
+ {
+  "scheme": "deny-local-onDone-ttl-free",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 4294,
+  "seconds": 2.4
+ },
+ {
+  "scheme": "deny-local-onDone-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 7423596,
+  "seconds": 32.1
+ },
+ {
+  "scheme": "deny-local-onDone-ttlVacate-free",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Disconnect(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 6163,
+  "seconds": 2.4
+ },
+ {
+  "scheme": "deny-local-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c1\")",
+    "Reconnect(\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 418200,
+  "seconds": 4.2
+ },
+ {
+  "scheme": "MutexGroup",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Disconnect(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Reconnect(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "ConfirmAllVacant",
+    "Enter(\"c2\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 11390,
+  "seconds": 2.8
+ },
+ {
+  "scheme": "deny-local-onVacate-ttl-designated",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Crash(\"c2\")",
+    "LeaseExpire(\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 4683032,
+  "seconds": 21.4
+ },
+ {
+  "scheme": "deny-local-onVacate-ttl-free",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "LeaseExpire(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 7415,
+  "seconds": 2.7
+ },
+ {
+  "scheme": "deny-local-onVacate-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c2\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 7258092,
+  "seconds": 32.9
+ },
+ {
+  "scheme": "deny-local-onVacate-ttlVacate-free",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Enter(\"c1\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 12464,
+  "seconds": 2.7
+ },
+ {
+  "scheme": "deny-none-onDone-none-designated",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 107172,
+  "seconds": 2.4
+ },
+ {
+  "scheme": "deny-none-onDone-none-free",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Exit(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 6253,
+  "seconds": 2.7
+ },
+ {
+  "scheme": "deny-none-onDone-ttl-designated",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 120672,
+  "seconds": 2.4
+ },
+ {
+  "scheme": "deny-none-onDone-ttl-free",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Exit(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 6232,
+  "seconds": 2.3
+ },
+ {
+  "scheme": "deny-none-onDone-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 261612,
+  "seconds": 2.9
+ },
+ {
+  "scheme": "deny-none-onDone-ttlVacate-free",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 6244,
+  "seconds": 2.4
+ },
+ {
+  "scheme": "deny-none-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 221808,
+  "seconds": 2.4
+ },
+ {
+  "scheme": "deny-none-onVacate-none-free",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 5601,
+  "seconds": 2.1
+ },
+ {
+  "scheme": "deny-none-onVacate-ttl-designated",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 261612,
+  "seconds": 2.7
+ },
+ {
+  "scheme": "deny-none-onVacate-ttl-free",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 6307,
+  "seconds": 2.2
+ },
+ {
+  "scheme": "deny-none-onVacate-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 235308,
+  "seconds": 2.7
+ },
+ {
+  "scheme": "deny-none-onVacate-ttlVacate-free",
+  "Arb": "deny",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 6813,
+  "seconds": 2.2
+ },
+ {
+  "scheme": "deny-permit-onDone-none-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 2704376,
+  "seconds": 14.0
+ },
+ {
+  "scheme": "deny-permit-onDone-none-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 5064568,
+  "seconds": 25.7
+ },
+ {
+  "scheme": "deny-permit-onDone-ttl-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 7752444,
+  "seconds": 38.6
+ },
+ {
+  "scheme": "LeaseFenced",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 14085880,
+  "seconds": 68.2
+ },
+ {
+  "scheme": "deny-permit-onDone-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 6008592,
+  "seconds": 28.6
+ },
+ {
+  "scheme": "deny-permit-onDone-ttlVacate-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 9608644,
+  "seconds": 45.7
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 1705444,
+  "seconds": 9.4
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 3060884,
+  "seconds": 16.3
+ },
+ {
+  "scheme": "deny-permit-onVacate-ttl-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Crash(\"c2\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Crash(\"c2\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 5513232,
+  "seconds": 27.1
+ },
+ {
+  "scheme": "deny-permit-onVacate-ttl-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ],
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Crash(\"c2\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 9854060,
+  "seconds": 48.6
+ },
+ {
+  "scheme": "deny-permit-onVacate-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 5722688,
+  "seconds": 28.8
+ },
+ {
+  "scheme": "LeaseFencedVacate",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 9105900,
+  "seconds": 47.2
+ },
+ {
+  "scheme": "none-local-onDone-none-free",
+  "Arb": "none",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 2267,
+  "seconds": 2.1
+ },
+ {
+  "scheme": "none-local-onDone-ttl-free",
+  "Arb": "none",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Recover(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "LeaseExpire(\"c2\")",
+    "Enter(\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Enter(\"c1\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 2698,
+  "seconds": 2.2
+ },
+ {
+  "scheme": "none-local-onDone-ttlVacate-free",
+  "Arb": "none",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "LeaseExpire(\"c2\")",
+    "Enter(\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 3134,
+  "seconds": 2.2
+ },
+ {
+  "scheme": "none-local-onVacate-none-free",
+  "Arb": "none",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 2805,
+  "seconds": 2.3
+ },
+ {
+  "scheme": "none-local-onVacate-ttl-free",
+  "Arb": "none",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "LeaseExpire(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "LeaseExpire(\"c2\")",
+    "Enter(\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 3423,
+  "seconds": 2.3
+ },
+ {
+  "scheme": "none-local-onVacate-ttlVacate-free",
+  "Arb": "none",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 3222,
+  "seconds": 2.3
+ },
+ {
+  "scheme": "none-none-onDone-none-free",
+  "Arb": "none",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Exit(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 5941,
+  "seconds": 2.2
+ },
+ {
+  "scheme": "none-none-onDone-ttl-free",
+  "Arb": "none",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 6324,
+  "seconds": 2.1
+ },
+ {
+  "scheme": "none-none-onDone-ttlVacate-free",
+  "Arb": "none",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 7785,
+  "seconds": 2.2
+ },
+ {
+  "scheme": "none-none-onVacate-none-free",
+  "Arb": "none",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Exit(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 7811,
+  "seconds": 2.1
+ },
+ {
+  "scheme": "none-none-onVacate-ttl-free",
+  "Arb": "none",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 8069,
+  "seconds": 2.1
+ },
+ {
+  "scheme": "none-none-onVacate-ttlVacate-free",
+  "Arb": "none",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Exit(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ]
+  },
+  "states": 7252,
+  "seconds": 2.1
+ },
+ {
+  "scheme": "none-permit-onDone-none-free",
+  "Arb": "none",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 15945002,
+  "seconds": 69.8
+ },
+ {
+  "scheme": "none-permit-onDone-ttl-free",
+  "Arb": "none",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 19473870,
+  "seconds": 84.9
+ },
+ {
+  "scheme": "none-permit-onDone-ttlVacate-free",
+  "Arb": "none",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 19446638,
+  "seconds": 83.2
+ },
+ {
+  "scheme": "none-permit-onVacate-none-free",
+  "Arb": "none",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 16179142,
+  "seconds": 69.5
+ },
+ {
+  "scheme": "none-permit-onVacate-ttl-free",
+  "Arb": "none",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 19363286,
+  "seconds": 83.0
+ },
+ {
+  "scheme": "none-permit-onVacate-ttlVacate-free",
+  "Arb": "none",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 22511774,
+  "seconds": 95.3
+ },
+ {
+  "scheme": "queue-local-onDone-none-designated",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 405936,
+  "seconds": 3.9
+ },
+ {
+  "scheme": "queue-local-onDone-none-free",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Crash(\"c2\")",
+    "Recover(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 428768,
+  "seconds": 4.3
+ },
+ {
+  "scheme": "queue-local-onDone-ttl-designated",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 4905788,
+  "seconds": 22.7
+ },
+ {
+  "scheme": "queue-local-onDone-ttl-free",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "LeaseExpire(\"c2\")",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 4465324,
+  "seconds": 21.5
+ },
+ {
+  "scheme": "queue-local-onDone-ttlVacate-designated",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "LeaseExpire(\"c2\")",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 8681824,
+  "seconds": 38.3
+ },
+ {
+  "scheme": "queue-local-onDone-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 5829544,
+  "seconds": 27.2
+ },
+ {
+  "scheme": "queue-local-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Disconnect(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c1\")",
+    "Reconnect(\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 458364,
+  "seconds": 4.4
+ },
+ {
+  "scheme": "queue-local-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Recover(\"c1\")",
+    "Enter(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 413740,
+  "seconds": 4.6
+ },
+ {
+  "scheme": "queue-local-onVacate-ttl-designated",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "LeaseExpire(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 5358040,
+  "seconds": 25.1
+ },
+ {
+  "scheme": "queue-local-onVacate-ttl-free",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Crash(\"c2\")",
+    "LeaseExpire(\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "LeaseExpire(\"c2\")",
+    "Enter(\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 4609956,
+  "seconds": 22.7
+ },
+ {
+  "scheme": "queue-local-onVacate-ttlVacate-designated",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Disconnect(\"c2\")",
+    "LeaseExpire(\"c2\")",
+    "Enter(\"c2\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 8484472,
+  "seconds": 38.8
+ },
+ {
+  "scheme": "queue-local-onVacate-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Recover(\"c1\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Disconnect(\"c1\")",
+    "LeaseExpire(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 5628104,
+  "seconds": 26.5
+ },
+ {
+  "scheme": "queue-none-onDone-none-designated",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 121056,
+  "seconds": 2.2
+ },
+ {
+  "scheme": "queue-none-onDone-none-free",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ]
+  },
+  "states": 143984,
+  "seconds": 2.9
+ },
+ {
+  "scheme": "queue-none-onDone-ttl-designated",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 136716,
+  "seconds": 2.3
+ },
+ {
+  "scheme": "queue-none-onDone-ttl-free",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ]
+  },
+  "states": 159644,
+  "seconds": 2.8
+ },
+ {
+  "scheme": "queue-none-onDone-ttlVacate-designated",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 305328,
+  "seconds": 3.1
+ },
+ {
+  "scheme": "queue-none-onDone-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ]
+  },
+  "states": 245536,
+  "seconds": 3.2
+ },
+ {
+  "scheme": "queue-none-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 258036,
+  "seconds": 2.8
+ },
+ {
+  "scheme": "queue-none-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ]
+  },
+  "states": 193228,
+  "seconds": 3.2
+ },
+ {
+  "scheme": "queue-none-onVacate-ttl-designated",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 305328,
+  "seconds": 3.1
+ },
+ {
+  "scheme": "queue-none-onVacate-ttl-free",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Exit(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ]
+  },
+  "states": 245536,
+  "seconds": 3.3
+ },
+ {
+  "scheme": "queue-none-onVacate-ttlVacate-designated",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 273696,
+  "seconds": 2.7
+ },
+ {
+  "scheme": "queue-none-onVacate-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "none",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S3": [
+    "Initial",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Enter(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ]
+  },
+  "states": 206800,
+  "seconds": 3.2
+ },
+ {
+  "scheme": "queue-permit-onDone-none-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 2878564,
+  "seconds": 14.7
+ },
+ {
+  "scheme": "queue-permit-onDone-none-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 2975364,
+  "seconds": 15.7
+ },
+ {
+  "scheme": "queue-permit-onDone-ttl-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 8399552,
+  "seconds": 40.8
+ },
+ {
+  "scheme": "queue-permit-onDone-ttl-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "G1": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Recover(\"c1\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 8253280,
+  "seconds": 40.2
+ },
+ {
+  "scheme": "queue-permit-onDone-ttlVacate-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
+    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 6675944,
+  "seconds": 31.9
+ },
+ {
+  "scheme": "queue-permit-onDone-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onDone",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Rel(\"c2\",\"c2\")"
+   ],
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Rel(\"c1\",\"c1\")",
+    "Next",
+    "Next",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 5694040,
+  "seconds": 27.4
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 1831112,
+  "seconds": 9.2
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ]
+  },
+  "states": 1799880,
+  "seconds": 9.9
+ },
+ {
+  "scheme": "queue-permit-onVacate-ttl-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 6022040,
+  "seconds": 28.6
+ },
+ {
+  "scheme": "queue-permit-onVacate-ttl-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttl",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "Rel(\"c1\",\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Crash(\"c1\")",
+    "Next",
+    "Next",
+    "LeaseExpire(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 5843024,
+  "seconds": 29.0
+ },
+ {
+  "scheme": "CAP",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 6351624,
+  "seconds": 31.0
+ },
+ {
+  "scheme": "queue-permit-onVacate-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "ownRelease_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Recover(\"c1\")",
+    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")"
+   ]
+  },
+  "states": 5359832,
+  "seconds": 27.9
+ }
+]

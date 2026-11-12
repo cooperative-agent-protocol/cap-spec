@@ -15,9 +15,10 @@ from pathlib import Path
 
 import run_family as rf
 
-SAFE = ["deny-local-onVacate-none-designated", "MutexGroup", "deny-permit-onVacate-none-designated",
-        "deny-permit-onVacate-none-free", "deny-permit-onVacate-ttlVacate-designated", "LeaseFencedVacate",
-        "queue-local-onVacate-none-designated", "queue-local-onVacate-none-free",
+# the schemes that satisfy S1-S3 at two machines when the Site's coordinator may give a zone up for its holder
+# (results/base.json and results/lossy.json: the same eight)
+SAFE = ["deny-permit-onVacate-none-designated", "deny-permit-onVacate-none-free",
+        "deny-permit-onVacate-ttlVacate-designated", "LeaseFencedVacate",
         "queue-permit-onVacate-none-designated", "queue-permit-onVacate-none-free", "CAP",
         "queue-permit-onVacate-ttlVacate-free"]
 
@@ -37,7 +38,7 @@ def main() -> int:
             lines = ["SPECIFICATION Spec", "CONSTANTS", "    Machines = {c1, c2, c3}",
                      "    Incompatible <- AllCarrierPairs"]
             lines += [f"    {k} = {rf.tla_value(v)}" for k, v in {**c, **env}.items()]
-            lines += ["SYMMETRY Symm", "INVARIANTS", "    TypeOK", *[f"    {p}" for p in props],
+            lines += ["SYMMETRY Symm", "INVARIANTS", "    TypeOK", *[f"    {p}" for p in props], "    AbsInv",
                       "CHECK_DEADLOCK FALSE"]
             name = f"m3_{setting}_{n}"
             (out / f"{name}.cfg").write_text("\n".join(lines) + "\n")

@@ -1,0 +1,9 @@
+8 combinations, setting=absInv_lossy, machines=['c1', 'c2']
+deny-permit-onVacate-none-designated     holds=AbsInv               fails=-              states=13799852 t=80.1s
+deny-permit-onVacate-none-free           holds=AbsInv               fails=-              states=23086676 t=134.5s
+deny-permit-onVacate-ttlVacate-designated holds=AbsInv               fails=-              states=13799852 t=80.1s
+LeaseFencedVacate                        holds=AbsInv               fails=-              states=23086676 t=135.4s
+queue-permit-onVacate-none-free          holds=AbsInv               fails=-              states=13806056 t=80.9s
+queue-permit-onVacate-none-designated    holds=AbsInv               fails=-              states=15738016 t=90.4s
+queue-permit-onVacate-ttlVacate-free     holds=AbsInv               fails=-              states=13806056 t=79.4s
+CAP                                      holds=AbsInv               fails=-              states=15738016 t=82.8s

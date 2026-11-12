@@ -1,109 +1,5 @@
 [
  {
-  "scheme": "deny-local-onVacate-none-designated",
-  "Arb": "deny",
-  "Gate": "local",
-  "Release": "onVacate",
-  "Expiry": "none",
-  "Succession": "designated",
-  "setting": "noGrace",
-  "holds": [],
-  "fails": {
-   "S2": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")"
-   ],
-   "S3": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Reconnect(\"c1\")",
-    "Req(\"c1\",\"c1\")",
-    "ConfirmAllVacant",
-    "Grant(\"c1\")",
-    "Enter(\"c1\")"
-   ],
-   "S1": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
-    "ConfirmAllVacant",
-    "Grant(\"c2\")",
-    "Enter(\"c1\")",
-    "Next",
-    "Enter(\"c2\")"
-   ]
-  },
-  "states": 10087,
-  "seconds": 2.2
- },
- {
-  "scheme": "MutexGroup",
-  "Arb": "deny",
-  "Gate": "local",
-  "Release": "onVacate",
-  "Expiry": "none",
-  "Succession": "free",
-  "setting": "noGrace",
-  "holds": [],
-  "fails": {
-   "S2": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")"
-   ],
-   "S3": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Reconnect(\"c1\")",
-    "Req(\"c1\",\"c1\")",
-    "ConfirmAllVacant",
-    "Grant(\"c1\")",
-    "Enter(\"c1\")"
-   ],
-   "S1": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Reconnect(\"c2\")",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")"
-   ]
-  },
-  "states": 9829,
-  "seconds": 2.1
- },
- {
   "scheme": "deny-permit-onVacate-none-designated",
   "Arb": "deny",
   "Gate": "permit",
@@ -113,50 +9,44 @@
   "setting": "noGrace",
   "holds": [],
   "fails": {
-   "S2": [
-    "Initial",
-    "Crash(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c2\")"
-   ],
    "S3": [
     "Initial",
-    "Crash(\"c1\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
-    "Recover(\"c1\")",
-    "Req(\"c1\",\"c1\")",
     "ConfirmAllVacant",
-    "Grant(\"c1\")",
     "Enter(\"c2\")"
    ],
    "S1": [
     "Initial",
-    "Crash(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
-    "Recover(\"c1\")",
-    "Req(\"c1\",\"c1\")",
     "ConfirmAllVacant",
-    "Grant(\"c1\")",
-    "Enter(\"c2\")",
+    "Enter(\"c1\")",
+    "Reconnect(\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
     "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 26089,
-  "seconds": 2.5
+  "states": 51529,
+  "seconds": 1.9
  },
  {
   "scheme": "deny-permit-onVacate-none-free",
@@ -168,8 +58,18 @@
   "setting": "noGrace",
   "holds": [],
   "fails": {
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
    "S2": [
     "Initial",
+    "Crash(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
@@ -178,20 +78,6 @@
     "ConfirmAllVacant",
     "Enter(\"c1\")"
    ],
-   "S3": [
-    "Initial",
-    "Crash(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Recover(\"c1\")",
-    "ConfirmAllVacant",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Enter(\"c2\")"
-   ],
    "S1": [
     "Initial",
     "Req(\"c1\",\"c1\")",
@@ -199,17 +85,17 @@
     "Next",
     "ArbCrash",
     "ArbRestart",
-    "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
     "ConfirmAllVacant",
     "Enter(\"c1\")",
+    "Reconnect(\"c2\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 26725,
-  "seconds": 2.6
+  "states": 44597,
+  "seconds": 1.9
  },
  {
   "scheme": "deny-permit-onVacate-ttlVacate-designated",
@@ -221,28 +107,28 @@
   "setting": "noGrace",
   "holds": [],
   "fails": {
-   "S2": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")"
-   ],
    "S3": [
     "Initial",
+    "Crash(\"c1\")",
+    "Crash(\"c2\")",
+    "Recover(\"c1\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
-    "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
-    "ConfirmAllVacant",
-    "Grant(\"c2\")",
     "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c2\")"
    ],
    "S1": [
     "Initial",
@@ -252,16 +138,16 @@
     "ArbCrash",
     "ArbRestart",
     "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
     "ConfirmAllVacant",
     "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 29579,
-  "seconds": 2.5
+  "states": 51718,
+  "seconds": 1.9
  },
  {
   "scheme": "LeaseFencedVacate",
@@ -273,6 +159,16 @@
   "setting": "noGrace",
   "holds": [],
   "fails": {
+   "S3": [
+    "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c2\")"
+   ],
    "S2": [
     "Initial",
     "Req(\"c1\",\"c1\")",
@@ -282,136 +178,16 @@
     "ArbRestart",
     "ConfirmAllVacant",
     "Enter(\"c1\")"
-   ],
-   "S3": [
-    "Initial",
-    "Crash(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Recover(\"c1\")",
-    "Req(\"c1\",\"c1\")",
-    "ConfirmAllVacant",
-    "Grant(\"c1\")",
-    "Enter(\"c2\")"
    ],
    "S1": [
     "Initial",
-    "Crash(\"c1\")",
+    "Disconnect(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Recover(\"c1\")",
-    "Req(\"c1\",\"c1\")",
-    "ConfirmAllVacant",
-    "Enter(\"c2\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
-   ]
-  },
-  "states": 28811,
-  "seconds": 2.5
- },
- {
-  "scheme": "queue-local-onVacate-none-designated",
-  "Arb": "queue",
-  "Gate": "local",
-  "Release": "onVacate",
-  "Expiry": "none",
-  "Succession": "designated",
-  "setting": "noGrace",
-  "holds": [],
-  "fails": {
-   "S2": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")"
-   ],
-   "S3": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
     "Reconnect(\"c1\")",
-    "Req(\"c1\",\"c1\")",
-    "ConfirmAllVacant",
-    "Grant(\"c1\")",
-    "Enter(\"c1\")"
-   ],
-   "S1": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
-    "ConfirmAllVacant",
-    "Grant(\"c2\")",
-    "Enter(\"c1\")",
-    "Next",
-    "Enter(\"c2\")"
-   ]
-  },
-  "states": 10633,
-  "seconds": 2.0
- },
- {
-  "scheme": "queue-local-onVacate-none-free",
-  "Arb": "queue",
-  "Gate": "local",
-  "Release": "onVacate",
-  "Expiry": "none",
-  "Succession": "free",
-  "setting": "noGrace",
-  "holds": [],
-  "fails": {
-   "S2": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")"
-   ],
-   "S3": [
-    "Initial",
-    "Crash(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Recover(\"c1\")",
-    "Req(\"c1\",\"c1\")",
-    "ConfirmAllVacant",
-    "Grant(\"c1\")",
-    "Enter(\"c2\")"
-   ],
-   "S1": [
-    "Initial",
-    "Crash(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Recover(\"c1\")",
     "ConfirmAllVacant",
     "Enter(\"c2\")",
     "Req(\"c1\",\"c1\")",
@@ -420,7 +196,7 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 9278,
+  "states": 44948,
   "seconds": 2.0
  },
  {
@@ -433,29 +209,27 @@
   "setting": "noGrace",
   "holds": [],
   "fails": {
-   "S2": [
-    "Initial",
-    "Crash(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c2\")"
-   ],
    "S3": [
     "Initial",
+    "Disconnect(\"c1\")",
     "Crash(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
-    "Recover(\"c1\")",
-    "Req(\"c1\",\"c1\")",
+    "Enter(\"c2\")"
+   ],
+   "S2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
     "ConfirmAllVacant",
-    "Grant(\"c1\")",
     "Enter(\"c2\")"
    ],
    "S1": [
@@ -465,17 +239,17 @@
     "Next",
     "ArbCrash",
     "ArbRestart",
-    "Reconnect(\"c2\")",
     "ConfirmAllVacant",
     "Enter(\"c1\")",
+    "Reconnect(\"c2\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 29529,
-  "seconds": 2.5
+  "states": 52333,
+  "seconds": 1.9
  },
  {
   "scheme": "queue-permit-onVacate-none-free",
@@ -487,58 +261,16 @@
   "setting": "noGrace",
   "holds": [],
   "fails": {
-   "S2": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")"
-   ],
    "S3": [
     "Initial",
+    "Crash(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
-    "ConfirmAllVacant",
-    "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
     "Enter(\"c1\")"
    ],
-   "S1": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")"
-   ]
-  },
-  "states": 25734,
-  "seconds": 2.4
- },
- {
-  "scheme": "CAP",
-  "Arb": "queue",
-  "Gate": "permit",
-  "Release": "onVacate",
-  "Expiry": "ttlVacate",
-  "Succession": "designated",
-  "setting": "noGrace",
-  "holds": [],
-  "fails": {
    "S2": [
     "Initial",
     "Crash(\"c1\")",
@@ -550,17 +282,53 @@
     "ConfirmAllVacant",
     "Enter(\"c2\")"
    ],
-   "S3": [
+   "S1": [
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
+    "ConfirmAllVacant",
+    "Enter(\"c1\")",
     "Reconnect(\"c2\")",
     "Req(\"c2\",\"c2\")",
-    "ConfirmAllVacant",
     "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 43806,
+  "seconds": 2.0
+ },
+ {
+  "scheme": "CAP",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "noGrace",
+  "holds": [],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ConfirmAllVacant",
     "Enter(\"c1\")"
    ],
    "S1": [
@@ -571,16 +339,16 @@
     "ArbCrash",
     "ArbRestart",
     "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
     "ConfirmAllVacant",
     "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 31058,
-  "seconds": 2.5
+  "states": 56398,
+  "seconds": 2.0
  },
  {
   "scheme": "queue-permit-onVacate-ttlVacate-free",
@@ -592,27 +360,25 @@
   "setting": "noGrace",
   "holds": [],
   "fails": {
-   "S2": [
-    "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "ArbCrash",
-    "ArbRestart",
-    "ConfirmAllVacant",
-    "Enter(\"c1\")"
-   ],
    "S3": [
     "Initial",
+    "Crash(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c2\")"
+   ],
+   "S2": [
+    "Initial",
+    "Crash(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
     "ArbCrash",
     "ArbRestart",
     "ConfirmAllVacant",
-    "Reconnect(\"c2\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
     "Enter(\"c1\")"
    ],
    "S1": [
@@ -625,13 +391,13 @@
     "Reconnect(\"c2\")",
     "Req(\"c2\",\"c2\")",
     "ConfirmAllVacant",
-    "Grant(\"c2\")",
     "Enter(\"c1\")",
+    "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 27110,
-  "seconds": 2.4
+  "states": 47840,
+  "seconds": 2.1
  }
 ]

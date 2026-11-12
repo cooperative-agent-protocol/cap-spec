@@ -1,0 +1,122 @@
+[
+ {
+  "scheme": "deny-permit-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 17374860,
+  "seconds": 93.4
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 28718676,
+  "seconds": 158.8
+ },
+ {
+  "scheme": "deny-permit-onVacate-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 17374860,
+  "seconds": 95.7
+ },
+ {
+  "scheme": "LeaseFencedVacate",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 28718676,
+  "seconds": 160.0
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 20118892,
+  "seconds": 111.5
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 17162568,
+  "seconds": 96.1
+ },
+ {
+  "scheme": "CAP",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 20118892,
+  "seconds": 101.9
+ },
+ {
+  "scheme": "queue-permit-onVacate-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "absInv_noA5",
+  "holds": [
+   "AbsInv"
+  ],
+  "fails": {},
+  "states": 17162568,
+  "seconds": 95.3
+ }
+]

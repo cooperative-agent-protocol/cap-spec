@@ -72,7 +72,9 @@ SETTINGS = {
     # assumption ablations (Proposition 3); run on the schemes that pass "lossy" or "base"
     "noA2": dict(env=dict(SensorSound=False), props=["S1", "S2", "S3"]),
     "noA4": dict(env=dict(TimingSound=False, Restart="lossy"), props=["S1", "S2", "S3"]),
-    "noA5": dict(env=dict(AuthOK=False), props=["S1", "S2", "S3"]),
+    # without authentication: safety is expected to hold all the same (the gate and the custody rule do not rest on
+    # who a request says it is from); G1 and G2 are checked too, to see what authentication is needed for
+    "noA5": dict(env=dict(AuthOK=False), props=["S1", "S2", "S3", "G1", "G2"]),
     "noBoot": dict(env=dict(BootScoped=False, Restart="lossy"), props=["S1", "S2", "S3"]),
     # the timing assumption alone (restarts keep the journal)
     "noA4d": dict(env=dict(TimingSound=False), props=["S1", "S2", "S3"]),
@@ -83,6 +85,10 @@ SETTINGS = {
     "ownRelease_lossy": dict(env=dict(SiteRelease=False, Restart="lossy"), props=["S1", "S2", "S3", "G1", "G2"]),
     # custody that ends on the vacancy alone, while a permit of the machine may still be counted
     "noCustodyLapse": dict(env=dict(CustodyUntilLapse=False), props=["S1", "S2", "S3"]),
+    # the invariant of the proof for any number of machines (formal/smt), on this model
+    "absInv": dict(env={}, props=["AbsInv"]),
+    "absInv_lossy": dict(env=dict(Restart="lossy"), props=["AbsInv"]),
+    "absInv_noA5": dict(env=dict(AuthOK=False, Restart="lossy"), props=["AbsInv"]),
     # non-triviality: a second machine can follow the first (NotCycle is expected VIOLATED)
     "trivial": dict(env=dict(Faults=False, Restart="none"), props=["NotCycle"]),
     # liveness G4 (a crashed holder eventually recovers or loses the zone) under LiveSpec's fairness

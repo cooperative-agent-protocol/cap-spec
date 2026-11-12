@@ -13,17 +13,17 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 207,
-  "seconds": 0.6
+  "states": 764,
+  "seconds": 0.4
  },
  {
   "scheme": "MutexOnDone",
@@ -38,18 +38,18 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Grant(\"c2\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 250,
-  "seconds": 0.6
+  "states": 763,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onDone-ttl-designated",
@@ -63,19 +63,19 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Rel(\"c2\",\"c2\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 219,
-  "seconds": 0.8
+  "states": 764,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onDone-ttl-free",
@@ -89,19 +89,19 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
-    "Req(\"c1\",\"c1\")",
     "Next",
-    "Enter(\"c2\")",
-    "Rel(\"c2\",\"c2\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 246,
-  "seconds": 0.7
+  "states": 731,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onDone-ttlVacate-designated",
@@ -117,17 +117,17 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 260,
-  "seconds": 0.7
+  "states": 597,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onDone-ttlVacate-free",
@@ -141,19 +141,19 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c2\",\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 227,
-  "seconds": 0.7
+  "states": 709,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onVacate-none-designated",
@@ -167,21 +167,20 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Exit(\"c2\")",
-    "Rel(\"c2\",\"c2\")",
-    "ConfirmVacant(\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 379,
-  "seconds": 0.7
+  "states": 1088,
+  "seconds": 0.4
  },
  {
   "scheme": "MutexGroup",
@@ -197,19 +196,18 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "ConfirmVacant(\"c1\")",
+    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 363,
-  "seconds": 0.6
+  "states": 1109,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onVacate-ttl-designated",
@@ -223,21 +221,20 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Exit(\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Rel(\"c2\",\"c2\")",
-    "ConfirmVacant(\"c2\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 401,
-  "seconds": 0.7
+  "states": 1025,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onVacate-ttl-free",
@@ -251,21 +248,20 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Req(\"c1\",\"c1\")",
-    "Enter(\"c2\")",
-    "Exit(\"c2\")",
-    "Rel(\"c2\",\"c2\")",
-    "ConfirmVacant(\"c2\")",
-    "Grant(\"c1\")",
     "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 368,
-  "seconds": 0.8
+  "states": 797,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onVacate-ttlVacate-designated",
@@ -281,19 +277,18 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "ConfirmVacant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 397,
-  "seconds": 0.8
+  "states": 1086,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-local-onVacate-ttlVacate-free",
@@ -307,21 +302,20 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Exit(\"c2\")",
-    "Rel(\"c2\",\"c2\")",
-    "ConfirmVacant(\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 375,
-  "seconds": 0.7
+  "states": 673,
+  "seconds": 0.5
  },
  {
   "scheme": "deny-none-onDone-none-designated",
@@ -335,12 +329,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 26,
-  "seconds": 0.6
+  "states": 41,
+  "seconds": 0.3
  },
  {
   "scheme": "deny-none-onDone-none-free",
@@ -358,8 +352,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 29,
-  "seconds": 0.6
+  "states": 40,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-none-onDone-ttl-designated",
@@ -377,8 +371,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 12,
-  "seconds": 0.6
+  "states": 41,
+  "seconds": 0.3
  },
  {
   "scheme": "deny-none-onDone-ttl-free",
@@ -396,8 +390,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 29,
-  "seconds": 0.7
+  "states": 43,
+  "seconds": 0.3
  },
  {
   "scheme": "deny-none-onDone-ttlVacate-designated",
@@ -415,8 +409,8 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 26,
-  "seconds": 0.6
+  "states": 41,
+  "seconds": 0.3
  },
  {
   "scheme": "deny-none-onDone-ttlVacate-free",
@@ -434,8 +428,8 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 9,
-  "seconds": 0.6
+  "states": 38,
+  "seconds": 0.3
  },
  {
   "scheme": "deny-none-onVacate-none-designated",
@@ -453,8 +447,8 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.5
+  "states": 46,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-none-onVacate-none-free",
@@ -468,12 +462,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 24,
-  "seconds": 0.5
+  "states": 47,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-none-onVacate-ttl-designated",
@@ -487,12 +481,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 26,
-  "seconds": 0.5
+  "states": 40,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-none-onVacate-ttl-free",
@@ -506,12 +500,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 26,
-  "seconds": 0.5
+  "states": 42,
+  "seconds": 0.3
  },
  {
   "scheme": "deny-none-onVacate-ttlVacate-designated",
@@ -525,12 +519,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 26,
-  "seconds": 0.7
+  "states": 36,
+  "seconds": 0.3
  },
  {
   "scheme": "deny-none-onVacate-ttlVacate-free",
@@ -544,12 +538,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.5
+  "states": 46,
+  "seconds": 0.4
  },
  {
   "scheme": "deny-permit-onDone-none-designated",
@@ -566,9 +560,9 @@
     "Req(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Next",
     "Next",
     "Grant(\"c2\")",
@@ -576,8 +570,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 1637,
-  "seconds": 0.8
+  "states": 3480,
+  "seconds": 0.5
  },
  {
   "scheme": "deny-permit-onDone-none-free",
@@ -591,21 +585,21 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c2\",\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Next",
     "Next",
-    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1317,
-  "seconds": 0.8
+  "states": 2577,
+  "seconds": 0.5
  },
  {
   "scheme": "deny-permit-onDone-ttl-designated",
@@ -621,19 +615,19 @@
     "Initial",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
     "Next",
     "Enter(\"c2\")",
     "Next",
     "Next",
     "Req(\"c1\",\"c1\")",
-    "Rel(\"c2\",\"c2\")",
     "Grant(\"c1\")",
     "Next",
     "Enter(\"c1\")"
    ]
   },
-  "states": 1550,
-  "seconds": 0.8
+  "states": 2637,
+  "seconds": 0.5
  },
  {
   "scheme": "LeaseFenced",
@@ -648,20 +642,20 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Next",
     "Next",
-    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1549,
-  "seconds": 0.9
+  "states": 2399,
+  "seconds": 0.5
  },
  {
   "scheme": "deny-permit-onDone-ttlVacate-designated",
@@ -675,21 +669,21 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c2\",\"c2\")",
     "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Next",
     "Next",
-    "Rel(\"c1\",\"c1\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1543,
-  "seconds": 0.8
+  "states": 2676,
+  "seconds": 0.5
  },
  {
   "scheme": "deny-permit-onDone-ttlVacate-free",
@@ -706,18 +700,18 @@
     "Req(\"c2\",\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Next",
-    "Rel(\"c1\",\"c1\")",
     "Next",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1390,
-  "seconds": 0.7
+  "states": 2559,
+  "seconds": 0.5
  },
  {
   "scheme": "deny-permit-onVacate-none-designated",
@@ -731,23 +725,23 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c2\",\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Exit(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Next",
+    "Next",
     "ConfirmVacant(\"c1\")",
-    "Next",
-    "Next",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 3396,
-  "seconds": 1.0
+  "states": 6471,
+  "seconds": 0.6
  },
  {
   "scheme": "deny-permit-onVacate-none-free",
@@ -761,23 +755,23 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
+    "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Exit(\"c1\")",
     "Next",
     "Next",
-    "Rel(\"c1\",\"c1\")",
     "ConfirmVacant(\"c1\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 3309,
-  "seconds": 0.9
+  "states": 4654,
+  "seconds": 0.5
  },
  {
   "scheme": "deny-permit-onVacate-ttl-designated",
@@ -793,21 +787,21 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "ConfirmVacant(\"c1\")",
     "Next",
     "Next",
     "Req(\"c2\",\"c2\")",
+    "ConfirmVacant(\"c1\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 3078,
-  "seconds": 0.9
+  "states": 5738,
+  "seconds": 0.6
  },
  {
   "scheme": "deny-permit-onVacate-ttl-free",
@@ -823,12 +817,12 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Exit(\"c1\")",
     "Next",
     "Next",
-    "Rel(\"c1\",\"c1\")",
     "ConfirmVacant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
@@ -836,8 +830,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 2431,
-  "seconds": 1.0
+  "states": 6965,
+  "seconds": 0.6
  },
  {
   "scheme": "deny-permit-onVacate-ttlVacate-designated",
@@ -852,22 +846,22 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
-    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Exit(\"c1\")",
+    "Next",
+    "Next",
     "ConfirmVacant(\"c1\")",
-    "Next",
-    "Next",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 3085,
-  "seconds": 0.9
+  "states": 6863,
+  "seconds": 0.6
  },
  {
   "scheme": "LeaseFencedVacate",
@@ -881,23 +875,23 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Exit(\"c2\")",
+    "Next",
+    "Next",
+    "ConfirmVacant(\"c2\")",
+    "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Exit(\"c1\")",
-    "Next",
-    "Next",
-    "Rel(\"c1\",\"c1\")",
-    "ConfirmVacant(\"c1\")",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c1\")"
    ]
   },
-  "states": 3207,
-  "seconds": 0.9
+  "states": 7032,
+  "seconds": 0.6
  },
  {
   "scheme": "none-local-onDone-none-free",
@@ -911,18 +905,18 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 229,
-  "seconds": 0.7
+  "states": 585,
+  "seconds": 0.4
  },
  {
   "scheme": "none-local-onDone-ttl-free",
@@ -940,14 +934,15 @@
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
     "Next",
-    "Enter(\"c1\")",
     "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 234,
-  "seconds": 0.7
+  "states": 463,
+  "seconds": 0.4
  },
  {
   "scheme": "none-local-onDone-ttlVacate-free",
@@ -963,6 +958,7 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
@@ -971,8 +967,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 231,
-  "seconds": 0.7
+  "states": 507,
+  "seconds": 0.4
  },
  {
   "scheme": "none-local-onVacate-none-free",
@@ -986,18 +982,18 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 265,
-  "seconds": 0.6
+  "states": 827,
+  "seconds": 0.4
  },
  {
   "scheme": "none-local-onVacate-ttl-free",
@@ -1011,18 +1007,18 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")"
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Enter(\"c2\")",
+    "Next",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 315,
-  "seconds": 0.6
+  "states": 819,
+  "seconds": 0.4
  },
  {
   "scheme": "none-local-onVacate-ttlVacate-free",
@@ -1037,17 +1033,17 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "Grant(\"c2\")",
     "Next",
     "Enter(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 271,
-  "seconds": 0.6
+  "states": 819,
+  "seconds": 0.4
  },
  {
   "scheme": "none-none-onDone-none-free",
@@ -1065,8 +1061,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 24,
-  "seconds": 0.5
+  "states": 41,
+  "seconds": 0.4
  },
  {
   "scheme": "none-none-onDone-ttl-free",
@@ -1080,12 +1076,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 24,
-  "seconds": 0.5
+  "states": 39,
+  "seconds": 0.4
  },
  {
   "scheme": "none-none-onDone-ttlVacate-free",
@@ -1103,8 +1099,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.5
+  "states": 45,
+  "seconds": 0.4
  },
  {
   "scheme": "none-none-onVacate-none-free",
@@ -1122,8 +1118,8 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 26,
-  "seconds": 0.5
+  "states": 40,
+  "seconds": 0.3
  },
  {
   "scheme": "none-none-onVacate-ttl-free",
@@ -1141,8 +1137,8 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 24,
-  "seconds": 0.5
+  "states": 42,
+  "seconds": 0.3
  },
  {
   "scheme": "none-none-onVacate-ttlVacate-free",
@@ -1156,12 +1152,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 29,
-  "seconds": 0.5
+  "states": 47,
+  "seconds": 0.4
  },
  {
   "scheme": "none-permit-onDone-none-free",
@@ -1175,18 +1171,18 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c2\",\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "Grant(\"c2\")",
     "Next",
     "Enter(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 824,
-  "seconds": 0.7
+  "states": 1294,
+  "seconds": 0.4
  },
  {
   "scheme": "none-permit-onDone-ttl-free",
@@ -1201,17 +1197,17 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
     "Req(\"c2\",\"c2\")",
-    "Enter(\"c1\")",
+    "Grant(\"c1\")",
     "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c1\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 824,
-  "seconds": 0.7
+  "states": 1180,
+  "seconds": 0.4
  },
  {
   "scheme": "none-permit-onDone-ttlVacate-free",
@@ -1225,18 +1221,18 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
+    "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Grant(\"c2\")",
     "Next",
+    "Enter(\"c1\")",
     "Next",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 760,
-  "seconds": 0.8
+  "states": 1716,
+  "seconds": 0.5
  },
  {
   "scheme": "none-permit-onVacate-none-free",
@@ -1250,18 +1246,19 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c2\",\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
-    "Grant(\"c2\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 823,
-  "seconds": 0.6
+  "states": 1079,
+  "seconds": 0.4
  },
  {
   "scheme": "none-permit-onVacate-ttl-free",
@@ -1275,18 +1272,18 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Req(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
+    "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Grant(\"c2\")",
     "Next",
+    "Enter(\"c1\")",
     "Next",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 777,
-  "seconds": 0.6
+  "states": 1808,
+  "seconds": 0.5
  },
  {
   "scheme": "none-permit-onVacate-ttlVacate-free",
@@ -1300,18 +1297,18 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Enter(\"c2\")",
+    "Enter(\"c1\")",
     "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 835,
-  "seconds": 0.7
+  "states": 1470,
+  "seconds": 0.5
  },
  {
   "scheme": "queue-local-onDone-none-designated",
@@ -1325,19 +1322,19 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c1\")"
    ]
   },
-  "states": 225,
-  "seconds": 0.7
+  "states": 679,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onDone-none-free",
@@ -1351,19 +1348,20 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Exit(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c1\")"
    ]
   },
-  "states": 210,
-  "seconds": 0.7
+  "states": 466,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onDone-ttl-designated",
@@ -1378,18 +1376,18 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
-    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 228,
-  "seconds": 0.7
+  "states": 800,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onDone-ttl-free",
@@ -1403,19 +1401,19 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Rel(\"c2\",\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 209,
-  "seconds": 0.6
+  "states": 704,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onDone-ttlVacate-designated",
@@ -1431,17 +1429,17 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
-    "Rel(\"c1\",\"c1\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 283,
-  "seconds": 0.6
+  "states": 709,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onDone-ttlVacate-free",
@@ -1457,17 +1455,17 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
+    "Enter(\"c1\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 205,
-  "seconds": 0.7
+  "states": 719,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onVacate-none-designated",
@@ -1483,19 +1481,18 @@
     "Initial",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")",
-    "Exit(\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Rel(\"c2\",\"c2\")",
+    "SiteRel(\"c2\")",
     "ConfirmVacant(\"c2\")",
+    "Next",
+    "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "Enter(\"c2\")",
     "Next",
     "Enter(\"c1\")"
    ]
   },
-  "states": 414,
-  "seconds": 0.7
+  "states": 860,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onVacate-none-free",
@@ -1511,19 +1508,18 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "ConfirmVacant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 307,
-  "seconds": 0.6
+  "states": 1019,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onVacate-ttl-designated",
@@ -1537,21 +1533,20 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "ConfirmVacant(\"c2\")",
+    "Next",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "ConfirmVacant(\"c1\")",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 404,
-  "seconds": 0.7
+  "states": 1117,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onVacate-ttl-free",
@@ -1567,19 +1562,18 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "ConfirmVacant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 323,
-  "seconds": 0.7
+  "states": 922,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onVacate-ttlVacate-designated",
@@ -1593,21 +1587,20 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Exit(\"c2\")",
-    "Rel(\"c2\",\"c2\")",
-    "ConfirmVacant(\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 438,
-  "seconds": 0.7
+  "states": 1044,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-local-onVacate-ttlVacate-free",
@@ -1623,19 +1616,18 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "ConfirmVacant(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "ConfirmVacant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 340,
-  "seconds": 0.7
+  "states": 930,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onDone-none-designated",
@@ -1649,12 +1641,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.6
+  "states": 41,
+  "seconds": 0.3
  },
  {
   "scheme": "queue-none-onDone-none-free",
@@ -1668,12 +1660,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 28,
-  "seconds": 0.7
+  "states": 41,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onDone-ttl-designated",
@@ -1687,12 +1679,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.6
+  "states": 41,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onDone-ttl-free",
@@ -1706,12 +1698,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 30,
-  "seconds": 0.7
+  "states": 42,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onDone-ttlVacate-designated",
@@ -1729,8 +1721,8 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 25,
-  "seconds": 0.5
+  "states": 43,
+  "seconds": 0.3
  },
  {
   "scheme": "queue-none-onDone-ttlVacate-free",
@@ -1748,8 +1740,8 @@
     "Enter(\"c1\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.6
+  "states": 44,
+  "seconds": 0.3
  },
  {
   "scheme": "queue-none-onVacate-none-designated",
@@ -1763,12 +1755,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 25,
-  "seconds": 0.6
+  "states": 46,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onVacate-none-free",
@@ -1782,12 +1774,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.5
+  "states": 45,
+  "seconds": 0.3
  },
  {
   "scheme": "queue-none-onVacate-ttl-designated",
@@ -1801,12 +1793,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c1\")",
-    "Enter(\"c2\")"
+    "Enter(\"c2\")",
+    "Enter(\"c1\")"
    ]
   },
-  "states": 25,
-  "seconds": 0.6
+  "states": 41,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onVacate-ttl-free",
@@ -1824,8 +1816,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 26,
-  "seconds": 0.6
+  "states": 44,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onVacate-ttlVacate-designated",
@@ -1839,12 +1831,12 @@
   "fails": {
    "NotCycle": [
     "Initial",
-    "Enter(\"c2\")",
-    "Enter(\"c1\")"
+    "Enter(\"c1\")",
+    "Enter(\"c2\")"
    ]
   },
-  "states": 27,
-  "seconds": 0.6
+  "states": 51,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-none-onVacate-ttlVacate-free",
@@ -1862,8 +1854,8 @@
     "Enter(\"c2\")"
    ]
   },
-  "states": 30,
-  "seconds": 0.6
+  "states": 43,
+  "seconds": 0.4
  },
  {
   "scheme": "queue-permit-onDone-none-designated",
@@ -1878,20 +1870,20 @@
    "NotCycle": [
     "Initial",
     "Req(\"c2\",\"c2\")",
-    "Req(\"c1\",\"c1\")",
     "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
     "Next",
     "Enter(\"c2\")",
-    "Rel(\"c2\",\"c2\")",
     "Next",
     "Next",
+    "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
     "Enter(\"c1\")"
    ]
   },
-  "states": 1427,
-  "seconds": 0.8
+  "states": 2339,
+  "seconds": 0.5
  },
  {
   "scheme": "queue-permit-onDone-none-free",
@@ -1907,19 +1899,19 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Next",
     "Next",
-    "Rel(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1371,
-  "seconds": 0.7
+  "states": 2316,
+  "seconds": 0.5
  },
  {
   "scheme": "queue-permit-onDone-ttl-designated",
@@ -1935,20 +1927,19 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
-    "IssueAuth(\"c1\")",
     "Enter(\"c1\")",
     "Next",
     "Next",
-    "Rel(\"c1\",\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1456,
-  "seconds": 0.8
+  "states": 2375,
+  "seconds": 0.5
  },
  {
   "scheme": "queue-permit-onDone-ttl-free",
@@ -1963,20 +1954,20 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
-    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
     "Next",
     "Next",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1224,
-  "seconds": 0.8
+  "states": 2387,
+  "seconds": 0.5
  },
  {
   "scheme": "queue-permit-onDone-ttlVacate-designated",
@@ -1991,20 +1982,20 @@
    "NotCycle": [
     "Initial",
     "Req(\"c1\",\"c1\")",
-    "Req(\"c2\",\"c2\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Next",
     "Next",
-    "Rel(\"c1\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 1743,
-  "seconds": 0.9
+  "states": 2651,
+  "seconds": 0.5
  },
  {
   "scheme": "queue-permit-onDone-ttlVacate-free",
@@ -2018,21 +2009,21 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Next",
+    "Next",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Next",
-    "Next",
-    "Rel(\"c2\",\"c2\")",
-    "Req(\"c1\",\"c1\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 1236,
-  "seconds": 0.8
+  "states": 2236,
+  "seconds": 0.5
  },
  {
   "scheme": "queue-permit-onVacate-none-designated",
@@ -2046,23 +2037,23 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Exit(\"c2\")",
+    "Next",
+    "Next",
+    "ConfirmVacant(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "Exit(\"c1\")",
-    "ConfirmVacant(\"c1\")",
-    "Next",
-    "Req(\"c2\",\"c2\")",
-    "Next",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c1\")"
    ]
   },
-  "states": 3335,
-  "seconds": 0.9
+  "states": 6479,
+  "seconds": 0.6
  },
  {
   "scheme": "queue-permit-onVacate-none-free",
@@ -2078,21 +2069,21 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
+    "Next",
+    "Next",
     "ConfirmVacant(\"c1\")",
-    "Next",
-    "Next",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 2171,
-  "seconds": 0.9
+  "states": 5146,
+  "seconds": 0.6
  },
  {
   "scheme": "queue-permit-onVacate-ttl-designated",
@@ -2106,23 +2097,23 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "Exit(\"c1\")",
+    "Next",
+    "Next",
+    "ConfirmVacant(\"c1\")",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
-    "Enter(\"c2\")",
-    "Next",
-    "Exit(\"c2\")",
-    "Next",
-    "Req(\"c1\",\"c1\")",
-    "Rel(\"c2\",\"c2\")",
-    "ConfirmVacant(\"c2\")",
-    "Grant(\"c1\")",
-    "Next",
-    "Enter(\"c1\")"
+    "Enter(\"c2\")"
    ]
   },
-  "states": 3534,
-  "seconds": 0.9
+  "states": 5485,
+  "seconds": 0.6
  },
  {
   "scheme": "queue-permit-onVacate-ttl-free",
@@ -2138,21 +2129,21 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
+    "Next",
+    "Next",
     "ConfirmVacant(\"c1\")",
-    "Next",
-    "Next",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 2470,
-  "seconds": 1.1
+  "states": 6365,
+  "seconds": 0.6
  },
  {
   "scheme": "CAP",
@@ -2168,21 +2159,21 @@
     "Initial",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
     "Next",
     "Enter(\"c1\")",
     "Exit(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
+    "Next",
+    "Next",
     "ConfirmVacant(\"c1\")",
-    "Next",
-    "Next",
     "Req(\"c2\",\"c2\")",
     "Grant(\"c2\")",
     "Next",
     "Enter(\"c2\")"
    ]
   },
-  "states": 3032,
-  "seconds": 0.8
+  "states": 5701,
+  "seconds": 0.6
  },
  {
   "scheme": "queue-permit-onVacate-ttlVacate-free",
@@ -2196,22 +2187,22 @@
   "fails": {
    "NotCycle": [
     "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "SiteRel(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "Exit(\"c2\")",
+    "Next",
+    "Next",
+    "ConfirmVacant(\"c2\")",
     "Req(\"c1\",\"c1\")",
     "Grant(\"c1\")",
     "Next",
-    "Enter(\"c1\")",
-    "Rel(\"c1\",\"c1\")",
-    "Exit(\"c1\")",
-    "Next",
-    "ConfirmVacant(\"c1\")",
-    "Next",
-    "Req(\"c2\",\"c2\")",
-    "Grant(\"c2\")",
-    "Next",
-    "Enter(\"c2\")"
+    "Enter(\"c1\")"
    ]
   },
-  "states": 2616,
-  "seconds": 0.9
+  "states": 4808,
+  "seconds": 0.6
  }
 ]
