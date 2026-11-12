@@ -58,8 +58,11 @@ NAMED = {
     "CAP": dict(Arb="queue", Gate="permit", Release="onVacate", Expiry="ttlVacate", Succession="designated"),
 }
 
+# SiteRelease: the Site's coordinator may give a holder's zone up for it (as the reference implementation does).
+# CustodyUntilLapse: a machine leaves custody only when none of its permits is counted.
 BASE_ENV = dict(SensorSound=True, TimingSound=True, AuthOK=True, Faults=True,
-                Restart="durable", BootScoped=True, GraceWait=True, MaxGen=3, MaxBoot=1)
+                Restart="durable", BootScoped=True, GraceWait=True, SiteRelease=True, CustodyUntilLapse=True,
+                MaxGen=3, MaxBoot=1)
 
 SETTINGS = {
     # main comparison: all assumptions hold, machine faults, arbiter restarts keep state
@@ -75,6 +78,11 @@ SETTINGS = {
     "noA4d": dict(env=dict(TimingSound=False), props=["S1", "S2", "S3"]),
     # no grace period after a lossy restart, permits still boot-scoped
     "noGrace": dict(env=dict(GraceWait=False, Restart="lossy"), props=["S1", "S2", "S3"]),
+    # every release is made by the holder's own agent (the environment of the first version of this model)
+    "ownRelease": dict(env=dict(SiteRelease=False), props=["S1", "S2", "S3", "G1", "G2"]),
+    "ownRelease_lossy": dict(env=dict(SiteRelease=False, Restart="lossy"), props=["S1", "S2", "S3", "G1", "G2"]),
+    # custody that ends on the vacancy alone, while a permit of the machine may still be counted
+    "noCustodyLapse": dict(env=dict(CustodyUntilLapse=False), props=["S1", "S2", "S3"]),
     # non-triviality: a second machine can follow the first (NotCycle is expected VIOLATED)
     "trivial": dict(env=dict(Faults=False, Restart="none"), props=["NotCycle"]),
     # liveness G4 (a crashed holder eventually recovers or loses the zone) under LiveSpec's fairness

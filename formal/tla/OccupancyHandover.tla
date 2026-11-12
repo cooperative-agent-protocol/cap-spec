@@ -73,6 +73,9 @@ CONSTANTS
     Restart,        \* "none" | "durable" | "lossy"
     BootScoped,     \* BOOLEAN: permits carry the arbiter's boot id
     GraceWait,      \* BOOLEAN: after a lossy restart, wait until every earlier permit has lapsed
+    SiteRelease,    \* BOOLEAN: the Site's coordinator may give a holder's zone up on its behalf; the
+                    \* holder's own agent is not told in the same step (it keeps a permit it holds)
+    CustodyUntilLapse, \* BOOLEAN: a machine leaves custody only when none of its permits is counted
     MaxGen,         \* bound on grant generations (finiteness)
     MaxBoot         \* bound on arbiter restarts (finiteness)
 
@@ -268,9 +271,15 @@ LeaseExpire(m) ==
     /\ UNCHANGED <<pos, alive, conn, knownBoot, auth, authLive, arbUp, boot,
                    guard, live, xvars, obs>>
 
+\* With CustodyUntilLapse the machine must also be locked out: none of its permits
+\* is counted any more, so it cannot come back in on one after the arbiter has stopped
+\* accounting for it. (Without it, and with releases the machine's own agent does not
+\* make - SiteRelease, or a forged release - a holder that was given up while it held an
+\* unused permit is confirmed out, enters on the permit, and is not accounted for.)
 ConfirmVacant(m) ==
     /\ arbUp /\ m \in custody
     /\ SensorSound => pos[m] = "out"
+    /\ CustodyUntilLapse => \A p \in live : p.m /= m
     /\ custody' = custody \ {m}
     /\ UNCHANGED <<mvars, arbUp, boot, gen, holder, queue, planned, guard, live,
                    xvars, hvars>>
@@ -320,11 +329,17 @@ GateOpen(m) ==
       [] Gate = "permit" -> /\ auth[m] /= {} /\ authLive[m]
                             /\ BootScoped => \A q \in auth[m] : q.b = knownBoot[m]
 
-\* m's entry is authorised when it uses the authorisation of the latest grant,
-\* and that grant was to m (with no gate: when the latest grant was to m).
+\* m's entry is authorised when the arbiter still honours the authority m uses:
+\*   a permit      - the arbiter still counts it, or (after a restart that lost the
+\*                   journal) is waiting out every permit of the start before;
+\*   a grant notice, or no gate - the arbiter has m as the holder.
+\* (An earlier version asked for the authorisation of the LATEST grant. With a release
+\* that the machine's own agent does not make, a machine granted again enters on the
+\* permit of its grant before - harmless, and flagged by that definition. What matters
+\* is that authority in use is authority the arbiter makes room for.)
 Authorised(m) ==
-    /\ curTok.m = m
-    /\ Gate /= "none" => \E p \in auth[m] : p.k = curTok.k
+    CASE Gate = "permit" -> (\E p \in auth[m] : p \in live) \/ guard = "waitTime"
+      [] OTHER           -> holder = m
 
 Enter(m) ==
     /\ pos[m] = "out" /\ alive[m] /\ GateOpen(m)
@@ -376,6 +391,19 @@ Rel(c, m) ==
                /\ UNCHANGED <<gen, queue, wants, planned, nGrants, curTok>>
     /\ OwnGiveUp(c, m)
     /\ UNCHANGED <<pos, alive, conn, knownBoot, arbUp, boot, guard, live, valid, obs>>
+
+\* The Site's coordinator gives m's zone up for it (it holds the reservations in the
+\* reference implementation). Unlike Rel, m's own agent takes no part: a permit that m
+\* holds, or that is on its way to m, stays usable until it lapses on m's clock.
+SiteRel(m) ==
+    /\ SiteRelease /\ arbUp /\ holder = m /\ guard = "open"
+    /\ IF Routed
+          THEN TransferTo(m, OccAware)
+          ELSE /\ holder' = None
+               /\ custody' = IF Release = "onVacate" THEN custody \cup {m} ELSE custody
+               /\ UNCHANGED <<gen, queue, wants, planned, nGrants, curTok>>
+    /\ UNCHANGED <<pos, alive, conn, knownBoot, auth, authLive, arbUp, boot, guard,
+                   live, xvars, obs>>
 
 \* A hand-over request from holder s to x; honoured only for the planned successor.
 HandoverReq(c, s, x) ==
@@ -458,7 +486,7 @@ ConfirmAllVacant ==
 \* ---------------------------------------------------------------- spec
 Next ==
     \/ \E m \in Machines : Grant(m) \/ IssueAuth(m) \/ Plan(m) \/ LeaseExpire(m)
-                           \/ ConfirmVacant(m) \/ LocalLapse(m)
+                           \/ ConfirmVacant(m) \/ LocalLapse(m) \/ SiteRel(m)
                            \/ Enter(m) \/ Exit(m)
                            \/ Crash(m) \/ Recover(m) \/ Disconnect(m) \/ Reconnect(m)
                            \/ Remove(m)
@@ -477,7 +505,7 @@ S1 == \A a, b \in Machines : Inc(a, b) => ~(pos[a] = "in" /\ pos[b] = "in")
 \* S2: while the arbiter can grant, it accounts for every machine in the zone.
 S2 == (arbUp /\ guard = "open") =>
         \A m \in Machines : pos[m] = "in" => (m = holder \/ m \in custody)
-\* S3: no machine enters the zone without being its holder.
+\* S3: no machine enters the zone on authority the arbiter no longer honours.
 S3 == ~violS3
 \* G1: once a successor is planned, the zone is never unheld until it is handed on.
 G1 == planned /= None => holder /= None
@@ -489,6 +517,23 @@ G2 == ~violG2
 NotCycle == nDistinct < 2
 
 Safety == S1 /\ S2 /\ S3
+
+\* ---------------------------------------------------------------- the unbounded proof's invariant
+\* formal/smt/occupancy_inductive.py proves S1-S3 for any number of machines, zones and permits
+\* by showing an invariant inductive for an abstraction of the schemes with an arbiter, a permit
+\* gate and custody. These are that invariant's conjuncts in this model's terms (S1 and S2 are
+\* two more of them); checking them here, at two and three machines, ties the abstraction to
+\* this model.
+Usable(m) == {p \in auth[m] : authLive[m]}
+PotW(m)   == {p \in valid : p.m = m /\ (p \in Usable(m) \/ p \in inflight)}
+Acc(m)    == m = holder \/ m \in custody
+AbsI1 == \A m \in Machines : Usable(m) \subseteq valid
+AbsI2 == guard /= "waitTime" => valid \subseteq live
+AbsI4 == guard = "open" => \A m \in Machines : PotW(m) /= {} => Acc(m)
+AbsI6 == \A a, b \in Machines : Inc(a, b) => ~(PotW(a) /= {} /\ PotW(b) /= {})
+AbsI7 == \A m, b \in Machines : (PotW(m) /= {} /\ Inc(m, b)) => pos[b] = "out"
+AbsI8 == guard = "waitVacancy" => valid = {}
+AbsInv == AbsI1 /\ AbsI2 /\ AbsI4 /\ AbsI6 /\ AbsI7 /\ AbsI8
 
 \* ---------------------------------------------------------------- liveness (G4)
 \* G4: a holder that has crashed eventually recovers or loses the zone, so the zone can come back to the others.
