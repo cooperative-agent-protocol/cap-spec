@@ -9,3 +9,8 @@ m3_base_queue-permit-onVacate-ttlVacate-free | Model checking completed. No erro
 m3_lossy_deny-permit-onVacate-none-designated | Model checking completed. No error has been found. | distinct=272351648 | 2044 s
 m3_lossy_deny-permit-onVacate-none-free | Model checking completed. No error has been found. | distinct=448143548 | 3433 s
 m3_lossy_deny-permit-onVacate-ttlVacate-designated | Model checking completed. No error has been found. | distinct=272351648 | 1994 s
+m3_lossy_LeaseFencedVacate | Model checking completed. No error has been found. | distinct=448143548 | 3488 s
+m3_lossy_queue-permit-onVacate-none-designated | Model checking completed. No error has been found. | distinct=416224770 | 3177 s
+m3_lossy_queue-permit-onVacate-none-free | Model checking completed. No error has been found. | distinct=312290502 | 2326 s
+m3_lossy_CAP | Model checking completed. No error has been found. | distinct=416224770 | 3214 s
+m3_lossy_queue-permit-onVacate-ttlVacate-free | Model checking completed. No error has been found. | distinct=312290502 | 2383 s

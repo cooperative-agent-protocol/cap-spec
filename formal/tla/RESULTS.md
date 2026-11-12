@@ -653,8 +653,8 @@ section, and their verdicts are kept in `family/results/m3_verdicts_before_site_
 The eight schemes that satisfy S1-S3 with two carriers when the Site may give a zone up (above), checked again with
 three carriers (`family/gen_m3_cfgs.py`: carriers as model values, `SYMMETRY Symm`; three grant generations, one
 arbiter restart; S1-S3, G1-G2 for the schemes with designated succession, and the unbounded proof's invariant
-`AbsInv`). Raw verdicts: `family/results/m3_verdicts.txt`. The configurations with a lost journal are large (the
-first has 272 M distinct states) and are still running; this table is extended as they finish.
+`AbsInv`). Raw verdicts: `family/results/m3_verdicts.txt`. All sixteen hold; the configurations with a lost journal
+are the large ones (up to 448 M distinct states).
 
 | Scheme | Journal | TLC | Distinct states | Seconds |
 |---|---|---|---|---|
@@ -669,3 +669,19 @@ first has 272 M distinct states) and are still running; this table is extended a
 | deny-permit-onVacate-none-designated | lost | no error | 272351648 | 2044 |
 | deny-permit-onVacate-none-free | lost | no error | 448143548 | 3433 |
 | deny-permit-onVacate-ttlVacate-designated | lost | no error | 272351648 | 1994 |
+| LeaseFencedVacate | lost | no error | 448143548 | 3488 |
+| queue-permit-onVacate-none-designated | lost | no error | 416224770 | 3177 |
+| queue-permit-onVacate-none-free | lost | no error | 312290502 | 2326 |
+| CAP | lost | no error | 416224770 | 3214 |
+| queue-permit-onVacate-ttlVacate-free | lost | no error | 312290502 | 2383 |
+
+## The tables of the paper, and the family on an implementation (2026-11-12)
+
+`family/make_tables.py` writes the LaTeX tables and number macros of the paper's verification section from the result
+files of this directory (`--m3 family/results/m3_verdicts.txt` adds the three-carrier checks); nothing in that section
+is typed by hand. The public `cap-coordination-kit` runs the same family of 90 schemes on an arbiter's code
+(`python -m cap_coordination_kit.family_fuzz`): randomised executions with an untrusted client, delayed and lost
+messages, drifting clocks and restarts, S1-S3 checked after every step. The schemes in which it finds no violation are
+those this directory finds safe, in each of the four settings (Site-side or own releases, journal kept or lost: 8, 8,
+12, 8), and removing the custody rule's second half, the bound on clock drift or sound vacancy sensing breaks all
+eight safe schemes. A randomised test finds violations; it does not show that there are none.
