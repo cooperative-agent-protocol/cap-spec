@@ -559,7 +559,7 @@ The schemes that satisfy S1-S3 with two carriers, checked again with three (`fam
 are model values and the configurations use `SYMMETRY Symm`; three grant generations, one arbiter restart; S1-S3,
 and G1-G2 for the schemes with designated succession). The twelve schemes with the journal kept and the eight that
 stay safe with it lost: 20 of 20 configurations hold. Raw verdicts:
-`family/results/m3_verdicts.txt`.
+`family/results/m3_verdicts_before_site_release.txt` (before `SiteRelease`; superseded below).
 
 | Scheme | Journal | TLC | Distinct states |
 |---|---|---|---|
@@ -583,3 +583,67 @@ stay safe with it lost: 20 of 20 configurations hold. Raw verdicts:
 | queue-permit-onVacate-none-free | lost | no error | 16,386,946 |
 | CAP | lost | no error | 212,304,563 |
 | queue-permit-onVacate-ttlVacate-free | lost | no error | 151,463,364 |
+
+## OccupancyHandover with Site-side releases and the custody rule (2026-11-12)
+
+An attempt to prove S1-S3 for any number of machines found that the model had every release made by the holder's
+own agent, which voids its permit in the same step. In the reference implementation the Site's coordinator holds the
+reservations and gives a zone up for its holder (a load no longer wanted, a hand-over it routes); the holder's gate
+hears of it only by a notice, which a cut link withholds. A holder given up while it held an unused permit left
+custody as soon as it was seen outside and could still enter on the permit, unaccounted for. Two constants were
+added: `SiteRelease` (the action `SiteRel(m)`: the Site gives the zone up for its holder at any time) and
+`CustodyUntilLapse` (the custody rule: a machine leaves custody only when it is seen outside AND no permit issued
+to it is still counted). Both are TRUE in every setting below unless named.
+
+### The family of 90 (two carriers)
+
+| Setting | Schemes that satisfy S1-S3 |
+|---|---|
+| Site-side releases, journal kept (`base`) | 8 |
+| Site-side releases, journal lost (`lossy`) | 8 (the same) |
+| holder's own releases only, journal kept (`ownRelease`) | 12 |
+| holder's own releases only, journal lost (`ownRelease_lossy`) | 8 |
+
+With Site-side releases every safe scheme has an arbiter, a gate with time-limited permits (`Gate = "permit"`),
+release on vacancy, and expiry none or into custody. The four schemes that are safe only with the holder's own
+releases have a gate that remembers grants (`Gate = "local"`): MutexGroup, deny-local-onVacate-none-designated, queue-local-onVacate-none-designated, queue-local-onVacate-none-free.
+Given up by the Site while outside, such a holder enters on the grant it remembers after the next machine was
+admitted (MutexGroup: S3 in 6 steps, S1 in 10).
+
+### The eight safe schemes: guarantees, ablations, and the proof's invariant
+
+| Scheme | G1, G2 | G4 | no custody rule | no A2 | no A4 (journal kept) | no A4 (lost) | no grace wait | no A5 | no boot id | AbsInv kept / lost / lost, no A5 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| deny-permit-onVacate-none-designated | holds | **violated** (G4) | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+| deny-permit-onVacate-none-free | **violated** (G1,G2) | **violated** (G4) | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+| deny-permit-onVacate-ttlVacate-designated | holds | holds | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+| LeaseFencedVacate | **violated** (G1,G2) | holds | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+| queue-permit-onVacate-none-designated | holds | **violated** (G4) | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+| queue-permit-onVacate-none-free | **violated** (G1) | **violated** (G4) | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+| CAP | holds | holds | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+| queue-permit-onVacate-ttlVacate-free | **violated** (G1) | holds | **violated** (S1,S2) | **violated** (S1,S2) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | **violated** (S1,S2,S3) | holds | holds | holds / holds / holds |
+
+Without authentication (A5) all eight remain safe, and the four with designated succession keep G1 and G2: a
+request, release or hand-over in another machine's name does what `SiteRel` may do anyway, and the custody rule
+keeps the machine accounted for until it can no longer enter. What safety rests on instead is that a permit reaches
+only the machine it was issued to. Without sound timing (A4) none remains safe, even with the journal kept: custody
+ends when the arbiter stops counting a machine's permits, which is safe only if the machine has stopped using them
+by then. (With the holder's own releases only, the schemes that never expire a holder did not need A4.) `AbsInv` is
+the invariant of the unbounded proof below, in this model's variables; it holds for all eight in all three settings.
+Result files: `family/results/{base,lossy,ownRelease,ownRelease_lossy,trivial}.json`, `family/results/*_safe8.json`.
+
+### S1-S3 for any number of machines, zones and permits (`../smt/occupancy_inductive.py`)
+
+An abstraction of the schemes with an arbiter, a permit gate and custody, over uninterpreted sorts of machines,
+zones and permit identifiers, with any symmetric irreflexive incompatibility relation per zone. Its fifteen
+actions (Hold, Issue, Transfer, Release, Vacate, ArbLapse, RealLapse, Receive, Lose, Forget, Enter, Exit, Restart,
+GraceOver, AllVacant) do not look at who asked, so releases and hand-overs in any machine's name, by any client or by
+the Site, are steps of it. An invariant of ten conjuncts (S1, S2, S3 among them) is inductive: each of the
+15 x 10 = 150 implications is a formula of the Bernays-Schoenfinkel class, and Z3 (4.15.0) reports each negation
+unsat (about 12 s in all). Removing the custody rule, the vacancy sensing, either condition of a permit, either half
+of the timing lemma, the grace wait or the gate makes the invariant non-inductive. Two checks turned out to be
+implied: that no permit of an incompatible machine is counted when a permit is issued or a zone is granted, and
+that no incompatible machine is in custody when a zone is granted. Run: `python3 formal/smt/occupancy_inductive.py`.
+
+The three-carrier checks of the section above were made before `SiteRelease`; they are superseded by the next
+section, and their verdicts are kept in `family/results/m3_verdicts_before_site_release.txt`.
