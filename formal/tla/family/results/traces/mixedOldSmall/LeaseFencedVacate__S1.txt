@@ -1,0 +1,414 @@
+Initial
+Req("c1","c1")
+Grant("c1")
+SiteRel("c1")
+Next
+Enter("c1")
+ArbCrash
+ArbRestart
+ArbCrash
+ArbRestart
+Reconnect("c2")
+Req("c2","c2")
+Grant("c2")
+Next
+Enter("c2")
+
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ valid = {}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "out", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 0
+/\ arbUp = TRUE
+/\ curTok = [m |-> "none", k |-> 0]
+/\ lastIn = "none"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 0
+
+State 2: <Req("c1","c1") line 371, col 5 to line 375, col 72 of module OccupancyHandover>
+/\ valid = {}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> TRUE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "out", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 0
+/\ arbUp = TRUE
+/\ curTok = [m |-> "none", k |-> 0]
+/\ lastIn = "none"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 0
+
+State 3: <Grant("c1") line 233, col 5 to line 246, col 66 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "out", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "c1"
+/\ inflight = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 0
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "none"
+/\ live = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 4: <SiteRel("c1") line 404, col 5 to line 411, col 37 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {"c1"}
+/\ pos = [c1 |-> "out", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 0
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "none"
+/\ live = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 5: <Next line 505, col 8 to line 505, col 51 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {"c1"}
+/\ pos = [c1 |-> "out", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> TRUE, c2 |-> FALSE]
+/\ nDistinct = 0
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "none"
+/\ live = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 6: <Enter("c1") line 350, col 5 to line 359, col 89 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> TRUE, c2 |-> TRUE]
+/\ custody = {"c1"}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "c1"
+/\ live = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 7: <ArbCrash line 455, col 5 to line 459, col 71 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> FALSE]
+/\ custody = {"c1"}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 0
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = FALSE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "c1"
+/\ live = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 8: <ArbRestart line 465, col 5 to line 478, col 78 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> FALSE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 1
+/\ guard = "waitTime"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "c1"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 9: <ArbCrash line 455, col 5 to line 459, col 71 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> FALSE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 1
+/\ guard = "waitTime"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = FALSE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "c1"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 10: <ArbRestart line 465, col 5 to line 478, col 78 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> FALSE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 0]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 2
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "c1"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 11: <Reconnect("c2") line 443, col 5 to line 446, col 75 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 2]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 2
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "c1"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 12: <Req("c2","c2") line 371, col 5 to line 375, col 72 of module OccupancyHandover>
+/\ valid = {[m |-> "c1", b |-> 0, g |-> 1, k |-> 1]}
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> TRUE]
+/\ conn = [c1 |-> FALSE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 2]
+/\ holder = "none"
+/\ inflight = {}
+/\ boot = 2
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c1", k |-> 1]
+/\ lastIn = "c1"
+/\ live = {}
+/\ gen = 0
+/\ violS3 = FALSE
+/\ nGrants = 1
+
+State 13: <Grant("c2") line 233, col 5 to line 246, col 66 of module OccupancyHandover>
+/\ valid = { [m |-> "c1", b |-> 0, g |-> 1, k |-> 1],
+  [m |-> "c2", b |-> 2, g |-> 1, k |-> 2] }
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 2]
+/\ holder = "c2"
+/\ inflight = {[m |-> "c2", b |-> 2, g |-> 1, k |-> 2]}
+/\ boot = 2
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c2", k |-> 2]
+/\ lastIn = "c1"
+/\ live = {[m |-> "c2", b |-> 2, g |-> 1, k |-> 2]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 2
+
+State 14: <Next line 505, col 8 to line 505, col 51 of module OccupancyHandover>
+/\ valid = { [m |-> "c1", b |-> 0, g |-> 1, k |-> 1],
+  [m |-> "c2", b |-> 2, g |-> 1, k |-> 2] }
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {[m |-> "c2", b |-> 2, g |-> 1, k |-> 2]}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "out"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 2]
+/\ holder = "c2"
+/\ inflight = {}
+/\ boot = 2
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> TRUE]
+/\ nDistinct = 1
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c2", k |-> 2]
+/\ lastIn = "c1"
+/\ live = {[m |-> "c2", b |-> 2, g |-> 1, k |-> 2]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 2
+
+State 15: <Enter("c2") line 350, col 5 to line 359, col 89 of module OccupancyHandover>
+/\ valid = { [m |-> "c1", b |-> 0, g |-> 1, k |-> 1],
+  [m |-> "c2", b |-> 2, g |-> 1, k |-> 2] }
+/\ violG2 = FALSE
+/\ auth = [c1 |-> {}, c2 |-> {}]
+/\ alive = [c1 |-> TRUE, c2 |-> TRUE]
+/\ wants = [c1 |-> FALSE, c2 |-> FALSE]
+/\ conn = [c1 |-> FALSE, c2 |-> TRUE]
+/\ custody = {}
+/\ pos = [c1 |-> "in", c2 |-> "in"]
+/\ knownBoot = [c1 |-> 0, c2 |-> 2]
+/\ holder = "c2"
+/\ inflight = {}
+/\ boot = 2
+/\ guard = "open"
+/\ planned = "none"
+/\ queue = <<>>
+/\ authLive = [c1 |-> FALSE, c2 |-> FALSE]
+/\ nDistinct = 2
+/\ arbUp = TRUE
+/\ curTok = [m |-> "c2", k |-> 2]
+/\ lastIn = "c2"
+/\ live = {[m |-> "c2", b |-> 2, g |-> 1, k |-> 2]}
+/\ gen = 1
+/\ violS3 = FALSE
+/\ nGrants = 2
+
+111670 states generated, 41926 distinct states found, 17961 states left on queue.
+The depth of the complete state graph search is 15.
+Finished in 00s at (2026-11-13 04:05:28)
+Trace exploration spec path: ./OccupancyHandover_TTrace_1794542727.tla

@@ -55,7 +55,12 @@
  * that moves a machine into the zone.
  *
  * Environment: machine crash, recovery and link loss (Faults); arbiter crash
- * and restart with its state kept (Restart = "durable") or lost ("lossy");
+ * and restart with its state kept (Restart = "durable") or lost ("lossy"), or
+ * either at each restart ("mixed"). The journal keeps the restart guard: a
+ * restart that finds a journal written while the zones were closed (after an
+ * earlier start lost its journal) closes them again and waits afresh.
+ * "mixedOld" is "mixed" with the rule before 2026-11-13 (a restart that finds a
+ * journal opens the zones whatever it says), kept to reproduce its counterexample;
  * BootScoped decides whether permits carry the arbiter's boot id. After a lossy
  * restart a scheme that times its authority waits until every earlier permit
  * has lapsed (the usual lease grace period; GraceWait = FALSE removes the wait),
@@ -70,7 +75,7 @@ CONSTANTS
     Arb, Gate, Release, Expiry, Succession,
     SensorSound, TimingSound, AuthOK,
     Faults,         \* BOOLEAN: machine crash/recovery, link loss, message loss
-    Restart,        \* "none" | "durable" | "lossy"
+    Restart,        \* "none" | "durable" | "lossy" | "mixed" | "mixedOld"
     BootScoped,     \* BOOLEAN: permits carry the arbiter's boot id
     GraceWait,      \* BOOLEAN: after a lossy restart, wait until every earlier permit has lapsed
     SiteRelease,    \* BOOLEAN: the Site's coordinator may give a holder's zone up on its behalf; the
@@ -86,7 +91,7 @@ ASSUME Gate \in {"none", "local", "permit"}
 ASSUME Release \in {"onDone", "onVacate"}
 ASSUME Expiry \in {"none", "ttl", "ttlVacate"}
 ASSUME Succession \in {"free", "designated"}
-ASSUME Restart \in {"none", "durable", "lossy"}
+ASSUME Restart \in {"none", "durable", "lossy", "mixed", "mixedOld"}
 ASSUME \A pr \in Incompatible : pr \subseteq Machines /\ Cardinality(pr) = 2
 
 Boots   == 0..MaxBoot
@@ -453,18 +458,23 @@ ArbCrash ==
     /\ UNCHANGED <<pos, alive, knownBoot, auth, authLive, wants, boot, gen, holder,
                    custody, queue, planned, guard, live, xvars, hvars>>
 
+\* The guard after a restart that cannot vouch for what was granted before it.
+Closed == IF Leased /\ GraceWait THEN "waitTime" ELSE IF OccAware THEN "waitVacancy" ELSE "open"
+
 ArbRestart ==
     /\ ~arbUp
     /\ arbUp' = TRUE
     /\ boot' = boot + 1
-    /\ IF Restart = "durable"
-          THEN /\ guard' = "open"
-               /\ UNCHANGED <<gen, holder, custody, queue, planned, live, wants>>
-          ELSE /\ holder' = None /\ custody' = {} /\ queue' = <<>> /\ planned' = None
-               /\ live' = {} /\ gen' = 0
-               /\ wants' = [m \in Machines |-> FALSE]
-               /\ guard' = IF Leased /\ GraceWait THEN "waitTime"
-                           ELSE IF OccAware THEN "waitVacancy" ELSE "open"
+    /\ \E kept \in (IF Restart \in {"mixed", "mixedOld"} THEN BOOLEAN ELSE {Restart = "durable"}) :
+          IF kept
+             THEN \* the journal holds the state and the guard: closed when it was written during the
+                  \* wait after an earlier start had lost its journal, and then the waits start again
+                  /\ guard' = IF guard = "open" \/ Restart = "mixedOld" THEN "open" ELSE Closed
+                  /\ UNCHANGED <<gen, holder, custody, queue, planned, live, wants>>
+             ELSE /\ holder' = None /\ custody' = {} /\ queue' = <<>> /\ planned' = None
+                  /\ live' = {} /\ gen' = 0
+                  /\ wants' = [m \in Machines |-> FALSE]
+                  /\ guard' = Closed
     /\ UNCHANGED <<pos, alive, conn, knownBoot, auth, authLive, xvars, hvars>>
 
 \* The grace period after a lossy restart: with TimingSound it ends only after

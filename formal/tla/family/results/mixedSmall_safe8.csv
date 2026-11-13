@@ -1,0 +1,9 @@
+scheme,Arb,Gate,Release,Expiry,Succession,S1,S2,S3,G1,G2,states,seconds
+deny-permit-onVacate-none-designated,deny,permit,onVacate,none,designated,holds,holds,holds,holds,holds,4237912,57.2
+deny-permit-onVacate-none-free,deny,permit,onVacate,none,free,holds,holds,holds,fails,fails,7050146,74.5
+deny-permit-onVacate-ttlVacate-designated,deny,permit,onVacate,ttlVacate,designated,holds,holds,holds,holds,holds,4237912,39.9
+LeaseFencedVacate,deny,permit,onVacate,ttlVacate,free,holds,holds,holds,fails,fails,7050146,72.8
+queue-permit-onVacate-none-designated,queue,permit,onVacate,none,designated,holds,holds,holds,holds,holds,4551321,46.9
+queue-permit-onVacate-none-free,queue,permit,onVacate,none,free,holds,holds,holds,fails,holds,4617021,44.6
+CAP,queue,permit,onVacate,ttlVacate,designated,holds,holds,holds,holds,holds,4551321,43.6
+queue-permit-onVacate-ttlVacate-free,queue,permit,onVacate,ttlVacate,free,holds,holds,holds,fails,holds,4617021,50.2

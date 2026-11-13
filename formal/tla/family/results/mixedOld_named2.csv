@@ -1,0 +1,3 @@
+scheme,Arb,Gate,Release,Expiry,Succession,S1,S2,S3,states,seconds
+LeaseFencedVacate,deny,permit,onVacate,ttlVacate,free,fails,fails,fails,140432,4.9
+CAP,queue,permit,onVacate,ttlVacate,designated,fails,fails,fails,171623,5.0

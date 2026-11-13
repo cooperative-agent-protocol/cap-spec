@@ -28,8 +28,10 @@ succession), with sound sensing (A2), sound permit timing (A4), the grace wait a
 and custody that ends only when no permit of the machine is counted. It has MORE behaviours than that model: it does
 not look at who asked, who is planned, whether a machine or the arbiter is up, or who sent a release - so a release
 or a hand-over made in another machine's name (no authentication, A5) and one made by the Site's coordinator are
-steps of it. Every step of the model is one step of this system or a short sequence of them (the table in
-RESULTS.md); what holds in every state reachable here holds in every state reachable there.
+steps of it. Every step of the model is one step of this system or a short sequence of them (the correspondence
+table in ../tla/RESULTS.md, argued by hand); what holds in every state reachable here holds in every state reachable
+there. A restart that keeps the journal while the zones are open restores the state and is no step here; one that
+finds a journal written while the zones were closed (after a restart that lost it) is a Restart.
 
 The script also removes one rule at a time and reports that the invariant is then no longer inductive (the solver
 finds a state and a step): the custody rule, the vacancy sensing, the two conditions of a permit, the two halves of

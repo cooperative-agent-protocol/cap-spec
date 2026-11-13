@@ -69,6 +69,20 @@ SETTINGS = {
     "base": dict(env={}, props=["S1", "S2", "S3", "G1", "G2"]),
     # arbiter restarts that lose state
     "lossy": dict(env=dict(Restart="lossy"), props=["S1", "S2", "S3", "G1", "G2"]),
+    # two restarts, each keeping or losing the journal (a restart during the wait after a lost journal)
+    "mixed": dict(env=dict(Restart="mixed", MaxBoot=2), props=["S1", "S2", "S3", "G1", "G2"]),
+    # the same with the rule before 2026-11-13: a restart that finds a journal opens the zones whatever it says
+    "mixedOld": dict(env=dict(Restart="mixedOld", MaxBoot=2), props=["S1", "S2", "S3"]),
+    "absInv_mixed": dict(env=dict(Restart="mixed", MaxBoot=2), props=["AbsInv"]),
+    # the same two restarts in a smaller setting (no machine faults, two grant generations), quick to check
+    "mixedSmall": dict(env=dict(Restart="mixed", MaxBoot=2, Faults=False, MaxGen=2), props=["S1", "S2", "S3", "G1", "G2"]),
+    "mixedOldSmall": dict(env=dict(Restart="mixedOld", MaxBoot=2, Faults=False, MaxGen=2), props=["S1", "S2", "S3"]),
+    # the holder's own releases only, without sound timing (journal kept): S1 and S2 hold for the schemes that never
+    # expire a holder, S3 does not (a permit counted out by the arbiter but still usable by the machine)
+    "ownRelease_noA4d": dict(env=dict(SiteRelease=False, TimingSound=False), props=["S1", "S2", "S3"]),
+    # without authentication, after restarts that lose the journal: safety, and G1 and G2 for designated succession
+    "noA5_lossy": dict(env=dict(AuthOK=False, Restart="lossy"), props=["S1", "S2", "S3", "G1", "G2"]),
+    "noA5_mixed": dict(env=dict(AuthOK=False, Restart="mixed", MaxBoot=2), props=["S1", "S2", "S3", "G1", "G2"]),
     # assumption ablations (Proposition 3); run on the schemes that pass "lossy" or "base"
     "noA2": dict(env=dict(SensorSound=False), props=["S1", "S2", "S3"]),
     "noA4": dict(env=dict(TimingSound=False, Restart="lossy"), props=["S1", "S2", "S3"]),

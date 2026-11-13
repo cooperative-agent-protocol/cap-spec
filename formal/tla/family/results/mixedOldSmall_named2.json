@@ -1,0 +1,109 @@
+[
+ {
+  "scheme": "LeaseFencedVacate",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "mixedOldSmall",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")",
+    "ArbCrash",
+    "ArbRestart",
+    "ArbCrash",
+    "ArbRestart"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "ArbCrash",
+    "ArbRestart",
+    "ArbCrash",
+    "ArbRestart",
+    "Reconnect(\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 41926,
+  "seconds": 2.6
+ },
+ {
+  "scheme": "CAP",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "mixedOldSmall",
+  "holds": [],
+  "fails": {
+   "S2": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "ArbCrash",
+    "ArbRestart",
+    "ArbCrash",
+    "ArbRestart"
+   ],
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "ArbCrash",
+    "ArbRestart",
+    "ArbCrash",
+    "ArbRestart",
+    "Enter(\"c1\")"
+   ],
+   "S1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "SiteRel(\"c1\")",
+    "Next",
+    "Enter(\"c1\")",
+    "ArbCrash",
+    "ArbRestart",
+    "ArbCrash",
+    "ArbRestart",
+    "Reconnect(\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Next",
+    "Enter(\"c2\")"
+   ]
+  },
+  "states": 50099,
+  "seconds": 2.6
+ }
+]

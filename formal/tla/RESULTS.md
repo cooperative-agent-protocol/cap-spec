@@ -628,7 +628,11 @@ request, release or hand-over in another machine's name does what `SiteRel` may 
 keeps the machine accounted for until it can no longer enter. What safety rests on instead is that a permit reaches
 only the machine it was issued to. Without sound timing (A4) none remains safe, even with the journal kept: custody
 ends when the arbiter stops counting a machine's permits, which is safe only if the machine has stopped using them
-by then. (With the holder's own releases only, the schemes that never expire a holder did not need A4.) `AbsInv` is
+by then. (An earlier note said that with the holder's own releases only the schemes that never expire a holder do
+not need A4. The run behind it used an older definition of S3 and was removed; an independent review found an S3
+counterexample for one of them, and the check is being repeated with `run_family.py --setting ownRelease_noA4d`.)
+With Site-side releases, schemes that differ only in expiry (none, or into custody) have the same state space here:
+`SiteRel` may take any holder's zone at any time, which subsumes `LeaseExpire`. `AbsInv` is
 the invariant of the unbounded proof below, in this model's variables; it holds for all eight in all three settings.
 Result files: `family/results/{base,lossy,ownRelease,ownRelease_lossy,trivial}.json`, `family/results/*_safe8.json`.
 
@@ -685,3 +689,61 @@ messages, drifting clocks and restarts, S1-S3 checked after every step. The sche
 those this directory finds safe, in each of the four settings (Site-side or own releases, journal kept or lost: 8, 8,
 12, 8), and removing the custody rule's second half, the bound on clock drift or sound vacancy sensing breaks all
 eight safe schemes. A randomised test finds violations; it does not show that there are none.
+
+
+Correspondence of the abstraction's actions to the steps of `OccupancyHandover` (argued by hand; the invariant
+`AbsInv` is also checked on the model itself at two and three machines):
+
+| Action | May occur when | Covers in the occupancy model |
+|---|---|---|
+| Hold | the guard is open and the zone has no holder | the grant of a free zone |
+| Issue | the guard is open, the machine holds the zone, and no machine incompatible with it is in the zone's custody | the permit sent with a grant, a further permit for the holder |
+| Transfer | the sender holds the zone; the sender enters custody | a hand-over, by request, by a routed release or on expiry |
+| Release | the machine holds the zone; it enters custody | a release by the machine's client, by another client or by the Site; an expiry |
+| Vacate | the machine is in custody, is outside the zone, and no permit of its own for the zone is counted | a confirmed vacancy |
+| ArbLapse | a counted permit is no longer valid | the arbiter's timer |
+| RealLapse | a valid permit is not usable by its machine | the end of a permit's validity |
+| Receive | a permit is in flight; it becomes usable if it is still valid | a permit's arrival |
+| Lose, Forget | always | a lost or voided message; a gate's timer, a restart of the machine, a release by its own agent |
+| Enter | the machine is outside and has a usable permit, which is used up | an entry through the gate |
+| Exit | the machine is inside | an exit, a removal by an operator |
+| Restart | always; holder, custody and counted permits are forgotten | a restart without the journal, or one that finds a journal written while the zones were closed |
+| GraceOver | the guard waits for permits and none is valid | the end of the grace period |
+| AllVacant | the guard waits for vacancy and no machine is inside any zone | the reopening of the zones |
+
+A restart that keeps the journal while the zones are open restores the state, the guard included, and is no step of
+the abstraction.
+
+## Two restarts, each keeping or losing the journal (2026-11-13)
+
+`Restart = "mixed"` lets each restart of the arbiter keep the journal or lose it, with `MaxBoot = 2`. The journal
+keeps the restart guard: a restart that finds a journal written while the zones were closed (during the wait after a
+restart that lost the journal) closes them again and starts both waits afresh. `Restart = "mixedOld"` is the rule
+before this date, under which a restart that found a journal opened the zones whatever it said.
+
+With the earlier rule the protocol and the lease with a vacancy check violate S1-S3 (LeaseFencedVacate: S1 in 14 steps; CAP: S1 in 14 steps, without machine faults
+and with two grant generations; LeaseFencedVacate: S1 in 14 steps; CAP: S1 in 13 steps, with faults and three generations): the holder enters, the arbiter restarts
+without its journal and, during the wait, restarts again and finds the journal written meanwhile, which holds no
+holder; the zones open and the next machine enters onto the first. The model checks with one restart, the SMT
+abstraction (which treats a journalled restart as a stutter) and the kit's family_fuzz (which kept or lost the
+journal for a whole run) could not see it; an independent review of the proofs found it. Results:
+`family/results/mixedOld_named2.json`, `family/results/mixedOldSmall_named2.json`, traces in
+`family/results/traces/mixedOldSmall/`.
+
+With the rule as now written, the eight schemes that are safe with one restart stay safe over two restarts of either
+kind (`family/results/mixedSmall_safe8.json`; two machines, no machine faults, two grant generations, `run_family.py
+--setting mixedSmall`):
+
+| Scheme | Holds | Violated | Distinct states |
+|---|---|---|---|
+| deny-permit-onVacate-none-designated | G1, G2, S1, S2, S3 | - | 4,237,912 |
+| deny-permit-onVacate-none-free | S1, S2, S3 | G1, G2 | 7,050,146 |
+| deny-permit-onVacate-ttlVacate-designated | G1, G2, S1, S2, S3 | - | 4,237,912 |
+| LeaseFencedVacate | S1, S2, S3 | G1, G2 | 7,050,146 |
+| queue-permit-onVacate-none-designated | G1, G2, S1, S2, S3 | - | 4,551,321 |
+| queue-permit-onVacate-none-free | G2, S1, S2, S3 | G1 | 4,617,021 |
+| CAP | G1, G2, S1, S2, S3 | - | 4,551,321 |
+| queue-permit-onVacate-ttlVacate-free | G2, S1, S2, S3 | G1 | 4,617,021 |
+
+The same check with machine faults and three grant generations (`--setting mixed`) is far larger and is reported in
+`family/results/mixed_*.json` when it has finished.
