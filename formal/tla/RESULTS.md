@@ -749,5 +749,17 @@ kind (`family/results/mixedSmall_safe8.json`; two machines, no machine faults, t
 | CAP | G1, G2, S1, S2, S3 | - | 4,551,321 |
 | queue-permit-onVacate-ttlVacate-free | G2, S1, S2, S3 | G1 | 4,617,021 |
 
-The same check with machine faults and three grant generations (`--setting mixed`) is far larger and is reported in
-`family/results/mixed_*.json` when it has finished.
+The same check with machine faults and three grant generations, the bounds of the other checks (`run_family.py
+--setting mixed`, `family/results/mixed_named2.json` and `family/results/mixed_rest6.json`, 2026-11-13), gives the
+same verdicts: S1-S3 hold for all eight, G1 and G2 for the four with designated succession.
+
+| Scheme | Holds | Violated | Distinct states |
+|---|---|---|---|
+| deny-permit-onVacate-none-designated | G1, G2, S1, S2, S3 | - | 308,439,884 |
+| deny-permit-onVacate-none-free | S1, S2, S3 | G1, G2 | 550,802,068 |
+| deny-permit-onVacate-ttlVacate-designated | G1, G2, S1, S2, S3 | - | 308,439,884 |
+| LeaseFencedVacate | S1, S2, S3 | G1, G2 | 550,802,068 |
+| queue-permit-onVacate-none-designated | G1, G2, S1, S2, S3 | - | 328,890,576 |
+| queue-permit-onVacate-none-free | G2, S1, S2, S3 | G1 | 301,491,808 |
+| CAP | G1, G2, S1, S2, S3 | - | 328,890,576 |
+| queue-permit-onVacate-ttlVacate-free | G2, S1, S2, S3 | G1 | 301,491,808 |
