@@ -1,0 +1,208 @@
+[
+ {
+  "scheme": "deny-permit-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 17374860,
+  "seconds": 157.8
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "SiteRel(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ]
+  },
+  "states": 28718676,
+  "seconds": 260.2
+ },
+ {
+  "scheme": "deny-permit-onVacate-ttlVacate-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 17374860,
+  "seconds": 148.0
+ },
+ {
+  "scheme": "LeaseFencedVacate",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Req(\"c1\",\"c2\")",
+    "Grant(\"c1\")",
+    "Plan(\"c2\")",
+    "SiteRel(\"c1\")"
+   ],
+   "G2": [
+    "Initial",
+    "Disconnect(\"c1\")",
+    "Req(\"c2\",\"c1\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")",
+    "Plan(\"c1\")",
+    "Rel(\"c2\",\"c2\")",
+    "Req(\"c2\",\"c2\")",
+    "Grant(\"c2\")"
+   ]
+  },
+  "states": 28718676,
+  "seconds": 249.2
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 20118892,
+  "seconds": 170.7
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c1\",\"c2\")",
+    "Plan(\"c2\")",
+    "SiteRel(\"c1\")"
+   ]
+  },
+  "states": 17162568,
+  "seconds": 148.7
+ },
+ {
+  "scheme": "CAP",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "designated",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G1",
+   "G2"
+  ],
+  "fails": {},
+  "states": 20118892,
+  "seconds": 179.6
+ },
+ {
+  "scheme": "queue-permit-onVacate-ttlVacate-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "ttlVacate",
+  "Succession": "free",
+  "setting": "noA5_lossy",
+  "holds": [
+   "S1",
+   "S2",
+   "S3",
+   "G2"
+  ],
+  "fails": {
+   "G1": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Req(\"c1\",\"c2\")",
+    "Plan(\"c2\")",
+    "SiteRel(\"c1\")"
+   ]
+  },
+  "states": 17162568,
+  "seconds": 158.2
+ }
+]

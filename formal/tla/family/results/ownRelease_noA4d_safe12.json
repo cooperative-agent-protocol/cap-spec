@@ -1,0 +1,171 @@
+[
+ {
+  "scheme": "deny-local-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {},
+  "states": 46080,
+  "seconds": 1.0
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-designated",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Next",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 8769088,
+  "seconds": 80.5
+ },
+ {
+  "scheme": "deny-permit-onVacate-none-free",
+  "Arb": "deny",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Next",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 14695136,
+  "seconds": 132.7
+ },
+ {
+  "scheme": "queue-local-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {},
+  "states": 51288,
+  "seconds": 1.1
+ },
+ {
+  "scheme": "queue-local-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {},
+  "states": 43336,
+  "seconds": 1.1
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-designated",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "designated",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Crash(\"c2\")",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Next",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 8732984,
+  "seconds": 73.8
+ },
+ {
+  "scheme": "queue-permit-onVacate-none-free",
+  "Arb": "queue",
+  "Gate": "permit",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2"
+  ],
+  "fails": {
+   "S3": [
+    "Initial",
+    "Req(\"c1\",\"c1\")",
+    "Grant(\"c1\")",
+    "Next",
+    "Next",
+    "Enter(\"c1\")"
+   ]
+  },
+  "states": 8908856,
+  "seconds": 79.8
+ },
+ {
+  "scheme": "MutexGroup",
+  "Arb": "deny",
+  "Gate": "local",
+  "Release": "onVacate",
+  "Expiry": "none",
+  "Succession": "free",
+  "setting": "ownRelease_noA4d",
+  "holds": [
+   "S1",
+   "S2",
+   "S3"
+  ],
+  "fails": {},
+  "states": 60160,
+  "seconds": 1.1
+ }
+]

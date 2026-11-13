@@ -628,9 +628,13 @@ request, release or hand-over in another machine's name does what `SiteRel` may 
 keeps the machine accounted for until it can no longer enter. What safety rests on instead is that a permit reaches
 only the machine it was issued to. Without sound timing (A4) none remains safe, even with the journal kept: custody
 ends when the arbiter stops counting a machine's permits, which is safe only if the machine has stopped using them
-by then. (An earlier note said that with the holder's own releases only the schemes that never expire a holder do
-not need A4. The run behind it used an older definition of S3 and was removed; an independent review found an S3
-counterexample for one of them, and the check is being repeated with `run_family.py --setting ownRelease_noA4d`.)
+by then. With the holder's own releases only (`--setting ownRelease_noA4d`, journal kept), the eight schemes that
+never expire a holder keep S1 and S2 without A4; the four with timed permits lose S3 (a permit the arbiter has
+stopped counting is still usable: five or six steps), and the four that admit on a remembered grant keep S3 as well
+(`family/results/ownRelease_noA4d_safe12.json`). An earlier note that said these schemes "do not need A4" used an
+older definition of S3 and was removed. Without authentication and with restarts that lose the journal
+(`--setting noA5_lossy`), all eight safe schemes keep S1-S3 and the four with designated succession G1 and G2
+(`family/results/noA5_lossy_safe8.json`, up to 28,718,676 states).
 With Site-side releases, schemes that differ only in expiry (none, or into custody) have the same state space here:
 `SiteRel` may take any holder's zone at any time, which subsumes `LeaseExpire`. `AbsInv` is
 the invariant of the unbounded proof below, in this model's variables; it holds for all eight in all three settings.
