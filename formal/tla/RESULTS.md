@@ -503,6 +503,8 @@ transitions, and the check finds each:
 | `refinement_ho_N2R1_atomic.cfg` | extended (`Transfer`, `Deny`) | refinement holds (204 states) |
 | `refinement_ho_N3R1_atomic.cfg` | extended | refinement holds (3,088 states) |
 | `refinement_N3R2.cfg` | extended | refinement holds (119,601 states) |
+| `refinement_N4R2.cfg` | extended, the sizes of `CAPCoordination_N4R2_nosym.cfg` | refinement holds (6,706,875 states, 9 min with 4 workers) |
+| `refinement_N5R2_sym.cfg` | extended, the sizes and symmetry of `CAPCoordination_N5R2.cfg` | refinement holds (15,643,374 orbit states, 37 min with 4 workers) |
 
 `ReservationInductive` gained `Transfer` and `HandoverInductive` gained `Deny`; both stay inductive (Apalache 0.58.0,
 `check --cinit=ConstInit --init=Init --inv=IndInv --length=0` and `--init=IndInv --length=1`: EXITCODE OK).
@@ -512,9 +514,16 @@ three machines and one resource, and every guard quantifies universally over mac
 A counterexample to inductiveness at any fleet size therefore projects onto one with at most 7 machines and 2
 resources for `HandoverInductive`, and 4 machines and 2 resources for `ReservationInductive`.
 `HandoverInductive` checked with `ConstInitCutoff` (`Gen(7)` machines, `Gen(2)` resources): base OK, step OK,
-`NotInductive` step violated (as it must). `ReservationInductive`'s `Gen(4)` already covers its cutoff. Together
-with the refinement above, NoDoubleGrant and receiver ownership hold for CAPCoordination's reservation and
-hand-over transitions at any number of machines. The CAPCoordination model itself was checked at the swept sizes.
+`NotInductive` step violated (as it must). `ReservationInductive`'s `Gen(4)` already covers its cutoff. So
+NoDoubleGrant and receiver ownership hold in the inductive models at any number of machines (the projection
+argument is a manual proof over these machine-checked premises). For CAPCoordination they follow as far as the
+refinement is checked, which is at bounded sizes only. The refinement is checked at every configuration at which the
+CAPCoordination model itself was checked: without hand-over up to five machines and two resources (the last under
+the same symmetry as `CAPCoordination_N5R2.cfg`; the refinement mapping and the abstract models treat every machine
+of a role and every resource alike, and the properties are safety properties, so the steps from one state of each
+orbit cover every step), and with the atomic hand-over at the hand-over sweep's two and three machines. The state
+counts equal those of the corresponding CAPCoordination checks. The 2026-11-15 runs used TLC2 2026.05.26 (the
+`tla2tools.jar` here) on Java 21; `run_sweep.sh` lists every refinement configuration with its expected verdict.
 
 ## PermitTiming: the lease lemma for entry permits (2026-11)
 

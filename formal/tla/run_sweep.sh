@@ -78,6 +78,13 @@ RUNS=(
   "CAPCoordination|CAPCoordination_ho_N2R1_atomic.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_ho_N3R1_atomic.cfg|CAPCoordination|PASS|0"
   "CAPCoordination|CAPCoordination_ho_N3R1_naive.cfg|CAPCoordination|FAIL|0"
+  "CAPCoordinationRefinement|refinement_ho_N3R1_atomic_without.cfg|CAPCoordinationRefinement|FAIL|0"
+  "CAPCoordinationRefinement|refinement_N3R2_without_deny.cfg|CAPCoordinationRefinement|FAIL|0"
+  "CAPCoordinationRefinement|refinement_ho_N2R1_atomic.cfg|CAPCoordinationRefinement|PASS|0"
+  "CAPCoordinationRefinement|refinement_ho_N3R1_atomic.cfg|CAPCoordinationRefinement|PASS|0"
+  "CAPCoordinationRefinement|refinement_N3R2.cfg|CAPCoordinationRefinement|PASS|0"
+  "CAPCoordinationRefinement|refinement_N4R2.cfg|CAPCoordinationRefinement|PASS|1"
+  "CAPCoordinationRefinement|refinement_N5R2_sym.cfg|CAPCoordinationRefinement|PASS|1"
 )
 
 printf '\n%-40s %-6s %-6s %12s %12s %8s\n' "config" "exp" "got" "generated" "distinct" "time"
