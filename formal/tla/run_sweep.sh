@@ -82,6 +82,8 @@ RUNS=(
   "CAPCoordinationRefinement|refinement_N3R2_without_deny.cfg|CAPCoordinationRefinement|FAIL|0"
   "CAPCoordinationRefinement|refinement_ho_N2R1_atomic.cfg|CAPCoordinationRefinement|PASS|0"
   "CAPCoordinationRefinement|refinement_ho_N3R1_atomic.cfg|CAPCoordinationRefinement|PASS|0"
+  "CAPCoordinationRefinement|refinement_N2R1.cfg|CAPCoordinationRefinement|PASS|0"
+  "CAPCoordinationRefinement|refinement_N3R1.cfg|CAPCoordinationRefinement|PASS|0"
   "CAPCoordinationRefinement|refinement_N3R2.cfg|CAPCoordinationRefinement|PASS|0"
   "CAPCoordinationRefinement|refinement_N4R2.cfg|CAPCoordinationRefinement|PASS|1"
   "CAPCoordinationRefinement|refinement_N5R2_sym.cfg|CAPCoordinationRefinement|PASS|1"
